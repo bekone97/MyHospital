@@ -1,0 +1,34 @@
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+}
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.btnForTimeOfAppointment{
+    width: 80px;
+
+    color: white;
+    padding: 8px 16px;
+    font-size: 18px;
+    font-family: cursive;
+    border: none;
+    border-radius:10px;;
+    cursor: pointer;
+    margin: 10px 30px;
+    float: left;
+
+
+}
+.blocked{
+    background-color: #6f767e;
+}
+.unBlocked{
+    background-color: #3498DB;
+}
+.unBlocked:hover, .unBlocked:focus{
+    background-color: #2980B9;
+}

@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,900&display=swap');
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+}
+.formForUserSettings {
+    width: 100%;
+    margin: auto;
+    padding:20px;
+    box-sizing: border-box;
+
+}
+.formForUserSettings input[type=text]{
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 40%;
+    margin-top: 10px;
+    /*box-sizing: border-box;*/
+}
+.formForUserSettings input[type=submit]{
+    box-sizing: border-box;
+}
+.formForUserSettings input[type=password]{
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 40%;
+    margin-top: 10px;
+}
+.userEmail{
+    position: relative;
+    width: 100%;
+}
+.userEmail label{
+    font-size: 18px;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+    margin-left: 10px;
+}
+.userPassword{
+    position: relative;
+    width: 100%;
+}
+.userPassword label{
+    font-size: 18px;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+    margin-left: 10px;
+}
+.userImg{
+    position: relative;
+    box-sizing: border-box;
+    margin: 30px;
+}
+.userImg label{
+    margin-top: 10px;
+}
+.thumbnail {
+    width: 200px;
+    border-radius: 20%;
+    box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.25);
+
+}
+.btnForUser{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 15%;
+
+}
+.btnForUser:hover, .btnForUser:focus{
+    background-color: #2980B9;
+}
+
+
+.btnsBottom{
+    width: 30%;
+    margin:10px 5px 0px 10px;
+}
+
+.btnBottom{
+    margin-top: 10px;
+}
+.inputFile{
+    visibility: hidden;
+}
+.inputFileBtn {
+    width: 100%;
+    margin-left: 20px;
+    max-width: 120px;
+    padding-left: 10px;
+    height: 60px;
+    background-color: #3498DB;
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    /*align-items: center;*/
+    -webkit-box-pack: start;
+    border-radius: 12px;
+    cursor: pointer;
+
+}
+.inputFileBtn:hover{
+    background-color: #2980B9;
+}
+.checkBoxForRole{
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 10px;
+
+}
+.checkBoxForRole label{
+    margin-bottom: 3px;
+}
+.modalForChangePassword {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+    top: -1000px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    background: rgba(0 0 0 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: scroll;
+    padding: 60px 15px;
+}
+
+
+.modalForChangePassword_content{
+    width: 100%;
+    max-width: 500px;
+    padding: 50px;
+    background: #f9f9f9;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0px 5px 15px black;
+}
+
+.modal__close-button {
+    background: #ff0000;
+    height: 20px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    cursor: pointer;
+    transition: .3s;
+    outline: none;
+}
+
+.modal_active{
+    position: fixed;
+    top: 0;
+    visibility: visible;
+    opacity: 1;
+    transition: .3s;
+}
+.changePassword{
+    position: relative;
+    margin-bottom: 10px;
+}

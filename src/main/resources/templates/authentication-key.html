@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{authentication.tittle}">Home Page</title>
+
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{authentication.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div th:if="${error}!=null">
+    <a th:text="${error}"></a>
+</div>
+<table>
+        <td>
+            <form th:method="POST" th:action="@{~/authentication}">
+                <label for="keyForUser" th:text="#{authentication.key}">Enter the key</label>
+                <input type="text"  th:name="key" id="keyForUser" th:placeholder="#{authentication.placeholderForKey}">
+                <button type="submit" th:text="#{authentication.button}">Authentication Of User</button>
+            </form>
+        </td>
+
+
+</table>
+</body>
+</html>

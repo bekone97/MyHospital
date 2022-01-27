@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{appointmentSelect.name}">SelectForAppointment</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/appointment/choice-date-doctor.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{appointmentSelect.name}"></a>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+<form th:method="GET" th:action="@{/choiceOfTime}" th:object="${appointmentDto}">
+    <div th:if="${patient==null}">
+        <div th:if="${#fields.hasErrors('phoneNumber')}" class="form-editPatronymic">
+            <span th:errors="*{phoneNumber}"></span>
+        </div>
+        <label for="phoneNumber" th:text="#{appointmentTime.phone}" >Phone number</label>
+        <input type="text" th:field="*{phoneNumber}" id="phoneNumber"
+               th:placeholder="#{appointmentTime.placeholderForPhone}" class="select"/>
+    </div>
+    <div th:unless="${patient==null}">
+        <input type="hidden" th:field="*{phoneNumber}" name="phoneNumber" />
+    </div>
+    <h1 th:text="#{appointmentSelect.doctor}"> Make choice of doctor</h1>
+    <select name="personalId" id="doctors" class="select" th:field="*{personal}">
+        <div th:each="doctor : ${listOfDoctors}">
+              <option  th:text="${doctor.getFIO()}"
+                th:value="${doctor.getId()}"></option>
+        </div>
+    </select>
+    <h1 th:text="#{appointmentSelect.date}">Make choice of date</h1>
+    <select  id="date" class="select" th:field="*{dateOfAppointment}">
+        <div th:each="date : ${listOfDates}">
+        <option th:text="${date}" th:value="${date}"></option>
+        </div>
+    </select>
+    <button type="submit" class="btnForAppointment" th:text="#{historyAdd.continue}">Continue </button>
+</form>
+
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

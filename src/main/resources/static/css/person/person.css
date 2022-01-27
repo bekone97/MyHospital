@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,900&display=swap');
+
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+
+}
+.textInformationPerson{
+    width: 55%;
+    box-sizing: border-box;
+    float: right;
+    margin-left: 30px;
+}
+.textInformationPerson a{
+    font-size: 20px;
+    font-weight: normal;
+
+}
+#allName{
+    font-size: 30px;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+}
+.personImg{
+    width: 40%;
+    float: right;
+    box-sizing: border-box;
+}
+.img{
+    float: right;
+    width: 80%;
+    border-radius: 20%;
+    box-shadow: 4px 4px 14px rgba(0,0,0,0.25);
+
+}
+.infoPerson p{
+    margin: 30px;
+}
+.infoPerson{
+    display: inline-block;
+    /*margin-bottom: 30px;*/
+    float: right;
+    width: 100%;
+}
+.personTitl{
+    text-transform: capitalize;
+    text-align: center;
+    word-spacing: 16px;
+}
+.personInfoContain{
+    max-width: 90%;
+    margin:auto;
+}
+/*.medicalHistories{*/
+/*    background-color: #628c80;*/
+/*}*/
+.historiesTable {
+    border-collapse: collapse;
+    width: 100%;
+    border: none;
+    /*margin-bottom: 20px;*/
+    mso-cellspacing: 0;
+    margin:auto;
+}
+.historiesTable thead th{
+    font-weight: bold;
+    text-align: left;
+    border: none;
+    padding:10px 15px;
+    background: #6998b0;
+    font-size: 14px;
+}
+.historiesTable thead tr th:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.historiesTable thead tr th:last-child{
+    border-radius: 0 8px 8px 0;
+}
+
+.historiesTable tbody td{
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    vertical-align: top;
+}
+.historiesTable tbody tr:nth-child(odd){
+    background-color: #95b9b3;
+}
+.historiesTable tbody tr:nth-child(even){
+    background-color: #8eafaa;
+}
+.historiesTable tbody tr td:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.historiesTable tbody tr td:last-child{
+    border-radius: 0 8px 8px 0;
+}
+.btnHistory{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 60%;
+
+}
+.btnHistory:hover, .btnHistory:focus{
+    background-color: #2980B9;
+}
+.btnsBottom{
+    width: 30%;
+    margin:5px 5px 0px 10px;
+}
+.btnBottom{
+    margin-top: 10px;
+}

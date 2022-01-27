@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/user/user-info.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{userInfo.name}">User info</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{userInfo.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div class="userInfo" id="userInfo">
+        <div class="userImg">
+            <div th:unless="${user.getImg()==null}">
+                <img th:src="@{${user.getImagePath()}}" class="img"/>>
+            </div>
+        </div>
+        <div class="userTextInformation" id="userTextInformation">
+            <div>
+            <p><a th:text="#{userInfo.username}">Username : </a><a th:text="${user.getUsername()}" id="username" class="userInf"></a></p>
+            </div>
+
+            <div th:unless="${user.getVerificationStatus()}">
+                <h4 class="verificationOfUser">Account isn't confirmed</h4>
+                <p><a th:text="#{userInfo.email}">Email : </a><a th:text="${user.getEmail()}" class="userInf"> </a></p>
+            </div>
+            <div th:if="${user.getAuthenticationStatus()}">
+                <p>
+                    <a th:text="#{userInfo.firstName}">Firstname : </a><a th:text="${user.getPerson().getFirstName()}" class="userInf">value</a>
+                </p>
+                <p>
+                    <a th:text="#{userInfo.surname}">Surname : </a> <a th:text="${user.getPerson().getSurname()}" class="userInf">value</a>
+                </p>
+                <p>
+                    <a th:text="#{userInfo.patronymic}">Patronymic : </a> <a th:text="${user.getPerson().getPatronymic()}" class="userInf">value</a>
+                </p>
+                <p>
+                    <a th:text="#{userInfo.address}">Address : </a><a th:text="${user.getPerson().getAddress()}" class="userInf">value</a>
+                </p>
+                <p>
+                    <a th:text="#{userInfo.dateOfBirthday}">Date of Birthday : </a><a th:text="${user.getPerson().getDateOfBirthday()}"
+                                                 class="userInf">value</a>
+                </p>
+                <p>
+                    <a th:text="#{userInfo.phoneNumber}">Phone number : </a><a th:text="${user.getPerson().getPhoneNumber()}" class="userInf">value</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${user.getAuthenticationStatus()}" class="authenticate">
+        <h4 class="userAuthenticate userInf"> Account isn't authenticated</h4>
+        <form th:method="GET" th:action="@{~/userAuthentication}">
+
+            <input type="submit" value="Authentication" class="btnAuthenticate btnUser"/>
+
+        </form>
+
+    </div>
+    <div class="btnsBottom">
+<div th:if="${id}==null">
+        <form th:method="GET" th:action="@{~/userSettings}">
+            <button type="submit"  class="btnBottom btnUser" th:text="#{userInfo.settings}">Settings</button>
+        </form>
+</div>
+    <form th:method="GET" th:action="@{~/}">
+        <button type="submit" class="btnBottom btnUser" th:text="#{homePage}">Back to homepage</button>
+    </form>
+    </div>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

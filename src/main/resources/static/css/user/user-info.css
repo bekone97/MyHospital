@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,900&display=swap');
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+}
+.userTextInformation{
+    width: 55%;
+    box-sizing: border-box;
+    float: right;
+    margin-left: 30px;
+}
+.userTextInformation a{
+    font-size: 20px;
+    font-weight: normal;
+}
+.userInf{
+    font-size: 30px;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+}
+.userImg{
+    width: 40%;
+    float: right;
+    box-sizing: border-box;
+}
+.img{
+    float: right;
+    width: 80%;
+    border-radius: 20%;
+    box-shadow: 4px 4px 14px rgba(0,0,0,0.25);
+
+}
+.infoPerson p{
+    margin: 30px;
+}
+.userInfo{
+    position: relative;
+    display: inline-block;
+    /*margin-bottom: 30px;*/
+    float: right;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.btnUser{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 60%;
+
+}
+.authenticate{
+    position: relative;
+    float: right;
+    margin-right: 20px;
+}
+
+.userAuthenticate{
+    color: red;
+    font-size: 12px;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.btnAuthenticate{
+    background-color: #545a65;
+    width: 100%;
+    /*margin-left: 150px;*/
+    margin-top: 0px;
+
+}
+.btnAuthenticate:hover, .btnAuthenticate:focus{
+    background-color: #6b7380;
+}
+.btnUser:hover, .btnUser:focus{
+    background-color: #6b7380;
+}
+.btnsBottom{
+    width: 30%;
+    margin:10px 5px 0px 10px;
+}
+.verificationOfUser{
+    color: red;
+    font-size: 12px  ;
+    margin-bottom: 0px;
+}
+.btnBottom{
+    margin-top: 10px;
+}

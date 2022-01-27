@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/person/person.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{personInfo.name}">Patient Info!!!</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{personInfo.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div class="infoPerson">
+
+        <div class="personImg">
+            <div th:unless="${person.getUser()==null}">
+                <div th:unless="${person.getUser().getImg()==null}">
+                    <img th:src="@{${person.getUser().getImagePath()}}" class="img" alt="image preview"/>
+                </div>
+            </div>
+        </div>
+        <div class="textInformationPerson">
+            <p><a th:text="#{personInfo.fio}"></a><strong th:text="${person.getFIO()}" id="allName" >FIO value</strong></p>
+            <p><a th:text="#{searchPerson.address}">Address:</a><strong th:text="${person.getAddress()}" id="address">value</strong></p>
+
+            <p><a th:text="#{searchPerson.dateOfBirthday}">Date of Birthday:</a><strong th:text="${person.getDateOfBirthday()}"
+                                           id="dateOfBirthday">value</strong></p>
+
+            <p><a th:text="#{searchPerson.phoneNumber}">Phone number: </a><strong th:text="${person.getPhoneNumber()}" id="phoneNumber">value</strong></p>
+
+            <div th:if="${person.getUser()}==null" sec:authorize="hasRole('ADMIN')">
+                <p><a th:text="#{personInfo.key}">Person key : </a><strong th:text="${person.getKeyForUser()}">Value</strong></p>
+            </div>
+        </div>
+    </div>
+<div th:unless="${histories}==null">
+    <div class="medicalHistories" id="patientMedicalHistories" sec:authorize="hasRole('ROLE_NURSE')"
+         th:unless="${histories.isEmpty()}">
+<!--        <p>-->
+<!--        <h2 class="titleOfHistories">Medical histories :</h2></p>-->
+<!--        <p>-->
+        <h3 th:text="#{personInfo.currentDis}">Current ills</h3>
+        <table class="historiesTable">
+            <thead>
+            <tr>
+                <th><a th:text="#{personInfo.diagnosis}">Diagnosis</a></th>
+                <th><a th:text="#{personInfo.doctor}">Doctor</a></th>
+                <th><a th:text="#{personInfo.receipt}">Receipt Date</a></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="historiesTBody">
+
+            <div th:each="history : ${histories}" class="history">
+                <tr>
+                    <td>
+                        <a th:text="${history.diagnosis.name}"/>
+                    </td>
+                    <td>
+                        <a th:text="${history.diagnosis.getPersonal().getFIO()}"/>
+                    </td>
+                    <td>
+                        <a th:text="${history.receiptDate}"/>
+                    </td>
+                    <td>
+                        <form th:method="GET" th:action="@{/history/{id}(id=${history.getId()})}">
+                            <button type="submit" class="btnHistory" th:text="#{personInfo.open}">Open history</button>
+                        </form>
+                    </td>
+                </tr>
+            </div>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+    <div sec:authorize="hasRole('DOCTOR')" class="btnsBottom">
+        <form th:method="get" th:action="@{/updatePerson/{id}(id=${person.getId()})}">
+            <button type="submit" class="btnBottom btnHistory"
+                    th:text="#{searchPerson.edit}">Update Person</button>
+        </form>
+
+        <div sec:authorize="hasRole('DOCTOR')">
+            <form th:method="GET" th:action="@{~/addNewHistory/{id}(id=${person.getId()})}">
+                <button type="submit" class="btnBottom btnHistory"
+                        th:text="#{personInfo.add}">AddNewMedicalHistory</button>
+            </form>
+        </div>
+        <div sec:authorize="hasRole('DOCTOR')">
+            <form th:method="GET" th:action="@{/openHistory/{id}(id=${person.getId()})}">
+                <button type="submit" class="btnBottom btnHistory"
+                        th:text="#{personInfo.openHistory}">Open medical history</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

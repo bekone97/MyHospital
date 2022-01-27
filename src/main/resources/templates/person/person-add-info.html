@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{personAdd.name}">Person info!!</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{personAdd.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+
+<form th:method="POST" th:action="@{/saveNewPerson}" th:object="${person}">
+    <input type="hidden" th:field="*{id}"/>
+    <input type="hidden" th:field="*{user}">
+    <input type="hidden" th:field="*{keyForUser}">
+    <!--    <input type="text" th:field="*{user}" id="user">-->
+    <div th:if="${#fields.hasErrors('firstName')}" class="form-editFirstName">
+        <span th:errors="*{firstName}"></span>
+    </div>
+    <label for="firstName" th:text="#{personAdd.firstname}">Enter firstName</label>
+    <input type="text" th:field="*{firstName}" id="firstName" th:placeholder="#{personAdd.firstname}">
+    <br>
+    <div th:if="${#fields.hasErrors('surname')}" class="form-editSurname>">
+        <span th:errors="*{surname}"></span>
+    </div>
+    <label for="surname" th:text="#{personAdd.surname}">Enter surname</label>
+    <input type="text" th:field="*{surname}" id="surname" th:placeholder="#{personAdd.surname}">
+    <br>
+    <div th:if="${#fields.hasErrors('patronymic')}" class="form-editPatronymic">
+        <span th:errors="*{patronymic}"></span>
+    </div>
+    <label for="patronymic" th:text="#{personAdd.patronymic}">Enter patronymic</label>
+    <input type="text" th:field="*{patronymic}" id="patronymic" th:placeholder="#{personAdd.patronymic}">
+    <br>
+    <div th:if="${#fields.hasErrors('address')}" class="form-editAddress">
+        <span th:errors="*{address}"></span>
+    </div>
+    <label for="address" th:text="#{personAdd.address}">Enter address</label>
+    <input type="text" th:field="*{address}" id="address" th:placeholder="#{personAdd.address}">
+    <br>
+    <label for="dateOfBirthday" th:text="#{personAdd.dateOfBirthday}">Enter dateOfBirthday XXXX-MM-DD</label>
+    <input type="date" th:field="*{dateOfBirthday}" id="dateOfBirthday" th:placeholder="#{personAdd.dateOfBirthday}">
+    <br>
+    <label for="phoneNumber" th:text="#{personAdd.phoneNumber}">Enter phoneNumber</label>
+    <input type="text" th:field="*{phoneNumber}" id="phoneNumber" th:placeholder="#{personAdd.phoneNumber}">
+
+    <button type="submit" th:text="#{save}">Save</button>
+</form>
+    <form th:method="GET" th:action="@{~/persons}">
+        <input type="hidden" name="sortField" value="surname">
+        <input type="hidden" name="sortDirection" value="asc">
+        <input type="submit" value="Back to persons"/>
+    </form>
+
+</body>
+</html>

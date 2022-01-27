@@ -1,0 +1,1 @@
+ALTER TABLE medical_history ADD COLUMN complain TEXT(60000);

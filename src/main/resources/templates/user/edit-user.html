@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{editUser.name}">Account settings</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/user/user-settings.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{editUser.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <form th:method="POST" th:action="@{/updateUser}" th:object="${user}" enctype="multipart/form-data"
+          class="formForUserSettings">
+
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{username}" id="username">
+        <input type="hidden" th:field="*{roles}">
+        <input type="hidden" th:field="*{password}">
+        <div class="userEmail">
+            <input type="text" th:field="*{email}" id="userEmail" th:placeholder="#{editUser.placeholderForEmail}">
+            <label for="userEmail" th:text="#{editUser.email}">Email</label>
+        </div>
+
+        <div class="userImg">
+            <div th:if="${user.getImg()==null}">
+                <img class="thumbnail" alt="Image Preview"/>
+                <label for="userImg" class="inputFileBtn" th:text="#{editUser.addPhoto}">Add photo</label>
+            </div>
+            <div th:unless="${user.getImg()}==null">
+                <img th:src="@{${user.imagePath}}" class="thumbnail">
+                <label for="userImg" class="inputFileBtn" th:text="#{editUser.changePhoto}">Change photo</label>
+            </div>
+            </p>
+
+
+            <input  type="file" name="userImg" id="userImg" value="Preview" accept="image/png, image/jpeg" class="inputFile">
+        </div>
+
+        <input type="submit" value="Save" class="btnForUser">
+    </form>
+    <div class="changePassword">
+        <button id="callbackChangePassword-button" class="btnChange btnForUser" th:text="#{editUser.password}">Change password</button>
+    </div>
+
+
+    <div class="modalForChangePassword" id="modalForChangePassword">
+        <div class="modalForChangePassword_content ">
+            <button class="modal__close-button">Close</button>
+                <form th:method="POST" th:action="@{/updatePasswordOfUser}" th:object="${user}">
+                <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{username}">
+                <input type="hidden" th:field="*{roles}">
+                <input type="hidden" th:field="*{email}">
+                <input type="hidden" th:field="*{img}">
+                <div class="userPassword">
+                    <input type="password" th:field="*{password}" id="password" th:placeholder="#{editUser.placeholderForChangePassword}">
+                    <label for="password" th:text="#{editUser.changePassword}">Enter new password</label>
+                </div>
+                    <button type="submit" class="btnForUser" th:text="#{save}">Save</button>
+            </form>
+            </div>
+    </div>
+    </div>
+</div>
+
+<script src="/js/user-settings.js"></script>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

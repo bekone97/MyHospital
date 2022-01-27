@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{userAppointments.name}">Home Page</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="css/appointment/user-appointments.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{userAppointments.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div th:unless="${appointments.isEmpty()}">
+        <table class="tableOfAppointments">
+
+            <thead>
+            <tr>
+                <th><a th:text="#{userAppointments.date}">Date of appointment</a></th>
+                <th><a th:text="#{userAppointments.doctor}">Doctor</a></th>
+                <th><a th:text="#{userAppointments.doctor}">Phone number of doctor</a></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="userAppointmentsTbody">
+            <div th:each="appointment : ${appointments}">
+                <tr>
+                    <td><a th:text="${appointment.getDateOfAppointment()}"/></td>
+                    <td><a th:text="${appointment.getPersonal().getFIO()}"
+                           th:href="@{/personal/{id}(id=${appointment.getPersonal().getId()})}"></a></td>
+                    <td><a th:text="${appointment.getPersonal().getPhoneNumber()}"></a> </td>
+                    <div th:if="${appointment.getUserPatient().getId()}==${user.getId()}">
+                        <td>
+                            <div th:if="${appointment.getDateOfAppointment().after(currentLocalDateTime)}">
+                            <form method="POST" th:action="@{/cancelAppointmentByUser/{id}(id=${appointment.getId()})}">
+                                <button type="submit" class="btnForAppointment" th:text="#{userAppointments.cancel}">Cancel</button>
+                            </form>
+                            </div>
+                        </td>
+                    </div>
+
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${appointments.isEmpty()}">
+        <h2 th:text="#{userAppointments.noAppointments}">You doesn't have any appointments</h2>
+    </div>
+    <form th:method="get" th:action="@{/myAllAppointments}">
+        <button type="submit" th:text="#{userAppointments.allAppointments}" class="btnForAppointment"></button>
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

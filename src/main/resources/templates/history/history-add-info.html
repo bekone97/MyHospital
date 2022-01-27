@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{historyAdd.name}">Enter history info</title>
+    <link rel="stylesheet" type="text/css" href="/css/history/history-add-info.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{historyAdd.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <form th:method="GET" th:action="@{/selectProcesses}" th:object="${history}" class="selectForHistory">
+
+        <input type="hidden" th:field="*{patient}" id="patient"/>
+        <div class="labelForInput">
+            <label for="selectOfDiagnoses" th:text="#{historyAdd.diagnosis}">Diagnosis</label>
+        </div>
+        <div th:if="${#fields.hasErrors('diagnosis.name')}">
+            <span th:errors="*{diagnosis.name}"></span>
+        </div>
+        <div class="selectOfDiagnoses" id="selectOfDiagnoses">
+            <input autocomplete="off" list="diagnoses" type="text" th:field="*{diagnosis.name}"
+                   th:placeholder="#{historyAdd.placeholderForDiagnosis}"/>
+            <datalist id="diagnoses">
+                <option th:each="diagnosis : ${diagnoses}"
+                        th:text="${diagnosis.getName()}"
+                        th:value="${diagnosis.getName()}">
+                </option>
+            </datalist>
+        </div>
+        <div class="labelForInput">
+            <label for="complain" th:text="#{historyAdd.complain}">Write the complain of pacient</label>
+        </div>
+        <div class="inputForHistory">
+            <input type="text" th:field="*{complain}" id="complain" class="inputForHistory"
+                   th:placeholder="#{historyAdd.placeholderForComplains}"/>
+        </div>
+        <div class="labelForInput" >
+            <label for="quantityOfOperations" th:text="#{historyAdd.quantityOperations}">Enter quantity of operations</label>
+        </div>
+        <div th:if="${#fields.hasErrors('numberOfOperations')}">
+            <span th:errors="*{numberOfOperations}"></span>
+        </div>
+        <div class="inputForHistory">
+            <input type="number" id="quantityOfOperations"  th:field="*{numberOfOperations}"
+                   th:placeholder="#{historyAdd.placeholderForQuantityOperations}"/>
+        </div>
+        <div class="labelForInput">
+            <label for="quantityOfProcedures" th:text="#{historyAdd.quantityProcedures}">Enter quantity of procedures</label>
+        </div>
+        <div th:if="${#fields.hasErrors('numberOfProcedures')}">
+        <span th:errors="*{numberOfProcedures}"></span>
+        </div>
+        <div class="inputForHistory">
+            <input type="number" id="quantityOfProcedures" th:field="*{numberOfProcedures}"
+                   th:placeholder="#{historyAdd.placeholderForQuantityProcedures}"/>
+        </div>
+        <div class="labelForInput">
+            <label for="quantityOfMedications" th:text="#{historyAdd.quantityMedications}">Enter quantity of medications</label>
+        </div>
+        <div th:if="${#fields.hasErrors('numberOfMedications')}">
+            <span th:errors="*{numberOfMedications}"></span>
+        </div>
+        <div class="inputForHistory">
+            <input type="number" id="quantityOfMedications" th:field="*{numberOfMedications}"
+                   th:placeholder="#{historyAdd.placeholderForQuantityMedications}"/>
+        </div>
+        <button value="OK" class="btnForHistory" th:text="#{historyAdd.continue}">Continue</button>
+    </form>
+    <form th:method="GET" th:action="@{~/histories}">
+        <input type="submit" value="Back to histories" class="btnForHistory"/>
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

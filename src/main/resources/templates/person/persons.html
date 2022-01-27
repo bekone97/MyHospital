@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/person/persons.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{persons.name}">Title</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{persons.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div class="searchPersonInput">
+        <form th:method="GET" th:action="@{~/searchPerson}" class="formForSearch">
+            <input type="text" name="keyword" th:placeholder="#{searchPerson.placeholderForSearch}"/>
+            <button type="submit" class="btnPersons" th:text="#{searchPerson.buttonSearch}"></button>
+        </form>
+    </div>
+    <table class="tableOfPersons">
+        <thead>
+        <tr>
+            <th></th>
+            <th>
+                <div th:if="${sortField}==surname">
+                    <a th:href="@{'/persons/1?sortField='+${sortField}+'&sortDirection='+${reverseSortDirection}}"
+                    th:text="#{searchPerson.surname}">
+                        Surname
+                    </a>
+                </div>
+                <div th:unless="${sortField}==surname">
+                    <a th:href="@{'/persons/1?sortField=surname&sortDirection=asc'}"
+                    th:text="#{searchPerson.surname}">
+                        Surname
+                    </a>
+                </div>
+            </th>
+            <th>
+                <div th:if="${sortField}==firstName">
+                    <a th:href="@{'/persons/1?sortField=firstName&sortDirection='+${reverseSortDirection}}"
+                    th:text="#{searchPerson.firstName}">
+                        Firstname
+                    </a>
+                </div>
+                <div th:unless="${sortField}==firstName">
+                    <a th:href="@{'/persons/1?sortField=firstName&sortDirection=asc'}"
+                    th:text="#{searchPerson.firstName}">
+                        Firstname
+                    </a>
+                </div>
+            </th>
+            <th>
+                <div th:if="${sortField}==patronymic">
+                    <a th:href="@{'/persons/1?sortField=patronymic&sortDirection='+${reverseSortDirection}}"
+                    th:text="#{searchPerson.patronymic}">
+                        Patronymic
+                    </a>
+                </div>
+                <div th:unless="${sortField}==patronymic">
+                    <a th:href="@{'/persons/1?sortField=patronymic&sortDirection=asc'}"
+                    th:text="#{searchPerson.patronymic}">
+                        Patronymic
+                    </a>
+                </div>
+            </th>
+            <th>
+                <div th:if="${sortField}==address">
+                    <a th:href="@{'/persons/1?sortField=address&sortDirection='+${reverseSortDirection}}"
+                    th:text="#{searchPerson.address}">
+                        Address
+                    </a>
+                </div>
+                <div th:unless="${sortField}==address">
+                    <a th:href="@{'/persons/1?sortField=address&sortDirection=asc'}"
+                    th:text="#{searchPerson.address}">
+                        Address
+                    </a>
+                </div>
+            </th>
+            <th>
+                <div th:if="${sortField}==DateOfBirthday">
+                    <a th:href="@{'/persons/1?sortField=dateofbirthday&sortDirection='+${reverseSortDirection}}"
+                    th:text="#{searchPerson.dateOfBirthday}">
+                        DateOfBirthday
+                    </a>
+                </div>
+                <div th:unless="${sortField}==DateOfBirthday">
+                    <a th:href="@{'/persons/1?sortField=DateOfBirthday&sortDirection=asc'}"
+                    th:text="#{searchPerson.dateOfBirthday}">
+                        DateOfBirthday
+                    </a>
+                </div>
+            </th>
+            <th th:text="#{searchPerson.phoneNumber}">Phone number</th>
+            <div sec:authorize="hasRole('ROLE_DOCTOR')">
+                <th></th>
+            </div>
+        </tr>
+        </thead>
+        <tbody id="personBody">
+        <div th:each="person : ${persons}">
+        <tr>
+            <td>
+                <div th:unless="${person.user}==null">
+                    <img th:src="@{${person.getUser().getImagePath()}}" style="width: 40px"/>
+                </div>
+            </td>
+            <td><a th:href="@{~/person/{id}(id=${person.getId()})}" th:text="${person.getSurname()}"></a></td>
+            <td><a th:text="${person.firstName}"></a></td>
+            <td><a th:text="${person.patronymic}"></a></td>
+            <td><a th:text="${person.address}"></a></td>
+            <td><a th:text="${person.dateOfBirthday}"></a></td>
+            <td><a th:text="${person.phoneNumber}"></a></td>
+            <div sec:authorize="hasRole('ROLE_DOCTOR')">
+                <td>
+                    <form th:method="get" th:action="@{/updatePerson/{id}(id=${person.getId()})}">
+                        <button type="submit" class="btn btn-updateUser" th:text="#{searchPerson.delete}">Update Person</button>
+                    </form>
+                    <form th:method="get" th:action="@{/deletePerson/{id}(id=${person.getId()})}">
+                        <button type="submit" class="btn btn-deleteUser" th:text="#{searchPerson.delete}">Delete Person</button>
+                    </form>
+                </td>
+            </div>
+        </tr>
+        </div>
+        </tbody>
+    </table>
+    <div class="btnsBottomPersons">
+        <form th:method="get" th:action="@{/addNewPerson}">
+            <button type="submit" class="btnBottom btnPersons" th:text="#{persons.add}">Create Person</button>
+        </form>
+        <form th:method="GET" th:action="@{~/}">
+            <button type="submit" class="btnBottom btnPersons" th:text="#{homePage}">Back to home page</button>
+        </form>
+    </div>
+</div>
+<div class="pagination">
+    <p><a th:text="#{persons.number}">Number of persons</a> <a th:text="${page.getTotalElements()}">Number Of Elements</a>
+        <a th:text="#{page}">-Page </a><a th:text="(__${page.number}__+1)"/>
+        of <a th:text="${page.totalPages}"/>
+        <a> </a> - <a> </a>
+        <a th:if="${pageNumber}>1" th:href="@{'/persons/'+1+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{first}">First</a>
+        <a> </a>
+        <a th:unless="${pageNumber}==1" th:href="@{'/persons/' + ${pageNumber-1}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{previous}">Previous</a>
+        <span th:each="i : ${#numbers.sequence(1,__${page.totalPages}__)}">
+        <a th:href="@{'/persons/'+${i}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1">[[${i}]]</a> <a> </a>
+    </span>
+        <a th:unless="${pageNumber}==(__${page.totalPages}__)" th:href="@{'/persons/'+${pageNumber+1}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{next}">Next</a>
+        <a> </a>
+        <a th:if="${pageNumber}<(__${page.totalPages}__)" th:href="@{'/persons/'+${page.totalPages}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{last}">Last</a>
+    </p>
+</div>
+<!--<form th:method="GET" th:action="@{/getAllHistories}"-->
+<!--<div class="text-end" sec:authorize="!isAuthenticated()">-->
+<!--    <form th:method="get" th:action="@{/login}">-->
+<!--        <button type="submit" class="btn my-btn btn-outline-light me-2">Войти</button>-->
+<!--    </form>-->
+<!--    <form th:method="get" th:action="@{/sign-up}">-->
+<!--        <button type="submit" class="btn btn-warning">Зарегистрироваться</button>-->
+<!--    </form>-->
+<!--</div>-->
+<script src="/js/dropList.js"></script>
+</body>
+</html>

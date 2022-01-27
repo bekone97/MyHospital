@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,900&display=swap');
+
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+
+}
+.textInformationPerson{
+    width: 55%;
+    box-sizing: border-box;
+    float: right;
+    margin-left: 30px;
+}
+.textInformationPerson a{
+    font-size: 20px;
+    font-weight: normal;
+
+}
+
+
+
+.tableOfAppointments {
+    border-collapse: collapse;
+    width: 100%;
+    border: none;
+    /*margin-bottom: 20px;*/
+    mso-cellspacing: 0;
+    margin:auto;
+}
+.tableOfAppointments thead th{
+    font-weight: bold;
+    text-align: left;
+    border: none;
+    padding:10px 15px;
+    background: #6998b0;
+    font-size: 14px;
+}
+.tableOfAppointments thead tr th:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.tableOfAppointments thead tr th:last-child{
+    border-radius: 0 8px 8px 0;
+}
+
+.tableOfAppointments tbody td{
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    vertical-align: top;
+}
+.tableOfAppointments tbody tr:nth-child(odd){
+    background-color: #95b9b3;
+}
+.tableOfAppointments tbody tr:nth-child(even){
+    background-color: #8eafaa;
+}
+.tableOfAppointments tbody tr td:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.tableOfAppointments tbody tr td:last-child{
+    border-radius: 0 8px 8px 0;
+}
+.btnForAppointment{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 60%;
+
+}
+.btnForAppointment:hover, .btnForAppointment:focus{
+    background-color: #2980B9;
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/dropListForProcess.css"/>
+    <link rel="stylesheet" type="text/css" href="/modalForExecutionProcess.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/processExecution/processExecutionHistory.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{processExecution.name}">ProcessExecutions</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{processExecution.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+
+   <div class="bodyExceptHeader">
+<div class="nameOfProcess">
+<a th:text="#{processExecution.executionOf}">Execution of </a> <a th:text="${process.nameOfProcess.name}"/>
+</div>
+   <table th:if="(__${executionHistory.size()}__)>0" class="tableOfExecutionProcess">
+       <thead>
+       <th><a th:text="#{processExecution.executionBy}">Who did it</a></th>
+       <th><a th:text="#{processExecution.dateExecution}">Date of completing</a></th>
+       <th><a th:text="#{processExecution.result}">Result of completing</a></th>
+       </thead>
+       <tbody id="executionsProcessTbody">
+       <div class="historyOfExecutions" id="historyOfExecutions" th:each="execution : ${executionHistory}">
+               <tr>
+               <td>
+                   <a th:text="${execution.personal.getFIO()}"/>
+               </td>
+               <td>
+                   <a th:text="${execution.dateOfCompleting}"/>
+               </td>
+
+               <td>
+                   <a th:text="${execution.resultOfCompleting}"/>
+               </td>
+               </tr>
+           </div>
+
+       </tbody>
+   </table>
+                <div th:unless="(__${executionHistory.size()}__)>0" >
+                    <h th:text="#{processExecution.noExecutions}">Medical process has got no executions</h>
+                </div>
+
+                <td>
+                    <div sec:authorize="isAuthenticated()" class="dropDownListForProcess" th:unless='(__${process.status}__)'>
+                        <button onclick="dropMedicationListFunction()" th:text="#{processExecution.edit}"
+                                class="dropbtnForProcess"></button>
+                        <div id="myDropdownListForProcess" class="dropDownList-processContent">
+                            <a id="callbackProcess-button" th:text="#{processExecution.execute}">Execute process</a>
+                            <div>
+                                <a th:href="@{/deleteProcess/{id}(id=${process.getId()})}"
+                                   th:text="#{processExecution.delete}">Delete process</a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <div class="modalForProcess" id="modalForProcess">
+                    <div class="modalForProcess_content ">
+                        <button class="modal__closeProcess-button">Close</button>
+                <form th:method="POST" th:action="@{~/executionProcess/{id}(id=${process.getId()})}" class="btnProcessForm">
+                    <label for="resultOfCompletingProcess" th:text="#{processExecution.resultForModel}">
+                        Enter the result of execution </label>
+                    <input type="text" name="result" id="resultOfCompletingProcess" th:placeholder="#{processExecution.resultForModel}"/>
+                    <button type="submit" class="btnProcess" th:text="#{processExecution.make}">Make execution</button>
+                </form>
+                    </div>
+                </div>
+
+<form th:method="GET" th:action="@{~/history/{id}(id=${process.getMedicalHistory().getId()})}" class="btnProcessForm">
+    <button type="submit" class="btnProcess" th:text="#{processExecution.backToHistory}">Back to medical history</button>
+</form>
+   </div>
+   <script src="/js/dropList.js"></script>
+   <script src="/js/modalWindowForProcess.js"></script>
+   <script src="/js/dropListForProcess.js"></script>
+</body>
+</html>

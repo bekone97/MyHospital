@@ -1,0 +1,183 @@
+.headName{
+    font-family:"Footlight MT Light";
+    text-align: center;
+    font-size: 18px;
+}
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+
+}
+.nameOfProcess{
+    font-size: 24px;
+    font-weight: bold;
+    font-family: Calibri;
+}
+.tableOfExecutionProcess {
+    border-collapse: collapse;
+    width: 100%;
+    border: none;
+    margin: 10px 0;
+    /*margin-bottom: 20px;*/
+    mso-cellspacing: 0;
+    /*margin:auto;*/
+}
+.tableOfExecutionProcess thead th{
+    font-weight: bold;
+    text-align: left;
+    border: none;
+    padding:10px 15px;
+    background: #6998b0;
+    font-size: 14px;
+}
+.tableOfExecutionProcess thead tr th:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.tableOfExecutionProcess thead tr th:last-child{
+    border-radius: 0 8px 8px 0;
+}
+
+.tableOfExecutionProcess tbody td{
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    vertical-align: top;
+    height: 40px;
+}
+.tableOfExecutionProcess tbody tr:nth-child(odd){
+    background-color: #95b9b3;
+}
+.tableOfExecutionProcess tbody tr:nth-child(even){
+    background-color: #8eafaa;
+}
+.tableOfExecutionProcess tr td:first-child{
+    border-radius: 8px 0 0 8px;
+}
+.tableOfExecutionProcess tbody tr td:last-child{
+    border-radius: 0 8px 8px 0;
+}
+
+.btnProcess{
+    margin-top: 10px;
+    appearance: none;
+    border: 0;
+    border-radius: 5px;
+    background: #4676D7;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+
+}
+
+.btnProcess:hover {
+    background: #1d49aa;
+}
+
+.btnProcess:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #cbd6ee;
+}
+.dropbtnForProcess{
+    background: #4676D7;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.dropbtnForProcess:hover, .dropbtnForProcess:focus{
+    outline: none;
+    background: #1d49aa;
+}
+.dropDownListForProcess{
+    position: relative;
+    display: inline-block;
+}
+.dropDownList-processContent{
+    display: none;
+    position: absolute;
+    background-color: #c2c2c2;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropDownList-processContent a{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.dropDownList-processContent a:hover{
+    background-color: #ddd;
+}
+
+.show {display: block}
+
+#callbackProcess-button{
+    cursor: pointer;
+}
+.modalForProcess{
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+    top: -1000px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    background: rgba(0 0 0 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: scroll;
+    padding: 60px 15px;
+}
+
+
+.modalForProcess_content{
+    width: 100%;
+    max-width: 500px;
+    padding: 50px;
+    background: #f9f9f9;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0px 5px 15px black;
+}
+
+.modal__closeProcess-button {
+    background: #ff0000;
+    height: 20px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    cursor: pointer;
+    transition: .3s;
+    outline: none;
+}
+
+.modal_active{
+    position: fixed;
+    top: 0;
+    visibility: visible;
+    opacity: 1;
+    transition: .3s;
+}
+
+.hidden{
+    overflow: hidden;
+}

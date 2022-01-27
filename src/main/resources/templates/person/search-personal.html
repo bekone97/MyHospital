@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/person/persons.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{searchPersonal.name}">Search</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{searchPersonal.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div class="searchPersonInput">
+<form th:method="GET" th:action="@{~/searchPersonal}" class="formForSearch">
+    <input type="text" name="keyword" th:placeholder="#{searchPerson.placeholderForSearch}"/>
+    <button type="submit" class="btnPersons" th:text="#{searchPerson.buttonSearch}"></button>
+</form>
+    </div>
+<div th:unless="(__${keyword.isEmpty()}__)"
+     class="resultOfSearch">
+    <div>
+        <a th:text="#{searchPerson.resultSearch}">Search Results for </a><a th:text="${keyword}" id="personalKeyword"></a>
+    </div>
+    <div th:unless="(__${result.isEmpty()}__)">
+        <table class="tableOfPersons">
+            <thead>
+            <tr>
+                <th></th>
+                <th><a th:text="#{searchPerson.firstName}">FirstName</a></th>
+                <th><a th:text="#{searchPerson.surname}">Surname</a></th>
+                <th><a th:text="#{searchPerson.patronymic}">Patronymic</a></th>
+                <th><a th:text="#{searchPerson.address}">Address</a></th>
+                <th><a th:text="#{searchPerson.dateOfBirthday}">DateOfBirthday</a></th>
+                <th><a th:text="#{searchPerson.phoneNumber}">Phone number</a> </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="personalTBody">
+            <div th:each="person,iterStat : ${result}">
+            <tr >
+                <td>
+                    <div th:unless="${person.user}==null">
+                        <img th:src="@{${person.getUser().getImagePath()}}" style="width: 40px"/>
+                    </div>
+                </td>
+                <td><a th:href="@{~/personal/{id}(id=${person.getId()})}" th:text="${person.getFIO()}"></a></td>
+                <td><a th:text="${person.surname}"></a></td>
+                <td><a th:text="${person.patronymic}"></a></td>
+                <td><a th:text="${person.address}"></a></td>
+                <td><a th:text="${person.dateOfBirthday}"></a></td>
+                <td><a th:text="${person.phoneNumber}"></a></td>
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <td>
+                        <form th:method="get" th:action="@{/updatePerson/{id}(id=${person.getId()})}">
+                            <button type="submit" class="btn btn-updatePerson" th:text="#{searchPersonal.edit}">Update Person</button>
+                        </form>
+                        <form th:method="get" th:action="@{/deletePerson/{id}(id=${person.getId()})}">
+                            <button type="submit" class="btn btn-deletePerson" th:text="#{searchPersonal.delete}">Delete Person</button>
+                        </form>
+                    </td>
+                </div>
+            </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+</div>
+    <div class="btnsBottomPersons">
+        <form th:method="GET" th:action="@{~/searchPersonal/1}">
+            <button type="submit" class="btnBottom btnPersons" th:text="#{searchPerson.back}">Back</button>
+        </form>
+    </div>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

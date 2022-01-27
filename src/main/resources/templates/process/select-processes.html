@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/process/select-processes.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8">
+    <title th:text="#{selectProcesses.name}">Select Processes</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{selectProcesses.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <form th:method="POST" th:action="@{/checkHistory}" th:object="${history}">
+        <input type="hidden" th:field="*{patient}" >
+        <input type="hidden" th:field="*{complain}">
+        <input type="hidden" th:field="*{diagnosis.name}">
+        <input type="hidden" th:field="*{diagnosis.personal}">
+
+
+
+        <div th:each="process, iterStat : ${history.medicalHistoryProcesses}">
+
+            <div th:if="(__${process.getNameOfProcess().getProcess().getId()}__)==1" class="operation inputForProcess">
+                <div class="nameOfProcess">
+                    <input type="hidden" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.process}">
+                    <div class="label">
+                        <label for="nameOfOperation" th:text="#{selectProcesses.operationName}">Name of operation</label>
+                        <label for="quantityOfOperation" th:text="#{selectProcesses.numberDays}">Number of days</label>
+                        <label for="quantityPerDayOfOperation" th:text="#{selectProcesses.quantityPerDay}">Quantity per day</label>
+                    </div>
+
+                    <div class="input">
+
+
+                        <input type="text" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"
+                               id="nameOfOperation" th:placeholder="#{selectProcesses.placeholderForOperationName}">
+                        <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"
+                               id="quantityOfOperation">
+                        <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"
+                               id="quantityPerDayOfOperation">
+                    </div>
+                    <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"></span>
+                    <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"></span>
+                    <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"></span>
+                </div>
+                </div>
+                <div th:if="(__${process.getNameOfProcess().getProcess().getId()}__)==2"
+                     class="procedure inputForProcess">
+                    <div class="nameOfProcess">
+                        <input type="hidden" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.process}">
+                        <div class="label">
+                            <label for="nameOfProcedure" th:text="#{selectProcesses.procedureName}">Name of procedure</label>
+                            <label for="quantityOfProcedure" th:text="#{selectProcesses.numberDays}">Number of days</label>
+                            <label for="quantityPerDayOfProcedure" th:text="#{selectProcesses.quantityPerDay}">Quantity per day</label>
+                        </div>
+
+                        <div class="input">
+                            <input type="text" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"
+                                   id="nameOfProcedure" th:placeholder="#{selectProcesses.placeholderForProcedureName}">
+                            <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"
+                                   id="quantityOfProcedure">
+                            <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"
+                                   id="quantityPerDayOfProcedure">
+                        </div>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"></span>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"></span>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"></span>
+                    </div>
+                </div>
+                <div th:if="(__${process.getNameOfProcess().getProcess().getId()}__)==3"
+                     class="medication inputForProcess">
+                    <div class="nameOfProcess">
+                        <input type="hidden" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.process}">
+                        <div class="label">
+                            <label for="nameOfOperation" th:text="#{selectProcesses.medicationName}">Name of medication</label>
+                            <label for="quantityOfOperation" th:text="#{selectProcesses.numberDays}">Number of days</label>
+                            <label for="quantityPerDayOfOperation" th:text="#{selectProcesses.quantityPerDay}">Quantity per day</label>
+                        </div>
+
+                        <div class="input">
+                            <input type="text" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"
+                                   id="nameOfMedication" th:placeholder="#{selectProcesses.placeholderForMedicationName}">
+                            <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"
+                                   id="quantityOfMedication">
+                            <input type="number" th:field="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"
+                                   id="quantityPerDayOfMedication">
+                        </div>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].nameOfProcess.name}"></span>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].numberOfDays}"></span>
+                        <span th:errors="*{medicalHistoryProcesses[__${iterStat.index}__].quantityPerDay}"></span>
+                    </div>
+                </div>
+
+        </div>
+        <button type="submit" class="btnForProcess" th:text="#{save}">Save</button>
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

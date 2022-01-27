@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{appointmentTime.name}">SelectTimeOfAppointment</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/appointment/choice-time-of-appointment.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{appointmentTime.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader" id="buttonsOfTime">
+
+    <a th:text="${date}"></a>
+    <div th:each="appointment : ${appointments}">
+        <div th:if="${appointment.getDateOfAppointment().after(currentLocalDateTime) and !appointment.isEngaged()}">
+            <form th:method="POST" th:action="@{/makeAppointment/{id}(id=${appointment.getId()})}">
+
+                <input type="hidden" name="phoneNumber" th:value="${phoneNumber}"/>
+                <button type="submit" th:value="${appointment.getDateOfAppointment().getHours()}+':'
+                                                +${appointment.getDateOfAppointment().getMinutes()}"
+                        th:text="${appointment.getDateOfAppointment().getHours()}+':'
+                                                +${appointment.getDateOfAppointment().getMinutes()}"
+                        class="btnForTimeOfAppointment unBlocked"></button>
+
+            </form>
+        </div>
+        <div th:if="${appointment.isEngaged() or appointment.getDateOfAppointment().before(currentLocalDateTime) }">
+            <button th:text="${appointment.getDateOfAppointment().getHours()}+':'
+                            +${appointment.getDateOfAppointment().getMinutes()}" class=" btnForTimeOfAppointment blocked" ></button>
+        </div>
+    </div>
+</div>
+    <script src="/js/dropList.js"></script>
+
+</body>
+</html>

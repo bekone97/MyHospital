@@ -1,0 +1,1 @@
+ALTER TABLE medical_history_processes MODIFY COLUMN status TINYINT(1);

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnoses</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="${nameOfPage}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<table>
+    <tr>
+        <td>Name</td>
+        <td>Personal Name</td>
+    </tr>
+    <tr th:each=" diagnosis : ${diagnoses}">
+        <td><a th:href="@{~/diagnosis/{id}(id=${diagnosis.getId()})}" th:text="${diagnosis.getName()}"></a> </td>
+        <td th:text="${diagnosis.personal}"></td>
+        <td>
+            <form th:method="get" th:action="@{/updateDiagnosis/{id}(id=${diagnosis.getId()})}">
+                <button type="submit" class="btn btn-updateDiagnosis">Update Diagnosis</button>
+            </form>
+            <form th:method="get" th:action="@{/deleteDiagnosis/{id}(id=${diagnosis.getId()})}">
+                <button type="submit" class="btn btn-deleteDiagnosis">Delete Diagnosis</button>
+            </form>
+        </td>
+    </tr>
+
+
+</table>
+<form th:method="get" th:action="@{/addNewDiagnosis}">
+    <button type="submit" class="btn btn-addDiagnosis">Create Diagnosis</button>
+</form>
+<form th:method="GET" th:action="@{~/}">
+    <input type="submit" value="Back to homepage"/>
+</form>
+</body>
+</html>

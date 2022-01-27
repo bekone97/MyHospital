@@ -1,0 +1,99 @@
+<div th:fragment="menu">
+
+        <div class="headerTable" >
+            <table class="tableOfBtns" id="navBarTable">
+                <div class="homePageBtn">
+                    <td>
+                        <form th:method="GET" th:action="@{/}">
+                            <button type="submit" class="btn" th:text="#{menu.home}">Home </button>
+                        </form>
+                    </td>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_PATIENT')" >
+                <td>
+                        <div class="appointmentDropdownList">
+                        <button onclick="dropAppointmentListFunction()"  class="btn dropbtnForAppointment"
+                                th:text="#{menu.appointment}"> Appointment</button>
+                        <div id="dropdownListForAppointment" class="dropDownList-contentForAppointment">
+                            <a th:href="@{/choiceOfDateAndDoctor}" th:text="#{menu.makeAppointment}">Make appointment</a>
+                            <a th:href="@{~/myCurrentAppointments}" th:text="#{menu.myAppointments}">My appointments</a>
+                        </div>
+                        </div>
+
+                </td>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_NURSE')">
+                    <td>
+                        <form method="GET" th:action="@{'/persons/1'}">
+                            <input type="hidden" name="sortField" value="surname"/>
+                            <input type="hidden" name="sortDirection" value="asc"/>
+                            <button type="submit" class="btn" th:text="#{menu.patients}" >Patients</button>
+                        </form>
+                        <!--                <a th:href="@{'/persons/1?sortField=surname&sortDirection=asc'}"> Patients</a>-->
+                    </td>
+
+                </div>
+                <div sec:authorize="hasRole('ROLE_PATIENT')">
+                    <td>
+                        <form th:action="@{'/searchPersonal/1'}">
+                            <!--                    <a th:href="@{'/personal/1'}">Doctors</a>-->
+                            <button type="submit" class="btn" th:text="#{menu.personal}">Doctors</button>
+                        </form>
+                    </td>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <td>
+                        <form method="GET" th:action="@{'/users/1'}">
+                            <input type="hidden" name="sortField" value="id"/>
+                            <input type="hidden" name="sortDirection" value="asc"/>
+                            <button type="submit" class="btn" th:text="#{menu.users}">Users</button>
+                        </form>
+                    </td>
+                </div>
+                                <div>
+                                    <td>
+                                        <a th:text="#{menu.contacts}">Contacts</a>
+                                    </td>
+                                </div>
+                <div>
+                    <td>
+                        <a th:text="#{menu.aboutUs}">About us</a>
+                    </td>
+                </div>
+                <div sec:authorize="isAuthenticated()" >
+                <td class="editUserList">
+                    <div class="userDropDownList">
+                        <button onclick="dropUserListFunction()" th:text="${#request.remoteUser}" id="nameOfUser" class="btn dropbtnForUser"></button>
+                        <div  id="dropdownListForUser" class="dropDownList-contentForUser">
+                            <a th:href="@{/userProfile}" th:text="#{menu.myProfile}">My Profile</a>
+                            <div sec:authorize="hasRole('PATIENT')">
+                                <a th:href="@{~/myMedicalHistory}" th:text="#{menu.medicalHistory}">Medical History</a>
+                            </div>
+                            <div sec:authorize="hasRole('DOCTOR')">
+                                <a th:href="@{~/mySchedule}" th:text="#{menu.schedule}">Schedule</a>
+                            </div>
+                            <!--                    <a th:href="@{~/uploadImgForUser}">Upload Image</a>-->
+                            <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                        </div>
+                        </div>
+                </td>
+
+                    </div>
+                <div sec:authorize="isAnonymous()" class="userDropDownList">
+                <td class="editUserList">
+                    <div class="userDropDownList">
+                        <button onclick="dropAnonymListFunction()" th:text="#{menu.account}" class="btn dropbtnForUser" id="nonUser">
+                            My profile</button>
+                        <div id="anonymDropdownList" class="dropDownList-contentForUser">
+                            <a th:href="@{'/login'}" th:text="#{menu.login}">Sing in</a>
+                            <a th:href="@{/authorization}" th:text="#{menu.registration}">Authorize</a>
+                        </div>
+                    </div>
+                </td>
+                </div>
+            </table>
+        </div>
+    </div>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{doctorAppointments.name}">Doctor appointments</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/homepage.css" />
+
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{doctorAppointments.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th><a th:text="#{doctorAppointments.date}">Date of appointment</a></th>
+        <th><a th:text="#{doctorAppointments.user}">User</a></th>
+        <th><a th:text="#{doctorAppointments.phone}">Phone Number</a></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="doctorAppointmentsTbody">
+    <div th:each="appointment : ${appointments}">
+    <tr>
+        <td><a th:text="${appointment.getDateOfAppointment()}"></a></td>
+        <td><a th:text="${appointment.getUserPatient().getUsername()}"></a></td>
+        <td><a th:text="${appointment.getPhoneNumber()}"></a> </td>
+        <div sec:authorize="hasRole('ROLE_DOCTOR')">
+            <td>
+            <form method="POST" th:action="@{/cancelAppointmentByDoctor/{id}(id=${appointment.getId()})}">
+                <button type="submit" th:text="#{doctorAppointments.cancel}">Cancel</button>
+            </form>
+            </td>
+        </div>
+
+    </tr>
+    </div>
+    </tbody>
+</table>
+
+<script src="/js/dropList.js"></script>
+</body>
+</html>

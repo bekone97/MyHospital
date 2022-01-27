@@ -1,0 +1,75 @@
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+}
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+
+.selectForHistory {
+    width: 100%;
+    margin: auto;
+    padding:20px;
+    box-sizing: border-box;
+
+}
+.selectForHistory input[type=text]{
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 80%;
+    /*box-sizing: border-box;*/
+}
+.selectForHistory input[type=submit]{
+
+    box-sizing: border-box;
+}
+.selectForHistory input[type=number]{
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 80%;
+    /*box-sizing: border-box;*/
+}
+.selectForHistory input[type=number]{
+    box-sizing: border-box;
+}
+.inputForHistory{
+    position: relative;
+    margin-bottom: 10px;
+}
+.labelForInput{
+    position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: Calibri;
+
+}
+.btnForHistory{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 16%;
+
+}
+.btnForHistory:hover, .btnForHistory:focus{
+    background-color: #2980B9;
+}
+
+.btnBottom{
+    margin:5px 5px 0px 0px;
+}
+.searchPersonalInput{
+    margin-top: 10px;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnosis</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="${nameOfPage}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<form th:method="POST" th:action="@{/saveNewDiagnosis}" th:object="${diagnosis}">
+    <input type="hidden" th:field="*{id}"/>
+    <br>
+    <div th:if="${#fields.hasErrors('name')}" class="form-editNameOfDiagnosis">
+        <span th:errors="*{name}"></span>
+    </div>
+    <label for="name">Enter name</label>
+    <input type="text" th:field="*{name}" id="name">
+    <br>
+    <div th:if="${#fields.hasErrors('personal')}" class="form-editPersonalOfDiagnosis">
+        <span th:errors="*{personal}"></span>
+    </div>
+    <label for="personal">Enter personal_id</label>
+    <input type="text" th:field="*{personal}" id="personal">
+    <br>
+    <input type="submit" value="OK">
+    <br>
+
+</form>
+<form th:method="GET" th:action="@{~/diagnoses}">
+    <input type="submit" value="Back to diagnoses"/>
+</form>
+</body>
+</html>

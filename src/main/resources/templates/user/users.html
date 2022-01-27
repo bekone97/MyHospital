@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/user/users.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <title th:text="#{users.tittle}">Users</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{users.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<a th:text="${error}">Value of error</a>
+
+    <table class="tableOfUsers" id="tableOfUsers">
+        <thead>
+        <tr>
+            <th>
+                <a th:text="#{users.img}"> User image</a>
+            </th>
+            <th>
+                <div th:if="${sortField}==username">
+                    <a th:href="@{'/users/1?sortField=username&sortDirection='+${reverseSortDirection}}"
+                       th:text="#{users.username}">
+                        Username
+                    </a>
+                </div>
+                <div th:unless="${sortField}==username">
+                    <a th:href="@{'/users/1?sortField=username&sortDirection=asc'}"
+                       th:text="#{users.username}">
+                        Username
+                    </a>
+                </div>
+            </th>
+            <th><a th:text="#{users.verificationCode}">Verification code</a></th>
+            <th><a th:text="#{users.verificationStatus}">Verification status</a></th>
+            <th><a th:text="#{users.roles}">Roles</a></th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody id="bodyOfUsers">
+        <div th:each=" user : ${users}">
+            <div class="userTr">
+                <tr>
+                    <td class="imgOfUser">
+                        <img th:src="@{${user.imagePath}}" class="img"/>
+                    </td>
+                    <td><a th:href="@{~/user/{id}(id=${user.getId()})}" th:text="${user.getUsername()}"></a></td>
+                    <td th:text="${user.verificationCode}"></td>
+                    <td th:text="${user.verificationStatus}"></td>
+                    <td>
+                        <div th:each="role,iterStat : ${user.getRoles()}">
+                            <p><a th:text="${role.getName()}">name of role</a></p>
+                        </div>
+                    </td>
+                    <td>
+                        <form th:action="@{~/userSettings/{id}(id=${user.getId()})}">
+                            <button type="submit" class="dropbtnForUser" th:text="#{users.edit}">Edit</button>
+                        </form>
+
+                        <form th:method="post" th:action="@{/deleteUser/{id}(id=${user.getId()})}">
+                            <button type="submit" class="dropbtnForUser" th:text="#{users.delete}">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </div>
+        </div>
+        </tbody>
+    </table>
+<form th:method="GET" th:action="@{~/}" class="backbtnForm">
+    <button type="submit" class="backbtn" th:text="#{homePage}">Back to home page</button>
+</form>
+<div class="pagination">
+    <a th:text="#{users.numberOfUsers}">Number of users</a>
+    <a th:text="${page.getTotalElements()}">Number Of Elements</a><a th:text="#{page}"> -Page </a><a
+        th:text="(__${page.number}__+1)"/>
+    of <a th:text="${page.totalPages}"/>
+    <a> </a>
+    <a th:if="${pageNumber}>1" th:href="@{'/users/'+1+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{first}">First</a>
+    <a> </a>
+    <a th:unless="${pageNumber}==1" th:href="@{'/users/' + ${pageNumber-1}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{previous}">Previous</a>
+    <span th:each="i : ${#numbers.sequence(1,__${page.totalPages}__)}">
+        <a th:href="@{'/users/'+${i}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1" >[[${i}]]</a> <a> </a>
+    </span>
+    <a> </a>
+    <a th:unless="${pageNumber}==(__${page.totalPages}__)" th:href="@{'/users/'+${pageNumber+1}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{next}">Next</a>
+    <a th:if="${pageNumber}<(__${page.totalPages}__)" th:href="@{'/users/'+${page.totalPages}+'?sortField='+${sortField}+'&'
+        +'sortDirection='+${sortDirection}}" class="paginationHref1 paginationHref2" th:text="#{last}">Last</a>
+
+</div>
+<script src="/js/dropList.js"></script>>
+</body>
+</html>
+<!--                <form th:action="@{~/updatePasswordOfUser/{id}(id=${user.getId()})}">-->
+<!--                    <button type="submit" class="dropbtnForUser">Change Password</button>-->
+<!--                </form>-->
+<!--                <form th:action="@{~/uploadImgForUser/{id}(id=${user.getId()})}">-->
+<!--                    <button type="submit" class="dropbtnForUser">Upload Image</button>-->
+<!--                </form>-->
+<!--<div class="modelOfUsers" id="modelOfUser" sec:authorize="isAuthenticated()">-->
+<!--        Username: <p th:text="${user.getUsername()}" id="username">value</p>-->
+<!--        Name: <p th:text="${user.getPerson().getFIO()}" id="FIO">value</p>-->
+<!--        Address: <p th:text="${user.getPerson().getAddress()}" id="address">value</p>-->
+<!--        DateOfBirthday: <p th:text="${user.getPerson().getDateOfBirthday()}" id="dateOfBirthday">value</p>-->
+<!--        <form th:method="GET" th:action="@{~/updateUser/{id}(id=${user.getId()})}">-->
+<!--            <input type="submit" value="changePassword"/>-->
+<!--        </form>-->
+<!--        <form th:method="GET" th:action="@{~/updatePerson/{id}(id=${user.getPerson().getId()})}">-->
+<!--            <input type="submit" value="Change information of User"/>-->
+<!--        </form>-->
+<!--</div>-->
+<!--<form th:method="get" th:action="@{/addNewUser}">-->
+<!--    <button type="submit" class="btn-addUser">Create User</button>-->
+<!--</form>-->
+<!--<div th:unless="${error}==null">-->
+<!--</div>-->

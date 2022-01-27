@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Pushster&display=swap');
+
+.headerTittle{
+    font-size: 30px;
+    color: #021e02;
+    font-family: 'Pushster', cursive;
+    text-align: center;
+    font-style: oblique;
+}
+.headerTittle h1{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.headerPageTable{
+    width: 100%;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.headerTable{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 70%;
+    float: right;
+
+}
+.headerTable td{
+    padding-right: 15px;
+}
+
+.nameOfPage{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 30%;
+    font-family:"Footlight MT Light";
+    margin-top: 2px;
+    text-align: center;
+    font-size: 41px;
+    font-weight: bold;
+    float: left;
+}
+.btn{
+    background-color: #3498DB;
+    color: white;
+    padding: 8px 16px;
+    font-size: 18px;
+    font-family: cursive;
+    border: none;
+    cursor: pointer;
+}
+.btn:hover, .btn:focus{
+    background-color: #2980B9;
+}
+.tableOfBtns{
+    float: right;
+    margin-right: 30px;
+}
+
+.userDropDownList {
+    position: relative;
+    display: inline-block;
+}
+
+
+.dropDownList-contentForUser{
+     display: none;
+     position: absolute;
+     right: 0px;
+     background-color: #f1f1f1;
+     min-width: 160px;
+     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+     z-index: 1;
+ }
+.dropDownList-contentForUser a{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropDownList-contentForUser a:hover{
+    background-color: #ddd;
+}
+
+
+
+.dropDownList-contentForAppointment a{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.appointmentDropdownList{
+    position: relative;
+    display: inline-block;
+}
+.dropDownList-contentForAppointment a:hover{
+    background-color: #ddd;
+}
+.dropDownList-contentForAppointment{
+    display: none;
+    position: absolute;
+    right: 0px;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+
+.show {display: block}

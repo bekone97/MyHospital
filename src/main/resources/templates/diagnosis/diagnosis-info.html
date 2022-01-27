@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnosis info</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="${nameOfPage}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+</table>
+Id <p th:text="${diagnosis.getId()}">value</p>
+Name <p th:text="${diagnosis.getName()}" id="name">value</p>
+Personal <p th:text="${diagnosis.getPersonal()}" id="personal_id">value</p>
+<br>
+<form th:method="GET" th:action="@{~/diagnoses}">
+    <input type="submit" value="Back to diagnoses"/>
+</form>
+</body>
+</html>

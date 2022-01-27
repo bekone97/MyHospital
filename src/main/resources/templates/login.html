@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/login.css"/>
+    <meta charset="UTF-8">
+    <title th:text="#{login.tittle}">Login</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{login.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
+        <div th:unless="${error}==null">
+            <p>
+                <a th:text="${error}"></a>
+            </p>
+        </div>
+        <p>
+            <label for="inputForUsername" th:text="#{login.username}" class="label">Username :</label>
+            <input type="text" name="username" id="inputForUsername" th:placeholder="#{login.placeholderForUsername}"  class="input"/>
+        </p>
+        <p>
+            <label for="inputForPassword" th:text="#{login.password}" class="label">Password: </label>
+            <input type="password" name="password" id="inputForPassword" th:placeholder="#{login.placeholderForPassword}" required class="input" />
+        </p>
+        <p>
+
+                <input type="checkbox" name="remember-me" id="remember-me">
+                <label for="remember-me" th:text="#{login.rememberMe}" class="label">Remember me</label>
+        </p>
+        <p>
+            <button type="submit" th:text="#{login.signIn}" class="btnForLogin">Sign in</button>
+        </p>
+
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

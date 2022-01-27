@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{allHistory.name}">Patient's History</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{allHistory.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="patientMedicalHistory" id="patientMedicalHistory">
+    <table>
+        <thead>
+        <tr>
+            <th><a th:text="#{patientHistory.diagnosis}">Diagnosis</a></th>
+            <th><a th:text="#{patientHistory.doctor}">Doctor</a></th>
+            <th><a th:text="#{patientHistory.receipt}">Receipt date</a></th>
+        </tr>
+        </thead>
+        <tbody id="historiesTbody">
+        <div th:each="history : ${histories}" >
+            <tr>
+                <td><a th:text="${history.diagnosis.name}"/></td>
+                <td><a th:text="${history.diagnosis.getPersonal().getFIO()}"/></td>
+                <td><a th:text="${history.receiptDate}"/></td>
+                <td>
+                    <form th:method="GET" th:action="@{/history/{id}(id=${history.getId()})}">
+                    <input type="submit" value="Open history"/>
+                </form>
+                </td>
+            </tr>
+        </div>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

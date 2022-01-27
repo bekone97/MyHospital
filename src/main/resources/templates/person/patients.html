@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Attributes</title>
+    <link rel="stylesheet" type="text/css" href="/css/person/personal-list.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="${nameOfPage}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+<div class="errorPatient" th:if="${error}">
+    <a>You've made wrong choice of patient</a>
+</div>
+<form th:method="GET" th:action="@{/patient}" class="formForSearch">
+    <label for="selectOfPatients">Enter the information of patient</label>
+                    <div class="selectOfPatients" id="selectOfPatients">
+                        <input autocomplete="off" list="patients" type="text" name="value" placeholder="Enter information">
+                        <datalist id="patients">
+                            <option th:each="person : ${persons}"
+                                    th:text="${person.getFIO()}"
+                                    th:value="${person.getId()}">
+                            </option>
+                        </datalist>
+                    </div>
+    <input type="submit" value="Select patient" class="btnPersonal"/>
+</form>
+<form th:method="GET" th:action="@{/addNewPersonForHistory}">
+    <input type="submit" value="AddNewPatient" class="btnPersonal"/>
+</form>
+
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

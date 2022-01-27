@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{addProcess.name}">Title</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{addProcess.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<form th:method="POST" th:action="@{~/addProcessToMedicalHistory}" th:object="${medicalHistoryProcess}">
+    <label for="selectOfProcess" th:text="#{addProces.select}">Select the process</label>
+    <select th:field="*{nameOfProcess.process}" id="selectOfProcess" >
+        <div th:each="process:${processes}">
+            <option th:value="${process.getId()}" th:text="${process.name}"></option>
+        </div>
+    </select>
+
+    <input type="hidden" th:field="*{medicalHistory}"/>
+    <label for="quantityOfProcess" th:text="#{addProcess.number}">Enter number of days</label>
+    <input type="number" th:field="*{numberOfDays}" id="quantityOfProcess" th:placeholder="#{addProcess.placeholderForNumber}"/>
+    <label for="quantityPerDayOfProcess" th:text="#{addProcess.quantity}">Enter quantity per day</label>
+    <input type="number" th:field="*{quantityPerDay}" id="quantityPerDayOfProcess" th:placeholder="#{addProcess.placeholderForQuantity}"/>
+    <label for="nameOfProcess" th:text="#{addProcess.processName}">Enter name</label>
+    <input th:field="*{nameOfProcess.name}" id="nameOfProcess" th:placeholder="#{addProcess.placeholderForProcessName}"/>
+    <button type="submit" th:text="#{addProcess.add}">Add process</button>
+</form>
+
+
+</body>
+</html>

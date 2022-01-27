@@ -1,0 +1,26 @@
+2022-01-05 14:49:41.286  INFO 3700 --- [main] c.i.myhospital.MyHospitalApplication     : Starting MyHospitalApplication using Java 11.0.12 on WIN-3N9M47L5BER with PID 3700 (D:\NewProjects\MyHospitalOne\MyHospital\target\classes started by User in D:\NewProjects\MyHospitalOne\MyHospital)
+2022-01-05 14:49:41.289 DEBUG 3700 --- [main] c.i.myhospital.MyHospitalApplication     : Running with Spring Boot v2.6.1, Spring v5.3.13
+2022-01-05 14:49:41.289  INFO 3700 --- [main] c.i.myhospital.MyHospitalApplication     : No active profile set, falling back to default profiles: default
+2022-01-05 14:49:41.919  INFO 3700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-01-05 14:49:42.002  INFO 3700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 71 ms. Found 9 JPA repository interfaces.
+2022-01-05 14:49:42.453  INFO 3700 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-01-05 14:49:42.460  INFO 3700 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-01-05 14:49:42.460  INFO 3700 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.55]
+2022-01-05 14:49:42.547  INFO 3700 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-01-05 14:49:42.547  INFO 3700 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1218 ms
+2022-01-05 14:49:42.888  INFO 3700 --- [main] o.f.c.internal.license.VersionPrinter    : Flyway Community Edition 8.0.4 by Redgate
+2022-01-05 14:49:42.888  INFO 3700 --- [main] o.f.c.i.database.base.BaseDatabaseType   : Database: jdbc:mysql://localhost:3306/my_hospital (MySQL 8.0)
+2022-01-05 14:49:42.936  INFO 3700 --- [main] o.f.core.internal.command.DbValidate     : Successfully validated 14 migrations (execution time 00:00.024s)
+2022-01-05 14:49:42.947  INFO 3700 --- [main] o.f.core.internal.command.DbMigrate      : Current version of schema `my_hospital`: 14
+2022-01-05 14:49:42.948  INFO 3700 --- [main] o.f.core.internal.command.DbMigrate      : Schema `my_hospital` is up to date. No migration necessary.
+2022-01-05 14:49:43.029  INFO 3700 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-01-05 14:49:43.058  INFO 3700 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.1.Final
+2022-01-05 14:49:43.144  INFO 3700 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-01-05 14:49:43.236  INFO 3700 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2022-01-05 14:49:43.753  INFO 3700 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-01-05 14:49:43.759  INFO 3700 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-01-05 14:49:44.070  WARN 3700 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-01-05 14:49:44.370  INFO 3700 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3bc33ad9, org.springframework.security.web.context.SecurityContextPersistenceFilter@4244e477, org.springframework.security.web.header.HeaderWriterFilter@51a5a8ba, org.springframework.security.web.authentication.logout.LogoutFilter@514b247b, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@66b62332, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3123ba75, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@6b35b0f4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@63614cdd, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@30eee098, org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter@240f712e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2cf669f2, org.springframework.security.web.session.SessionManagementFilter@404566e7, org.springframework.security.web.access.ExceptionTranslationFilter@28b4b10e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1784a296]
+2022-01-05 14:49:44.659  INFO 3700 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-01-05 14:49:44.679  INFO 3700 --- [main] c.i.myhospital.MyHospitalApplication     : Started MyHospitalApplication in 3.689 seconds (JVM running for 4.303)
+2022-01-05 14:51:03.637  INFO 3700 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
