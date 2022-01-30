@@ -6,17 +6,17 @@ import com.itacademy.myhospital.exception.MedicalHistoryException;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.ProcessException;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.*;
+import com.itacademy.myhospital.model.entity.Diagnosis;
+import com.itacademy.myhospital.model.entity.MedicalHistory;
+import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
+import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.repository.MedicalHistoryRepository;
 import com.itacademy.myhospital.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,7 +24,6 @@ import java.util.List;
 public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
     public static final String NO_HISTORY_EXCEPTION = "Medical history doesn't exist with id: ";
-    public static final String NO_MEDICAL_HISTORIES_EXCEPTION = "There are no medical histories in the project";
     public static final String ROLE_NURSE = "ROLE_NURSE";
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final UserService userService;
@@ -41,17 +40,16 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
     @Override
     public MedicalHistory findById(Integer id) throws MedicalHistoryException {
-        MedicalHistory medicalHistory = null;
         var optional = medicalHistoryRepository.findById(id);
         if(optional.isPresent()) {
-            medicalHistory = optional.get();
+        return optional.get();
         }else {
             throw new MedicalHistoryException(NO_HISTORY_EXCEPTION + id);
         }
-        return medicalHistory;
     }
 
     @Override
+    @Transactional
     public void saveAndFlush(MedicalHistory item) {
         medicalHistoryRepository.saveAndFlush(item);
     }
@@ -65,23 +63,6 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         }
     }
 
-//    @Override
-//    public List<MedicalHistory> findByReceiptDate(LocalDate receiptDate) throws MedicalHistoryException {
-//        var histories= medicalHistoryRepository.findByReceiptDate(receiptDate);
-//        if (histories==null){
-//            throw new MedicalHistoryException(NO_MEDICAL_HISTORIES_EXCEPTION);
-//        }
-//        return histories;
-//    }
-
-//    @Override
-//    public List<MedicalHistory> findByDischargeDate(LocalDate dischargeDate) throws MedicalHistoryException {
-//        var histories= medicalHistoryRepository.findByDischargeDate(dischargeDate);
-//        if (histories==null){
-//            throw new MedicalHistoryException(NO_MEDICAL_HISTORIES_EXCEPTION);
-//        }
-//        return histories;
-//    }
 
     @Override
     public List<MedicalHistory> findByPatient(Person patient){
@@ -89,15 +70,16 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
     }
 
 
-
-//    @Override
-//    public MedicalHistory findByPatientAndReceiptDate(Person patient,
-//                                                      LocalDate receiptDate) {
-//        return medicalHistoryRepository.findByPatientAndReceiptDate(patient,
-//                                                                     receiptDate);
-//    }
+    /**
+     * This method changes status of Medical History, MedicalHistoryProcesses on true and set Discharge Date and save the history
+     * @param id - id of Medical History
+     * @return Medical History
+     * @throws MedicalHistoryException if there is no Medical History with this id in database and
+     * if Medical History is already discharged
+     */
 //    Change status of processes of medical history and medical history on true and set Discharge Date and save history
     @Override
+    @Transactional
     public boolean dischargePatient(Integer id) throws MedicalHistoryException {
         var medicalHistory =findById(id);
         if (!medicalHistory.isStatus()){
@@ -111,7 +93,15 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
             throw new MedicalHistoryException("Medical history has already discharged");
         }
     }
-//check person: Is he  a patient of the history, or maybe he has role ROLE_NURSE, And check history. If is it true return history, is it false - null
+
+    /**
+     * This method checks whether the user is a patient in this medical history or he has enough permissions to view
+     * @param historyId - id of MedicalHistory
+     * @param username - name of User
+     * @return MedicalHistory
+     * @throws MedicalHistoryException if there is no MedicalHistory with this id in database
+     * @throws UserException if there is no user with the username in database or user doesn't have enough permissions
+     */
     @Override
     public MedicalHistory checkPersonForViewHistory(Integer historyId, String username) throws MedicalHistoryException, UserException {
         var history = findById(historyId);
@@ -130,6 +120,7 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         }
     }
 
+    @Transactional
     public MedicalHistory createAndSaveNewMedicalHistoryFromDto(MedicalHistoryDtoWithProcesses dto) {
 
         var history = MedicalHistory.builder()
@@ -149,6 +140,13 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         saveAndFlush(history);
         return history;
     }
+
+    /**
+     * This method returns all medical histories of the patient
+     * @param username - name of User
+     * @return list of Medical Histories
+     * @throws PersonException if there is no person with the user
+     */
     public List<MedicalHistory> getHistoriesOfPatient(String username) throws PersonException {
         var person = personService.findPersonByUsernameOfUser(username);
         if (person!=null) {
@@ -158,6 +156,13 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         }
     }
 
+    /**
+     *This method returns a  MedicalHistoryDtoWithProcesses with added MedicalHistoryProcesses ,diagnosis ,complain,patient
+     * @param historyDto - MedicalHistoryDtoWithNumberOfProcesses
+     * @param personal - who is a doctor in this MedicalHistory
+     * @return MedicalHistoryDtoWithProcesses
+     * @throws ProcessException if there is no process with id in database
+     */
     //make tests and description
     public MedicalHistoryDtoWithProcesses getMedicalHistoryDtoWithProcessesFromDtoWithNumbers(MedicalHistoryDtoWithNumberOfProcesses historyDto,Person personal) throws ProcessException {
         var diagnosis = diagnosisService.findOrCreateDiagnosis(historyDto.getDiagnosis().getName(), personal);
@@ -169,17 +174,4 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         dto.setDiagnosis(diagnosis);
         return dto;
     }
-//    public void saveUpdatedMedicalHistoryFromMedicalHistoryDto(MedicalHistoryDtoWithNumberOfProcesses historyDto) {
-//        MedicalHistory medicalHistory = MedicalHistory.builder()
-//                .id(historyDto.getId())
-//                .receiptDate(Timestamp.valueOf(LocalDateTime.now()))
-//                .dischargeDate(checkDtoDate(historyDto))
-//                .patient(historyDto.getPatient())
-//                .build();
-//        saveAndFlush(medicalHistory);
-//    }
-//
-//    private Timestamp checkDtoDate(MedicalHistoryDtoWithNumberOfProcesses dto) {
-//            return null;
-//    }
 }

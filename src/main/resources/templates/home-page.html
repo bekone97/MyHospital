@@ -9,105 +9,13 @@
     <link rel="stylesheet" type="text/css" href="/homepage.css" />
 </head>
 <body>
-
-
+<div class="bodyExceptFooter">
 <header th:insert="blocks/header::header"></header>
 <header th:insert="blocks/menu::menu"></header>
 <div th:unless="${error}==null">
     <a th:text="${error}">Value of error</a>
 </div>
-<!--<div class="dropDownList">-->
-<!--    <button onclick="dropListFunction()" class="dropbtn">Выпадающий список</button>-->
-<!--    <div id="myDropDownList" class="dropDownList-content">-->
-<!--        <a href="google.com">Ссылка 1</a>-->
-<!--        <a href="youtube.com">Ссылка 2</a>-->
-<!--        <a href="vk.com">Ссылка 3</a>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--</div>-->
-<!--<div class="headerLogin">-->
-<!--    <table>-->
-<!--        <td>-->
-<!--            <form th:method="get" th:action="@{/logout}">-->
-<!--                <button sec:authorize="isAuthenticated()" class="btn btn-userLogout" type="submit">Logout</button>-->
-<!--                <button sec:authorize="isAnonymous()" th:href="@{~/login}" class="btn btn-userLogin">Login</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--        <td sec:authorize="isAnonymous()">-->
-<!--            <form th:method="GET" th:action="@{/authorization}">-->
-<!--                <button class="btn btn-userAuthorize">Authorize</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </table>-->
-<!--</div>-->
-<!--<table>-->
-<!--    <div sec:authorize="hasRole('ADMIN')">-->
-
-<!--    <td>-->
-<!--        <a href="/users" >List of users</a>-->
-<!--    </td>-->
-<!--    </div>-->
-<!--    <div  sec:authorize="hasAnyRole('USER','ADMIN')">-->
-<!--    <td>-->
-<!--        <a href="/persons">List of persons</a>-->
-<!--    </td>-->
-<!--    </div>-->
-<!--&lt;!&ndash;    <div sec:authorize="hasAnyRole('PATIENT')">&ndash;&gt;-->
-<!--&lt;!&ndash;    <td>&ndash;&gt;-->
-<!--&lt;!&ndash;        <form method="GET" th:action="@{~/person/{id}(id=${user.getPerson().getId()})}">&ndash;&gt;-->
-<!--&lt;!&ndash;            <input type="submit" th:value="${user.getUsername()}">&ndash;&gt;-->
-<!--&lt;!&ndash;        </form>&ndash;&gt;-->
-<!--&lt;!&ndash;    </td>&ndash;&gt;-->
-<!--&lt;!&ndash;    </div>&ndash;&gt;-->
-<!--    <div sec:authorize="isAuthenticated()" class="userProfile">-->
-<!--        <td >-->
-<!--            <form th:method="GET" th:action="@{/userProfile}">-->
-<!--                <input type="submit" th:value="${#request.remoteUser}">-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--    <div sec:authorize="hasRole('NURSE')">-->
-<!--        <td>-->
-<!--            <form method="GET" th:action="@{~/searchPerson}">-->
-<!--                <input type="hidden" th:value="null" th:name="keyword">-->
-<!--                <input type="submit" value="FindPerson">-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--    <div sec:authorize="hasRole('PATIENT')">-->
-<!--        <td>-->
-<!--            <form method="GET" th:action="@{~/searchDoctor}">-->
-<!--                <input type="hidden" th:value="null" th:name="keyword">-->
-<!--                <input type="submit" value="FindDoctor">-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--    </div>-->
-<!--    <div sec:authorize="hasRole('PATIENT')">-->
-<!--        <td>-->
-<!--            <form method="GET" th:action="@{~/myMedicalHistory}">-->
-<!--                <input type="submit" value="My Medical History">-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--    <div sec:authorize="hasRole('ADMIN')">-->
-<!--        <td>-->
-<!--            <form method="GET" th:action="@{/users}">-->
-<!--                <input type="submit" value="List Of User">-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--        <td>-->
-<!--            <a>Contacts</a>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--            <a>About us</a>-->
-<!--        </td>-->
-<!--    </div>-->
-<!--</table>-->
-<footer th:insert="blocks/footer::footer"></footer>
+</div>
 <script src="/js/dropList.js"></script>
 </body>
 </html>

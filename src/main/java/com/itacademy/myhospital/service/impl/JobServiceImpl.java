@@ -5,7 +5,6 @@ import com.itacademy.myhospital.service.AppointmentService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -20,26 +19,25 @@ public class JobServiceImpl {
     public JobServiceImpl(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
-//The method is invoked while the project constructs
+
+    /**
+     * The method is invoked when the project has started(Except tests)
+     */
     @Scheduled(initialDelayString = "${schedule.start}",fixedDelay=Long.MAX_VALUE)
-    public void checkAndAddAppointmentsForPersonalForWeek() {
+    public void checkAndAddAppointmentsForPersonalForWeek() throws AppointmentException {
          var currentDate = getCurrentDate();
         var limitDate = currentDate.plusDays(8);
-        try {
             appointmentService.addAppointmentsForPersonalForWeek(currentDate,limitDate);
-        } catch (AppointmentException e) {
-
-        }
 
     }
-//The method is invoked in 24 hours after the project constructs, and it is invoked every 24 hours
+
+    /**
+     * The method is called 24 hours after the project has started working and then called every 24 hours
+     */
     @Scheduled(initialDelayString = "${schedule.work}", fixedDelayString = "${schedule.work}")
-    public void addAppointmentsForDay()  {
+    public void addAppointmentsForDay() throws AppointmentException {
         var currentDate = getCurrentDate();
-        try {
             appointmentService.addAppointmentsForPersonalForDay(currentDate.plusDays(7));
-        } catch (AppointmentException e) {
-        }
     }
 
 

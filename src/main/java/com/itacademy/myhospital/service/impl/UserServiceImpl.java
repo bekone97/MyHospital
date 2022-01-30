@@ -1,7 +1,6 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.UserDto;
-import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.entity.User;
@@ -20,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,14 +98,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) throws UserException {
-        var user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UserException("User with this email doesn't exist");
-        }
-        return user;
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
+    /**
+     *  This method is for encoding and changing password of user .
+     * @param user this is Dto of user.
+     * @return If the method has completed  return true
+     * @throws UserException if there is no user with UserDto.getId in the database
+     */
+    @Transactional
     public boolean updatePasswordOfUser(UserDto user) throws UserException {
         var updatedUser = findById(user.getId());
         updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -113,8 +116,17 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    /**
+     * This method checks username, creates a verification code for new user, encodes the password of new user, sends an
+     * email message to a new user and saves a new user.
+     * @param userDto This is dto of new user.
+     * @return  If the method is successful, true is returned
+     * @throws UserException If a user with the same name already exists, the method throws an error
+     * @throws MessagingException,UnsupportedEncodingException If there are some problems with sending a message
+     */
+    @Transactional
     public boolean createCodeAndSaveUser(UserDto userDto) throws UserException, MessagingException, UnsupportedEncodingException {
-        if (checkUsername(userDto)) {
+        if (findByUsername(userDto.getUsername())!=null) {
             var user = User.builder()
                     .username(userDto.getUsername())
                     .verificationCode(createRandomCode())
@@ -131,19 +143,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean checkUsername(UserDto userDto){
-        return findByUsername(userDto.getUsername()) == null;
-    }
-
     private String createRandomCode() {
-        String code = uuidService.getRandomString();
-        if (userRepository.findByVerificationCode(code) != null) {
-            return createRandomCode();
-        } else {
-            return code;
-        }
+        return uuidService.getRandomString();
     }
 
+
+    /**
+     * This method changes a verification status on true value, adds the role_patient to a user,
+     * makes verification code equals null and saves a user
+     * @param code - the verification code of user
+     * @return true if a user exists and its status is false or false if there is no user with the code or its status is true
+     */
+    @Transactional
     public boolean checkAndChangeVerificationStatus(String code) {
         var user = findByVerificationCode(code);
         if (user == null || user.getVerificationStatus()) {
@@ -159,7 +170,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public boolean saveUpdatedUser(UserDto user, MultipartFile multipartFile) throws UserException, IOException, MessagingException, PersonException {
+    /**
+     * This method checks changing of an email , img , roles and makes these changes and saves a user.
+     * @param user - a userDto with changes.
+     * @param multipartFile - an img of user.
+     * @return true
+     * @throws UserException If there is no user with userDto.getId()
+     * @throws IOException,MessagingException if there are some problems with sending message
+     */
+    @Transactional
+    public boolean saveUpdatedUser(UserDto user, MultipartFile multipartFile) throws UserException, IOException, MessagingException {
         var updatedUser = findById(user.getId());
         checkChangeOfEmail(user,updatedUser);
 
@@ -183,18 +203,16 @@ public class UserServiceImpl implements UserService {
         }
         return returnValue;
     }
-
-    public boolean checkChangeOfEmail(UserDto user, User updatedUser) throws MessagingException, UnsupportedEncodingException {
+    public boolean checkChangeOfEmail(UserDto user, User updatedUser) throws MessagingException, UnsupportedEncodingException{
         if (!Objects.equals(updatedUser.getEmail(), user.getEmail())) {
-            updatedUser.setVerificationStatus(false);
-            updatedUser.setRoles(null);
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setVerificationCode(createRandomCode());
-            emailService.sendEmailAboutChangeEmail(updatedUser,LOCALHOST);
-            return true;
-        }else {
+                updatedUser.setVerificationStatus(false);
+                updatedUser.setRoles(null);
+                updatedUser.setEmail(user.getEmail());
+                updatedUser.setVerificationCode(createRandomCode());
+                emailService.sendEmailAboutChangeEmail(updatedUser, LOCALHOST);
+                return true;
+            }
             return false;
-        }
     }
 
 
@@ -229,7 +247,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //Return dto for userByIf and userInfo
     public UserDto getDtoByUsernameForProfile(String username) {
         var user = findByUsername(username);
         return getDtoFromUserForUserProfile(user);
@@ -250,7 +267,6 @@ public class UserServiceImpl implements UserService {
         return getDtoFromUserForUserProfile(user);
     }
 
-    //Create userDto  verificationCode
     private UserDto getDtoFromUserForUserProfile(User user) {
         return UserDto.builder()
                 .id(user.getId())
@@ -265,7 +281,13 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    //    Dto without verificationCode verificationStatus authenticationStatus,person
+
+    /**
+     * This method creates a userDto without a verification status of user, a verification code of user and a verifications
+     * status of user
+     * @param user - A user from which a dto is created
+     * @return a userDto
+     */
     private UserDto getDtoFromUserForSettings(User user) {
         return UserDto.builder()
                 .id(user.getId())

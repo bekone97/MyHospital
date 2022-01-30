@@ -1,0 +1,89 @@
+
+body{
+    background-color: #9ec7c0;
+    font-size: 16px;
+    font-weight: normal;
+}
+.bodyExceptHeader{
+    width: 80%;
+    margin:auto;
+}
+
+.formWithoutBtn{
+    width: 53%;
+    float: left;
+    margin-left: 50px;
+    box-sizing: border-box;
+}
+.formOnlyButton{
+    width: 41%;
+    float: right;
+    box-sizing: border-box;
+}
+.formForPerson input[type=text]{
+    position: relative;
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 40%;
+    /*box-sizing: border-box;*/
+}
+
+.formForPerson input[type=date]{
+    position: relative;
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 40%;
+    /*box-sizing: border-box;*/
+}
+
+.formForPerson{
+    position: relative;
+    margin-bottom: 10px;
+}
+.label{
+    position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: Calibri;
+
+}
+.input{
+    /*display: inline-block;*/
+    position: relative;
+}
+.label{
+    /*display: inline-block;*/
+    position: relative;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.input{
+    margin-bottom: 10px;
+}
+.btnForPerson{
+    position: relative;
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 16%;
+    margin-top: 40px;
+}
+.btnForPerson:hover, .btnForPerson:focus{
+    background-color: #2980B9;
+}
+.bot{
+    margin-left: 20px;
+}
+
+

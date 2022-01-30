@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -24,7 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MedicalHistoryController {
 
-    public static final String NAME_OF_PAGE_FOR_MODEL = "nameOfPage";
+    public static final String ERROR_FOR_MODEL = "error";
+    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
     private final MedicalHistoryService medicalHistoryService;
     private final PersonService personService;
     private final ProcessService processService;
@@ -32,12 +34,7 @@ public class MedicalHistoryController {
     private final DiagnosisService diagnosisService;
     private final NameOfProcessService nameOfProcessService;
 
-    //    @GetMapping("/histories")
-//    public String histories(Model model){
-//        var histories = medicalHistoryService.findAll();
-//        model.addAttribute("histories",histories);
-//        return "history/histories";
-//    }
+
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     @GetMapping("/addPatientToNewHistory")
     public String addPatientToNewHistory(Model model) {
@@ -55,7 +52,8 @@ public class MedicalHistoryController {
             model.addAttribute("history", history);
             return "history/history-info";
         } catch (MedicalHistoryException | UserException e) {
-            return "redirect:/";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
@@ -66,7 +64,7 @@ public class MedicalHistoryController {
             return "process/select-processes";
         }
         dto = nameOfProcessService.checkNameOfProcesses(dto);
-        var medicalHistory = medicalHistoryService.createAndSaveNewMedicalHistoryFromDto(dto);
+        medicalHistoryService.createAndSaveNewMedicalHistoryFromDto(dto);
         return "redirect:/person/" + dto.getPatient().getId();
     }
 
@@ -81,7 +79,8 @@ public class MedicalHistoryController {
             model.addAttribute("diagnoses", diagnoses);
             return "history/history-add-info";
         } catch (PersonException e) {
-            return "redirect:/persons/1?sortField=surname&sortDirection=asc";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -102,7 +101,8 @@ public class MedicalHistoryController {
                 return "redirect:/history/" + history.getId();
             }
         } catch (MedicalHistoryException e) {
-            return "redirect:/";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -123,12 +123,14 @@ public class MedicalHistoryController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/dischargePatient/{id}")
-    public String dischargePatient(@PathVariable Integer id) {
+    public String dischargePatient(@PathVariable Integer id,
+                                   Model model) {
         try {
             medicalHistoryService.dischargePatient(id);
             return "redirect:/history/" + id;
         } catch (MedicalHistoryException e) {
-            return "redirect:/";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -142,7 +144,8 @@ public class MedicalHistoryController {
         model.addAttribute("histories", historiesOfPerson);
             return "history/histories-of-patient";
         } catch (PersonException e) {
-            return "redirect:/persons/1?sortField=surname&sortDirection=asc";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
     @PreAuthorize("isAuthenticated()")
@@ -158,15 +161,10 @@ public class MedicalHistoryController {
             }
         return "history/patient-medical-history";
         } catch (PersonException e) {
-            return "redirect:/";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 }
 
-//    public String checkDate(MedicalHistory history) {
-//        if (history.getDischargeDate() == null) {
-//            return null;
-//        } else {
-//            return history.getDischargeDate().toString();
-//        }
-//    }
+

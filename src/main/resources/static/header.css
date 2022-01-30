@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Pushster&display=swap');
-
 .headerTittle{
     font-size: 30px;
     color: #021e02;
@@ -107,5 +106,22 @@
     z-index: 1;
 }
 
+.btnLang{
+    display: inline-block;
+    background-color: #575759;
+    color: white;
+    padding:6px 8px;
+    font-size: 18px;
+    font-family: cursive;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 2px;
+}
+.btnLang:hover, .btnLang:focus{
+    background-color: #262b2d;
+}
+.btnsLang{
+    float: right;
+}
 
 .show {display: block}

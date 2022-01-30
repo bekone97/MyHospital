@@ -1,10 +1,8 @@
 package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
-import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.ProcessException;
 import com.itacademy.myhospital.model.entity.Person;
-import com.itacademy.myhospital.model.entity.Process;
 import com.itacademy.myhospital.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,13 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class ProcessController {
 
 
+    public static final String ERROR_FOR_MODEL = "error";
+    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
     private final PersonService personService;
     private final MedicalHistoryService medicalHistoryService;
 
@@ -44,7 +43,8 @@ public class ProcessController {
                 model.addAttribute("history", dto);
                 return "process/select-processes";
                 } catch (ProcessException e) {
-                    return "error/405";
+                    model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+                    return ERROR_EXCEPTION_PAGE;
                 }
             }else {
                 return "redirect:/";

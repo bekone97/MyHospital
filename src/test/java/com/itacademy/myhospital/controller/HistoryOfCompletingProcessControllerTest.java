@@ -148,8 +148,9 @@ class HistoryOfCompletingProcessControllerTest {
                         .param("result",result))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/processExecutionHistory/"+medicalHistoryProcess.getId()));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(personService,times(1)).findPersonByUsernameOfUser("user");
         verify(medicalHistoryProcessService,times(1)).findById(1);
         verify(historyOfCompletingProcessService,times(1))
@@ -167,8 +168,8 @@ class HistoryOfCompletingProcessControllerTest {
                         .param("result",result))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(personService,times(1)).findPersonByUsernameOfUser("user");
         verify(medicalHistoryProcessService,times(1)).findById(1);
 
@@ -211,7 +212,8 @@ class HistoryOfCompletingProcessControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(medicalHistoryProcessService,times(1)).findById(1);
     }

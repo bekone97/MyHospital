@@ -1,12 +1,10 @@
 package com.itacademy.myhospital.controller;
 
-import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 
 import java.security.Principal;
 
@@ -24,4 +22,10 @@ public class MainController {
         }
         return "home-page";
     }
+
+    @GetMapping("/contacts")
+    public String contacts(){
+        return "contacts";
+    }
+
 }

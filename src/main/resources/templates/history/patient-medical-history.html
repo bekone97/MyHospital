@@ -4,7 +4,9 @@
       xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{patientHistory}">Medical History!!!</title>
+    <title th:text="#{patientHistory.name}">Medical History!!!</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/history/histories-of-patient.css">
 </head>
 <body>
 <div class="pageHead">
@@ -12,36 +14,38 @@
 
     <div class="headerPageTable">
         <div class="nameOfPage">
-            <a th:text="${nameOfPage}"/>
+            <a th:text="#{patientHistory.name}"/>
         </div>
         <header th:insert="blocks/menu::menu"></header>
     </div>
 </div>
+<div class="bodyExceptHeader">
 <div class="patientMedicalHistories" id="patientMedicalHistories" th:if="${isPersonHasHistory}">
-    <table>
+    <table class="tableOfHistories">
         <thead>
         <tr>
-            <th><a th:text="#{patientHistory.diagnosis}"> Diagnosis name</a></th>
+            <th><a th:text="#{patientHistory.diagnosis}">Diagnosis</a></th>
             <th><a th:text="#{patientHistory.doctor}">Doctor</a></th>
             <th><a th:text="#{patientHistory.receipt}">Receipt date</a></th>
+            <th><a class="verticalBodyTable" th:text="#{historyInfo.discharge}">Discharge Date</a></th>
             <th></th>
         </tr>
         </thead>
-        <tbody>
-        <div th:each="history : ${histories}">
+        <tbody id="historiesTbody">
+        <div th:each="history : ${histories}" >
             <tr>
-                <td>
-                    <a th:text="${history.diagnosis.name}"/>
-                </td>
-                <td>
-                    <a th:text="${history.diagnosis.getPersonal().getFIO()}"/>
-                </td>
-                <td>
-                    <a th:text="${history.receiptDate}"/>
-                </td>
+                <td><a th:text="${history.diagnosis.name}"/></td>
+                <td><a th:text="${history.diagnosis.getPersonal().getFIO()}"/></td>
+                <td><a th:text="${history.receiptDate}"/></td>
+                <div th:if="${history.isStatus()}">
+                    <td><a th:text="${history.dischargeDate}"></a></td>
+                </div>
+                <div th:unless="${history.isStatus()}">
+                    <td><a>-</a></td>
+                </div>
                 <td>
                     <form th:method="GET" th:action="@{/history/{id}(id=${history.getId()})}">
-                        <button type="submit" th:text="#{patientHistory.open}">Open history</button>
+                        <button type="submit" th:text="#{patientHistory.open}" class="btnHistory">Open history</button>
                     </form>
                 </td>
             </tr>
@@ -49,9 +53,6 @@
         </tbody>
     </table>
 
-
-    </li>
-    </ul>
 </div>
 <div th:unless="${isPersonHasHistory}">
     <a th:text="#{patientHistory.noHistories}">Person doesn't have any medical histories</a>
@@ -59,7 +60,9 @@
 <br>
 
 <form th:method="GET" th:action="@{~/}">
-    <button type="submit" th:text="#{homePage}"></button>
+    <button type="submit" th:text="#{homePage}" class="btnHistory"></button>
 </form>
+</div>
+<script src="/js/dropList.js"></script>
 </body>
 </html>

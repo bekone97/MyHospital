@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:name="#{contacts.name}">Home Page</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="css/contacts.css" />
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{contacts.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+<h1 th:text="#{contacts.information}"></h1>
+    <div  class="contactList">
+<ul>
+    <li><a th:text="#{contacts.medical}"></a><a>: +375(29)3824329</a></li>
+    <li><a th:text="#{contacts.desk}"></a><a>: +375(29)3823224 </a></li>
+    <li><a th:text="#{contacts.appointments}"></a><a>: +375(29)3233121 </a></li>
+</ul>
+    </div>
+
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

@@ -11,12 +11,12 @@ import com.itacademy.myhospital.service.MedicalHistoryProcessService;
 import com.itacademy.myhospital.service.NameOfProcessService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
-
 public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessService {
 
     public static final String NO_MEDICAL_HISTORY_PROCESS_WITH_ID_EXCEPTION = "There is no medical history process with id :";
@@ -60,7 +60,13 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
     }
 
 
-    //returned history with list of nameOfProcesses
+    /**
+     * This method gets list of MedicalHistoryProcess and adds them to new MedicalHistoryDtoWithProcesses,and adds complain
+     * ,a patient from historyDto
+     * @param mapOfProcesses - where a key is a process and a value is a quantity of this process
+     * @param historyDto - HistoryDtoWithNumberOfProcesses with complain, a patient for new HistoryDtoWithProcesses
+     * @return new MedicalHistoryDtoWithProcesses
+     */
     @Override
     public MedicalHistoryDtoWithProcesses createMedicalHistoryProcessesAndAddToHistory(Map<Process, Integer> mapOfProcesses,
                                                                                        MedicalHistoryDtoWithNumberOfProcesses historyDto) {
@@ -73,7 +79,13 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
                 .build();
     }
 
-    //returned list with required number of MedicalHistoryProcesses. Add to MedicalHistoryProcess nameOfProcess with required Process
+
+    /**
+     * This method creates a list of MedicalHistoryProcesses with the required number of name of processes
+     * and the necessary processes in them
+     * @param mapOfProcesses -  - where a key is a process and a value is a quantity of this process
+     * @return list of MedicalHistoryProcesses
+     */
     private List<MedicalHistoryProcess> createAndAddMedicalHistoryProcessesToList(Map<Process, Integer> mapOfProcesses) {
         List<MedicalHistoryProcess> medicalHistoryProcesses = new ArrayList<>();
         for (Map.Entry<Process, Integer> entry : mapOfProcesses.entrySet()) {
@@ -86,6 +98,14 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
         }
         return medicalHistoryProcesses;
     }
+
+    /**
+     * This method checks the NameOfProcess for MedicalHistoryProcess and saves MedicalHistoryProcess
+     * @param medicalHistoryProcess - list of MedicalHistoryProcesses
+     * @return checked MedicalHistoryProcess
+     */
+    @Transactional
+
     public MedicalHistoryProcess checkAndSaveMedicalHistoryProcess(MedicalHistoryProcess medicalHistoryProcess){
         var nameOfProcess=nameOfProcessService.checkIfExist(medicalHistoryProcess.getNameOfProcess());
         medicalHistoryProcess.setNameOfProcess(nameOfProcess);

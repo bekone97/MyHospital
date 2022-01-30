@@ -1,7 +1,6 @@
 package com.itacademy.myhospital.service.impl;
 
 
-import com.itacademy.myhospital.exception.DiagnosisException;
 import com.itacademy.myhospital.exception.ProcessException;
 import com.itacademy.myhospital.model.entity.Process;
 import com.itacademy.myhospital.model.repository.ProcessRepository;
@@ -56,6 +55,15 @@ public class ProcessServiceImpl implements ProcessService {
 
 
 //    Returned map with  key :operation, procedure,medication and value :quantity each of them
+
+    /**
+     * This method creates a map where a key is a process and a value is a quantity of it
+     * @param numberOfOperations  -  shows the number of operations
+     * @param numberOfProcedures -  shows the number of procedures
+     * @param numberOfMedications -  shows the number of medications
+     * @return Map<Process,Integer>
+     * @throws ProcessException if there is no process with the id
+     */
     @Override
     public Map<Process , Integer> getMapOfProcesses(int numberOfOperations,
                                                     int numberOfProcedures,

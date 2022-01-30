@@ -217,8 +217,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/history/15"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(medicalHistoryService, times(1)).checkPersonForViewHistory(15, user1.getUsername());
     }
@@ -231,8 +232,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/history/15"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(medicalHistoryService, times(1)).checkPersonForViewHistory(15, user1.getUsername());
     }
@@ -333,8 +335,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/addNewHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/persons/1?sortField=surname&sortDirection=asc"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(diagnosisService, times(1)).getDiagnosesOfPerson(user1.getUsername());
         verify(personService, times(1)).findById(10);
@@ -408,8 +411,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/addProcessToMedicalHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(medicalHistoryService, times(1)).findById(10);
     }
 
@@ -494,8 +498,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/dischargePatient/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(medicalHistoryService,times(1)).dischargePatient(10);
     }
@@ -534,8 +539,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/openHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/persons/1?sortField=surname&sortDirection=asc"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(personService,times(1)).findById(10);
         verify(medicalHistoryService,times(0)).findByPatient(person1);
     }
@@ -590,8 +596,9 @@ class MedicalHistoryControllerTest {
         mockMvc.perform(get("/myMedicalHistory"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(medicalHistoryService,times(1)).getHistoriesOfPatient(user1.getUsername());
 

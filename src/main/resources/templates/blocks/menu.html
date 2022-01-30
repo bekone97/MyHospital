@@ -17,7 +17,7 @@
                                 th:text="#{menu.appointment}"> Appointment</button>
                         <div id="dropdownListForAppointment" class="dropDownList-contentForAppointment">
                             <a th:href="@{/choiceOfDateAndDoctor}" th:text="#{menu.makeAppointment}">Make appointment</a>
-                            <a th:href="@{~/myCurrentAppointments}" th:text="#{menu.myAppointments}">My appointments</a>
+                            <a th:href="@{/myCurrentAppointments}" th:text="#{menu.myAppointments}">My appointments</a>
                         </div>
                         </div>
 
@@ -38,7 +38,6 @@
                 <div sec:authorize="hasRole('ROLE_PATIENT')">
                     <td>
                         <form th:action="@{'/searchPersonal/1'}">
-                            <!--                    <a th:href="@{'/personal/1'}">Doctors</a>-->
                             <button type="submit" class="btn" th:text="#{menu.personal}">Doctors</button>
                         </form>
                     </td>
@@ -55,14 +54,12 @@
                 </div>
                                 <div>
                                     <td>
-                                        <a th:text="#{menu.contacts}">Contacts</a>
+                                        <form th:action="@{/contacts}" th:method="get">
+                                        <button th:text="#{menu.contacts}" class="btn">Contacts</button>
+                                        </form>
                                     </td>
                                 </div>
-                <div>
-                    <td>
-                        <a th:text="#{menu.aboutUs}">About us</a>
-                    </td>
-                </div>
+
                 <div sec:authorize="isAuthenticated()" >
                 <td class="editUserList">
                     <div class="userDropDownList">

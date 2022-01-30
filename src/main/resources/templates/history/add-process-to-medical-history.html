@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8"/>
     <title th:text="#{addProcess.name}">Title</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/history/add-process-to-medical-history.css"/>
 </head>
 <body>
 <div class="pageHead">
@@ -17,24 +19,48 @@
         <header th:insert="blocks/menu::menu"></header>
     </div>
 </div>
-<form th:method="POST" th:action="@{~/addProcessToMedicalHistory}" th:object="${medicalHistoryProcess}">
-    <label for="selectOfProcess" th:text="#{addProces.select}">Select the process</label>
-    <select th:field="*{nameOfProcess.process}" id="selectOfProcess" >
-        <div th:each="process:${processes}">
-            <option th:value="${process.getId()}" th:text="${process.name}"></option>
+<div class="bodyExceptHeader">
+    <form th:method="POST" th:action="@{~/addProcessToMedicalHistory}" th:object="${medicalHistoryProcess}"
+          class="inputForProcess">
+        <div class="labelForProcess">
+            <label for="selectOfProcess" th:text="#{addProces.select}">Select the process</label>
         </div>
-    </select>
+        <div class="input">
+            <select th:field="*{nameOfProcess.process}" id="selectOfProcess" class="select">
+                <div th:each="process:${processes}">
+                    <option th:value="${process.getId()}" th:text="${process.name}"></option>
+                </div>
+            </select>
+        </div>
 
-    <input type="hidden" th:field="*{medicalHistory}"/>
-    <label for="quantityOfProcess" th:text="#{addProcess.number}">Enter number of days</label>
-    <input type="number" th:field="*{numberOfDays}" id="quantityOfProcess" th:placeholder="#{addProcess.placeholderForNumber}"/>
-    <label for="quantityPerDayOfProcess" th:text="#{addProcess.quantity}">Enter quantity per day</label>
-    <input type="number" th:field="*{quantityPerDay}" id="quantityPerDayOfProcess" th:placeholder="#{addProcess.placeholderForQuantity}"/>
-    <label for="nameOfProcess" th:text="#{addProcess.processName}">Enter name</label>
-    <input th:field="*{nameOfProcess.name}" id="nameOfProcess" th:placeholder="#{addProcess.placeholderForProcessName}"/>
-    <button type="submit" th:text="#{addProcess.add}">Add process</button>
-</form>
+        <input type="hidden" th:field="*{medicalHistory}"/>
+        <div class="labelForProcess">
+            <label for="nameOfProcess" th:text="#{addProcess.processName}">Enter name</label>
+        </div>
+        <div class="input">
+            <input type="text" th:field="*{nameOfProcess.name}" id="nameOfProcess"
+                   th:placeholder="#{addProcess.placeholderForProcessName}"/>
+        </div>
+        <div class="labelForProcess">
+            <label for="quantityOfProcess" th:text="#{addProcess.number}">Enter number of days</label>
+        </div>
+        <div class="input">
+            <input type="number" th:field="*{numberOfDays}" id="quantityOfProcess"
+                   th:placeholder="#{addProcess.placeholderForNumber}"/>
+        </div>
+        <div class="labelForProcess">
+            <label for="quantityPerDayOfProcess" th:text="#{addProcess.quantity}">Enter quantity per day</label>
+        </div>
+        <div class="input">
+            <input type="number" th:field="*{quantityPerDay}" id="quantityPerDayOfProcess"
+                   th:placeholder="#{addProcess.placeholderForQuantity}"/>
+        </div>
 
 
+        <button type="submit" th:text="#{addProcess.add}" class="btnForProcess">Add process</button>
+    </form>
+
+</div>
+<script src="/js/dropList.js"></script>
 </body>
 </html>

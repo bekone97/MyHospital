@@ -4,38 +4,39 @@ import com.itacademy.myhospital.dto.AppointmentDto;
 import com.itacademy.myhospital.exception.AppointmentException;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.Appointment;
-import com.itacademy.myhospital.model.entity.Person;
-import com.itacademy.myhospital.model.entity.User;
-import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.AppointmentService;
+import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.service.emailService.EmailService;
-//import com.itacademy.myhospital.validator.PhoneValidatorService;
-import com.itacademy.myhospital.validator.PersonAgeValidatorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class AppointmentController {
+    public static final String ERROR_EMAIL_EXCEPTION_PAGE = "error/emailException";
+    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
+    public static final String ERROR_FOR_MODEL = "error";
+    public static final String APPOINTMENTS_FOR_MODEL = "appointments";
+    public static final String CURRENT_DATE_TIME_FOR_MODEL = "currentLocalDateTime";
+    public static final String DATES_FOR_MODEL = "dates";
+    public static final String CURRENT_DATE_FOR_MODEL = "currentDate";
+    public static final String USER_FOR_MODEL = "user";
     private final AppointmentService appointmentService;
     private final PersonService personService;
     private final UserService userService;
@@ -76,26 +77,30 @@ public class AppointmentController {
             var appointmentsOfDay =
                     appointmentService.getAppointmentsOfDayAndDoctor(appointmentDto.getDateOfAppointment(),
                             appointmentDto.getPersonal());
-            model.addAttribute("appointments", appointmentsOfDay);
+            model.addAttribute(APPOINTMENTS_FOR_MODEL, appointmentsOfDay);
             model.addAttribute("date", appointmentDto.getDateOfAppointment());
             model.addAttribute("phoneNumber", appointmentDto.getPhoneNumber());
-            model.addAttribute("currentLocalDateTime",LocalDateTime.now());
+            model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
             return "appointment/choice-time-of-appointment";
         } catch (AppointmentException e) {
-            return "redirect:/";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/makeAppointment/{id}")
     public String makeAppointment(@PathVariable("id") Integer id,
-                                  Principal principal, @RequestParam("phoneNumber") String phoneNumber) {
+                                  Principal principal,
+                                  @RequestParam("phoneNumber") String phoneNumber,
+                                  Model model) {
         try {
             appointmentService.changeAppointmentOnBlockedValue(phoneNumber, principal.getName(), id);
         } catch (AppointmentException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         } catch (MessagingException |UnsupportedEncodingException e) {
-            return "error/exception";
+            return ERROR_EMAIL_EXCEPTION_PAGE;
          }
         return "redirect:/myCurrentAppointments";
     }
@@ -106,9 +111,9 @@ public class AppointmentController {
         var user = userService.findByUsername(principal.getName());
         var userAppointments = appointmentService.findByUserPatientAndDateOfAppointmentAfter(user,
                 Timestamp.valueOf(LocalDateTime.now()));
-        model.addAttribute("user", user);
-        model.addAttribute("appointments", userAppointments);
-        model.addAttribute("currentLocalDateTime",LocalDateTime.now());
+        model.addAttribute(USER_FOR_MODEL, user);
+        model.addAttribute(APPOINTMENTS_FOR_MODEL, userAppointments);
+        model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
         return "appointment/user-appointments";
     }
 
@@ -117,9 +122,9 @@ public class AppointmentController {
     public String myAllAppointments(Principal principal, Model model){
         var user = userService.findByUsername(principal.getName());
         var userAppointments = appointmentService.findByUserPatient(user);
-        model.addAttribute("user", user);
-        model.addAttribute("appointments", userAppointments);
-        model.addAttribute("currentLocalDateTime",LocalDateTime.now());
+        model.addAttribute(USER_FOR_MODEL, user);
+        model.addAttribute(APPOINTMENTS_FOR_MODEL, userAppointments);
+        model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
         return "appointment/user-appointments";
     }
 
@@ -131,11 +136,12 @@ public class AppointmentController {
         var user = userService.findById(id);
         var userAppointments = appointmentService.findByUserPatientAndDateOfAppointmentAfter(user,
                 Timestamp.valueOf(LocalDateTime.now()));
-        model.addAttribute("user", user);
-        model.addAttribute("appointments", userAppointments);
+        model.addAttribute(USER_FOR_MODEL, user);
+        model.addAttribute(APPOINTMENTS_FOR_MODEL, userAppointments);
         return "appointment/user-appointments-for-doctor";
         } catch (UserException e) {
-            return "redirect:error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -145,10 +151,11 @@ public class AppointmentController {
         try {
         var user = userService.findById(id);
         var userAppointments = appointmentService.findByUserPatient(user);
-        model.addAttribute("user", user);
-        model.addAttribute("appointments", userAppointments);
+        model.addAttribute(USER_FOR_MODEL, user);
+        model.addAttribute(APPOINTMENTS_FOR_MODEL, userAppointments);
         } catch (UserException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
         return "appointment/user-appointments-for-doctor";
     }
@@ -156,32 +163,36 @@ public class AppointmentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/cancelAppointmentByUser/{id}")
     public String cancelAppointmentByUser(@PathVariable("id") Integer appointmentId,
-                                          Principal principal) {
+                                          Principal principal,
+                                          Model model) {
         try {
             appointmentService.cancelAppointmentByUser(principal.getName(), appointmentId);
         } catch (AppointmentException | UserException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         } catch (MessagingException |UnsupportedEncodingException e) {
-            return "error/exception";
+            return ERROR_EMAIL_EXCEPTION_PAGE;
         }
         return "redirect:/myCurrentAppointments";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_ADMIN')")
     @PostMapping("/cancelAppointmentByDoctor/{id}")
-    public String cancelAppointmentByDoctor(@PathVariable("id") Integer appointmentId, Principal principal) {
+    public String cancelAppointmentByDoctor(@PathVariable("id") Integer appointmentId, Principal principal,
+                                            Model model) {
         try {
             appointmentService.cancelAppointmentByDoctor(appointmentId, principal.getName());
         } catch (AppointmentException | UserException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         } catch (MessagingException |UnsupportedEncodingException e) {
-            return "error/exception";
+            return ERROR_EMAIL_EXCEPTION_PAGE;
         }
         return "redirect:/myCurrentAppointments";
     }
 
 
-//    make tests
+
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/mySchedule")
     public String getMyAppointmentsSchedule(Principal principal,Model model){
@@ -189,13 +200,14 @@ public class AppointmentController {
             var appointments=appointmentService
                     .getAppointmentsOfDoctorByDate(LocalDate.now(),principal.getName());
          List<LocalDate> dates = appointmentService.createListOfDays(LocalDate.now());
-            model.addAttribute("appointments",appointments);
-            model.addAttribute("dates",dates);
-            model.addAttribute("currentDate",LocalDate.now());
-        model.addAttribute("currentLocalDateTime",LocalDateTime.now());
+            model.addAttribute(APPOINTMENTS_FOR_MODEL,appointments);
+            model.addAttribute(DATES_FOR_MODEL,dates);
+            model.addAttribute(CURRENT_DATE_FOR_MODEL,LocalDate.now());
+        model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
             return "appointment/appointments-schedule";
         } catch (PersonException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
@@ -205,32 +217,39 @@ public class AppointmentController {
         var appointments = appointmentService
                     .getAppointmentsOfDoctorByDate(LocalDate.parse(date),principal.getName());
         List<LocalDate> dates = appointmentService.createListOfDays(LocalDate.now());
-        model.addAttribute("appointments",appointments);
-        model.addAttribute("dates",dates);
-        model.addAttribute("currentDate",LocalDate.parse(date));
-        model.addAttribute("currentLocalDateTime",LocalDateTime.now());
+        model.addAttribute(APPOINTMENTS_FOR_MODEL,appointments);
+        model.addAttribute(DATES_FOR_MODEL,dates);
+        model.addAttribute(CURRENT_DATE_FOR_MODEL,LocalDate.parse(date));
+        model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
         return "appointment/appointments-schedule";
         } catch (PersonException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping("/blockAppointmentByDoctor/{id}")
-    public String blockAppointmentByDoctor(@PathVariable("id") Integer id, Principal principal){
+    public String blockAppointmentByDoctor(@PathVariable("id") Integer id,
+                                           Principal principal,
+                                           Model model){
         try {
            appointmentService.blockAppointmentByDoctor(id,principal.getName());
         } catch (AppointmentException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
         return "redirect:/mySchedule";
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping("/unblockAppointmentByDoctor/{id}")
-    public String unblockAppointmentByDoctor(@PathVariable("id") Integer id, Principal principal){
+    public String unblockAppointmentByDoctor(@PathVariable("id") Integer id,
+                                             Principal principal,
+                                             Model model){
         try {
             appointmentService.unblockAppointmentByDoctor(id,principal.getName());
         } catch (AppointmentException e) {
-            return "error/405";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION_PAGE;
         }
         return "redirect:/mySchedule";
     }

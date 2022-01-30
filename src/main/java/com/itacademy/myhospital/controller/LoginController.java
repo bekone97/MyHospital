@@ -1,17 +1,10 @@
 package com.itacademy.myhospital.controller;
 
 
-import com.itacademy.myhospital.dto.PersonDto;
 import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.Person;
-import com.itacademy.myhospital.model.entity.Role;
-import com.itacademy.myhospital.model.entity.User;
-import com.itacademy.myhospital.service.PersonService;
-import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.UserService;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,17 +52,18 @@ public class LoginController {
             model.addAttribute("user",user);
             return "authorization";
         } catch (MessagingException |UnsupportedEncodingException e) {
-            return "redirect:somethingWrong";
+            return "error/emailException";
         }
         return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/verification")
-    public String makeVerification(@RequestParam("code") String verificationCode){
+    public String makeVerification(@RequestParam("code") String verificationCode, Model model){
 
        if (!userService.checkAndChangeVerificationStatus(verificationCode)){
-           return "badVerivicationCode";
+           model.addAttribute("error","There is no user with the code :"+verificationCode);
+           return "error/exception";
        }else {
            return "redirect:/";
        }

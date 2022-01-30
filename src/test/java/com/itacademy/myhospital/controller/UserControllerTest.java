@@ -195,8 +195,9 @@ class UserControllerTest {
         when(userService.getDtoById(20)).thenThrow(UserException.class);
         this.mockMvc.perform(get("/user/20"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users/1?sortField=id&sortDirection=asc"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(userService,times(1)).getDtoById(20);
     }
     @Test
@@ -268,8 +269,9 @@ class UserControllerTest {
         when(userService.getDtoByIdForSettings(20)).thenThrow(UserException.class);
         this.mockMvc.perform(get("/userSettings/20"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users/1?sortField=id&sortDirection=asc"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(userService,times(1)).getDtoByIdForSettings(20);
     }
     @Test

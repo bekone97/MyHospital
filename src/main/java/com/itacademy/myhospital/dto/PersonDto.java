@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 
@@ -38,8 +39,8 @@ public class PersonDto {
     @NotBlank(message = "date of birthday is required field")
     private String dateOfBirthday;
 
-    @Size(min = 7,message = "phoneNumber must be less than 7 symbols")
-    @Size(max=10,message = "phoneNumber must be less than 10 symbols")
+    @Pattern(regexp = "([^a-zA-Z][0-9]{12,15})",message = "Number must be between 12 - 15 symbols")
+    @NotBlank(message = "Phone number is required field")
     private String phoneNumber;
 
     private User user;

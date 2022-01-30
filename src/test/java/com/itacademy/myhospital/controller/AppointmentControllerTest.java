@@ -2,6 +2,7 @@ package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.dto.AppointmentDto;
 import com.itacademy.myhospital.exception.AppointmentException;
+import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Appointment;
 import com.itacademy.myhospital.model.entity.Person;
@@ -268,7 +269,8 @@ class AppointmentControllerTest {
                         .param("phoneNumber",patient.getPhoneNumber()))
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(appointmentService,times(1))
                 .changeAppointmentOnBlockedValue(patient.getPhoneNumber(),user1.getUsername(), 1);
@@ -342,7 +344,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
 
         verify(userService,times(1)).findById(1);
     }
@@ -379,7 +382,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(appointmentService,times(1)).cancelAppointmentByUser(user1.getUsername(),1);
     }
 
@@ -404,7 +408,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
         verify(appointmentService,times(1)).cancelAppointmentByDoctor(1,user1.getUsername());
     }
     @Test
@@ -415,6 +420,150 @@ class AppointmentControllerTest {
         this.mockMvc.perform(post("/cancelAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(authenticated())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void getMyAppointmentsScheduleTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.getAppointmentsOfDoctorByDate(LocalDate.now(),user1.getUsername()))
+                .thenReturn(appointments);
+        when(appointmentService.createListOfDays(LocalDate.now())).thenReturn(dates);
+        this.mockMvc.perform(get("/mySchedule"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(4))
+                .andExpect(model().attribute("appointments",appointments))
+                .andExpect(model().attribute("dates",dates))
+                .andExpect(model().attribute("currentDate",LocalDate.now()))
+                .andExpect(view().name("appointment/appointments-schedule"));
+        verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now(),user1.getUsername());
+        verify(appointmentService,times(1)).createListOfDays(LocalDate.now());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void getMyAppointmentsScheduleFailTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.getAppointmentsOfDoctorByDate(LocalDate.now(),user1.getUsername()))
+                .thenThrow(PersonException.class);
+        when(appointmentService.createListOfDays(LocalDate.now())).thenReturn(dates);
+        this.mockMvc.perform(get("/mySchedule"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
+        verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now(),user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE"})
+    void getMyAppointmentsScheduleFailTest2() throws Exception {
+        when(appointmentService.createListOfDays(LocalDate.now())).thenReturn(dates);
+        this.mockMvc.perform(get("/mySchedule"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void getMyAppointmentsScheduleByDateTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),user1.getUsername()))
+                .thenReturn(appointments);
+        when(appointmentService.createListOfDays(LocalDate.now())).thenReturn(dates);
+        this.mockMvc.perform(get("/myScheduleByDate")
+                        .param("date",LocalDate.now().plusDays(2).toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(4))
+                .andExpect(model().attribute("appointments",appointments))
+                .andExpect(model().attribute("dates",dates))
+                .andExpect(model().attribute("currentDate",LocalDate.now().plusDays(2)))
+                .andExpect(view().name("appointment/appointments-schedule"));
+        verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),
+                user1.getUsername());
+        verify(appointmentService,times(1)).createListOfDays(LocalDate.now());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void getMyAppointmentsScheduleByDateFailTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),user1.getUsername()))
+                .thenThrow(PersonException.class);
+        this.mockMvc.perform(get("/myScheduleByDate")
+                        .param("date",LocalDate.now().plusDays(2).toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
+        verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),
+                user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE"})
+    void getMyAppointmentsScheduleByDateFailTest2() throws Exception {
+        this.mockMvc.perform(get("/myScheduleByDate"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void blockAppointmentByDoctorTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.blockAppointmentByDoctor(1,user1.getUsername())).thenReturn(true);
+        this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mySchedule"));
+        verify(appointmentService,times(1)).blockAppointmentByDoctor(1,user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void blockAppointmentByDoctorFailTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.blockAppointmentByDoctor(1,user1.getUsername())).thenThrow(AppointmentException.class);
+        this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
+        verify(appointmentService,times(1)).blockAppointmentByDoctor(1,user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE"})
+    void blockAppointmentByDoctorFailTest2() throws Exception {
+        this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void unblockAppointmentByDoctorTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.unblockAppointmentByDoctor(1,user1.getUsername())).thenReturn(true);
+        this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mySchedule"));
+        verify(appointmentService,times(1)).unblockAppointmentByDoctor(1,user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
+    void unblockAppointmentByDoctorFailTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(appointmentService.unblockAppointmentByDoctor(1,user1.getUsername())).thenThrow(AppointmentException.class);
+        this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(view().name("error/exception"));
+        verify(appointmentService,times(1)).unblockAppointmentByDoctor(1,user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "user", roles = {"PATIENT","NURSE"})
+    void unblockAppointmentByDoctorFailTest2() throws Exception {
+        this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
+                .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
 }

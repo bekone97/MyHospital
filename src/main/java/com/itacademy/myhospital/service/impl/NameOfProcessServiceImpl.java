@@ -1,6 +1,5 @@
 package com.itacademy.myhospital.service.impl;
 
-import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithProcesses;
 import com.itacademy.myhospital.exception.NameOfProcessesException;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
@@ -9,6 +8,7 @@ import com.itacademy.myhospital.model.repository.NameOfProcessRepository;
 import com.itacademy.myhospital.service.NameOfProcessService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +37,7 @@ public class NameOfProcessServiceImpl implements NameOfProcessService {
     }
 
     @Override
+    @Transactional
     public void saveAndFlush(NameOfProcess item) {
         nameOfProcessRepository.saveAndFlush(item);
     }
@@ -55,7 +56,12 @@ public class NameOfProcessServiceImpl implements NameOfProcessService {
         return nameOfProcessRepository.findByName(name);
     }
 
-// returns medical history dto with changed name of processes ( If name of process exists with the name, method adds existing Name Of Processes , if not adds name of processes from dto)
+    /**
+     * This method checks name of processes. If a name of process exists, the method adds existing Name Of Process from
+     * database,if not adds name of process from dto
+     * @param dto - MedicalHistoryDtoWithProcesses
+     * @return MedicalHistoryDtoWithProcesses with changed name of processes
+     */
     public MedicalHistoryDtoWithProcesses checkNameOfProcesses(MedicalHistoryDtoWithProcesses dto) {
         List<MedicalHistoryProcess> medicalHistoryProcesses = new ArrayList<>();
         for (MedicalHistoryProcess medicalHistoryProcess :

@@ -16,7 +16,7 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
 
     public static final String NO_COMPLETING_PROCESS_WITH_ID = "There is no completing process with id : ";
     public static final String MEDICAL_HISTORY_PROCESS_COMPLETED_EXCEPTION = "The medical history process is completed";
-    private HistoryOfCompletingProcessRepository historyOfCompletingProcessRepository;
+    private final HistoryOfCompletingProcessRepository historyOfCompletingProcessRepository;
 
     public HistoryOfCompletingProcessServiceImpl(HistoryOfCompletingProcessRepository historyOfCompletingProcessRepository) {
         this.historyOfCompletingProcessRepository = historyOfCompletingProcessRepository;
@@ -57,10 +57,16 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
         return historyOfCompletingProcessRepository.findByMedicalHistoryProcess(medicalHistoryProcess);
     }
 
-    /*Check required number of executions this process and if status
-     true throw new Exception if not - create new HistoryOfCompletingProcess
-     and check number of executions if it equals required number change status
-     of medical history process on true ;*/
+    /**
+     * This method checks the MedicalHistoryProcess and creates  a new HistoryOfCompletingProcess with the personal, the result,the date of
+     * execution,and with the MedicalHistoryProcess
+     * @param medicalHistoryProcess - what process was executed
+     * @param person - by whom the process was executed
+     * @param result - execution result
+     * @return true
+     * @throws HistoryOfCompletingProcessException if the status of MedicalHistoryProcess is true or if the number
+     * of executed processes equal or more than the number of required
+     */
     public boolean checkNumberOfExecutionsAndCreateNewExecution(MedicalHistoryProcess medicalHistoryProcess,
                                                                                    Person person,
                                                                                    String result) throws HistoryOfCompletingProcessException {
@@ -76,6 +82,14 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
         return true;
     }
 
+    /**
+     * This method checks the number of executed processes with the number of required executions and checks status
+     * of the MedicalHistoryProcess
+     * @param medicalHistoryProcess - what process was executed
+     * @return MedicalHistoryProcess
+     * @throws HistoryOfCompletingProcessException if the status of MedicalHistoryProcess is true or if the number
+     *      * of executed processes equal or more than the number of required
+     */
     private MedicalHistoryProcess checkNumberOfExecutions(MedicalHistoryProcess medicalHistoryProcess) throws HistoryOfCompletingProcessException {
         var listOfCompletingProcess = findByMedicalHistoryProcess(medicalHistoryProcess);
         var numberOfCompletedExecutions = listOfCompletingProcess.size();
@@ -106,14 +120,5 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
         return true;
     }
 
-//    @Override
-//    public List<HistoryOfCompletingProcess> findByMedicalHistoryId(Integer medicalHistoryId) throws HistoryOfCompletingProcessException {
-//        var completingProcesses=
-//                historyOfCompletingProcessRepository.findByMedicalHistoryId(medicalHistoryId);
-//        if (completingProcesses.isEmpty()){
-//            throw new HistoryOfCompletingProcessException(NO_COMPLETING_PROCESSES_WITH_MEDICAL_HISTORY_ID_EXCEPTION +medicalHistoryId);
-//        }
-//        return completingProcesses;
-//    }
 
 }

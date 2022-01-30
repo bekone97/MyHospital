@@ -35,6 +35,7 @@ public class PersonServiceImpl implements PersonService {
         this.userService = userService;
     }
 
+
     @Override
     public Page<Person> findAll(int pageNumber, String sortField, String sortDirection) throws PersonException {
         Sort sort = Sort.by(sortField);
@@ -116,6 +117,14 @@ public class PersonServiceImpl implements PersonService {
         }
         return personWithRole;
     }
+
+    /**
+     * The method returns persons page with required role
+     * @param roleId - with what role returns page of person
+     * @param numberOfPage - what number of page
+     * @return the page of persons who have the roleId
+     * @throws PersonException if there is no page with the number
+     */
     @Override
     public Page<Person> getPageOfPersonWithRoleId(Integer roleId,int numberOfPage) throws PersonException {
         Pageable pageable = PageRequest.of(numberOfPage-1,2);
@@ -131,8 +140,9 @@ public class PersonServiceImpl implements PersonService {
 
 
     @Override
+    @Transactional
     public void createPersonFromPersonDtoAndSave(PersonDto personDto){
-        String keyForUser = createAndCheckKey();
+        String keyForUser = createKey();
         Person person = Person.builder()
                 .id(personDto.getId())
                 .firstName(personDto.getFirstName())
@@ -146,7 +156,12 @@ public class PersonServiceImpl implements PersonService {
        saveAndFlush(person);
     }
 
-//    Create personDto for update
+    /**
+     * This method is for creating a personDto from a person with the id.
+     * @param id - id of person
+     * @return a PersonDto
+     * @throws PersonException if there is no person with the id
+     */
     @Override
     public PersonDto createPersonDtoFromPerson(Integer id) throws PersonException {
         var person=findById(id);
@@ -177,6 +192,11 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    /**
+     * This method is for searching a person with roles : ROLE_NURSE, ROLE_DOCTOR, ROLE_ADMIN
+     * @param keyword - The string used to search for a person
+     * @return a list of persons
+     */
     //Return persons by keyword and filter the with roleId <4 (NURSE DOCTOR AND ADMIN)
     @Override
     public List<Person> searchAndFilterPersons(String keyword){
@@ -187,6 +207,15 @@ public class PersonServiceImpl implements PersonService {
         return resultPersons;
     }
 
+    /**
+     * This method finds a person by  the key and a user by the username, and checks the person and the user for adding
+     * them to each other.
+     * @param key - a string for finding a person
+     * @param username - name of user
+     * @return a person if the method completed successfully
+     * @throws UserException if there is no user with this username, or authentication stats is true
+     * @throws PersonException if there is no person with the key, or it already has a user
+     */
     @Override
     @Transactional
     public Person addUserToPerson(String key, String username) throws UserException, PersonException {
@@ -208,8 +237,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person checkAndFindPersonal(Integer id) throws PersonException {
-        var personal= findPersonByIdAndRoleId(id, NURSE_ROLE_ID);
-        return personal;
+        return findPersonByIdAndRoleId(id, NURSE_ROLE_ID);
     }
 
     @Override
@@ -218,8 +246,12 @@ public class PersonServiceImpl implements PersonService {
 
     }
 
-    //Check string - is it number or not ?
-    private static boolean isDigit(String s) throws NumberFormatException {
+    /**
+     * This method checks the string - is it only numbers or not ?
+     * @param s - incoming string
+     * @return true if the string has only numbers, and false - if not
+     */
+    private static boolean isDigit(String s) {
         try {
             Integer.parseInt(s);
             return true;
@@ -227,15 +259,16 @@ public class PersonServiceImpl implements PersonService {
             return false;
         }
     }
-    //Check key on unique value
-    private String createAndCheckKey() {
-        String key = uuidService.getRandomString();
-            if(findByKeyForUser(key)!=null)
-            key= createAndCheckKey();
-        return key;
+    private String createKey() {
+        return uuidService.getRandomString();
     }
 
 
+    /**
+     * This method finds medical histories of the person and filter them
+     * @param person - whose medical histories
+     * @return a list of current medical histories
+     */
     public List<MedicalHistory> getCurrentHistories (Person person){
         return person.getHistories().stream()
                 .filter(medicalHistory -> !medicalHistory.isStatus())

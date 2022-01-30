@@ -69,7 +69,7 @@ class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(1))
                 .andExpect(xpath("//*[@id='nameOfUser']").string("user"))
-                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(6))
+                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(5))
                 .andExpect(view().name("home-page"));
     }
     @Test
@@ -80,7 +80,7 @@ class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(0))
                 .andExpect(xpath("//*[@id='nonUser']").string("Account"))
-                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(4))
+                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(3))
                 .andExpect(view().name("home-page"));;
     }
 
@@ -94,7 +94,7 @@ class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(1))
                 .andExpect(xpath("//*[@id='nameOfUser']").string("user"))
-                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(7))
+                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(6))
                 .andExpect(view().name("home-page"));;
     }
     @Test
@@ -107,7 +107,7 @@ class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(1))
                 .andExpect(xpath("//*[@id='nameOfUser']").string("user"))
-                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(7))
+                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(6))
                 .andExpect(view().name("home-page"));
     }
     @Test
@@ -120,7 +120,7 @@ class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(1))
                 .andExpect(xpath("//*[@id='nameOfUser']").string("user"))
-                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(8))
+                .andExpect(xpath("//*[@id='navBarTable']/div").nodeCount(7))
                 .andExpect(view().name("home-page"));
     }
 }

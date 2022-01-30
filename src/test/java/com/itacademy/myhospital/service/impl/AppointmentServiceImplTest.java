@@ -128,7 +128,7 @@ class AppointmentServiceImplTest {
     @Test
     void createListOfDays() {
         var listOfDays = appointmentService.createListOfDays(LocalDate.now());
-        assertEquals(6, listOfDays.size());
+        assertEquals(5, listOfDays.size());
     }
 
 
@@ -287,5 +287,67 @@ class AppointmentServiceImplTest {
         verify(appointmentRepository, times(1)).findById(1);
         verify(userRepository, times(1)).findUserByUsername(user2.getUsername());
         verify(personRepository,times(1)).findByUser(user2);
+    }
+
+    @Test
+    void blockAppointmentByDoctorTest() throws AppointmentException {
+        when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
+        var isTestCompleted = appointmentService.blockAppointmentByDoctor(1,user1.getUsername());
+        assertTrue(isTestCompleted);
+        assertEquals(person1,appointment.getPersonal());
+        assertTrue(appointment.isEngaged());
+        verify(appointmentRepository,times(1)).findById(1);
+        verify(personRepository,times(1)).findPersonByUsernameOfUser(user1.getUsername());
+        verify(appointmentRepository,times(1)).saveAndFlush(appointment);
+    }
+    @Test
+    void blockAppointmentByDoctorFailTest(){
+        when(appointmentRepository.findById(1)).thenReturn(Optional.empty());
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
+        Exception exception = assertThrows(AppointmentException.class,
+                ()->appointmentService.blockAppointmentByDoctor(1,user1.getUsername()));
+        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        verify(appointmentRepository,times(1)).findById(1);
+    }
+    @Test
+    void blockAppointmentByDoctorFailTes2t(){
+        appointment.setPersonal(person1);
+        when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(null);
+        Exception exception = assertThrows(AppointmentException.class,
+                ()->appointmentService.blockAppointmentByDoctor(1,user1.getUsername()));
+        assertTrue(exception.getMessage().contains("User doesn't have permissions to block the appointment"));
+        verify(appointmentRepository,times(1)).findById(1);
+    }
+    @Test
+    void unblockAppointmentByDoctorTest() throws AppointmentException {
+        when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
+        var isTestCompleted = appointmentService.unblockAppointmentByDoctor(1,user1.getUsername());
+        assertTrue(isTestCompleted);
+        assertFalse(appointment.isEngaged());
+        verify(appointmentRepository,times(1)).findById(1);
+        verify(personRepository,times(1)).findPersonByUsernameOfUser(user1.getUsername());
+        verify(appointmentRepository,times(1)).saveAndFlush(appointment);
+    }
+    @Test
+    void unblockAppointmentByDoctorFailTest(){
+        when(appointmentRepository.findById(1)).thenReturn(Optional.empty());
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
+        Exception exception = assertThrows(AppointmentException.class,
+                ()->appointmentService.unblockAppointmentByDoctor(1,user1.getUsername()));
+        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        verify(appointmentRepository,times(1)).findById(1);
+    }
+    @Test
+    void unblockAppointmentByDoctorFailTest2(){
+        appointment.setPersonal(person1);
+        when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
+        when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(null);
+        Exception exception = assertThrows(AppointmentException.class,
+                ()->appointmentService.unblockAppointmentByDoctor(1,user1.getUsername()));
+        assertTrue(exception.getMessage().contains("User doesn't have permissions to unblock the appointment"));
+        verify(appointmentRepository,times(1)).findById(1);
     }
 }

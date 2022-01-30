@@ -4,6 +4,8 @@
       xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/history/histories-of-patient.css"/>
     <title th:text="#{allHistory.name}">Patient's History</title>
 </head>
 <body>
@@ -16,13 +18,15 @@
         <header th:insert="blocks/menu::menu"></header>
     </div>
 </div>
-<div class="patientMedicalHistory" id="patientMedicalHistory">
-    <table>
+<div class="patientMedicalHistory bodyExceptHeader" id="patientMedicalHistory">
+    <table class="tableOfHistories">
         <thead>
         <tr>
             <th><a th:text="#{patientHistory.diagnosis}">Diagnosis</a></th>
             <th><a th:text="#{patientHistory.doctor}">Doctor</a></th>
             <th><a th:text="#{patientHistory.receipt}">Receipt date</a></th>
+            <th><a class="verticalBodyTable" th:text="#{historyInfo.discharge}">Discharge Date</a></th>
+            <th></th>
         </tr>
         </thead>
         <tbody id="historiesTbody">
@@ -31,9 +35,15 @@
                 <td><a th:text="${history.diagnosis.name}"/></td>
                 <td><a th:text="${history.diagnosis.getPersonal().getFIO()}"/></td>
                 <td><a th:text="${history.receiptDate}"/></td>
+                <div th:if="${history.isStatus()}">
+                    <td><a th:text="${history.dischargeDate}"></a></td>
+                </div>
+                <div th:unless="${history.isStatus()}">
+                    <td><a>-</a></td>
+                </div>
                 <td>
                     <form th:method="GET" th:action="@{/history/{id}(id=${history.getId()})}">
-                    <input type="submit" value="Open history"/>
+                        <button type="submit" th:text="#{patientHistory.open}" class="btnHistory">Open history</button>
                 </form>
                 </td>
             </tr>
@@ -41,5 +51,6 @@
         </tbody>
     </table>
 </div>
+<script src="/js/dropList.js"></script>
 </body>
 </html>

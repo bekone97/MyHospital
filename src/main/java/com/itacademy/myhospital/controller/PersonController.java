@@ -22,15 +22,20 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class PersonController {
-
-
     public static final String REDIRECT_PERSONS_PAGE = "redirect:/persons/1?sortField=surname&sortDirection=asc";
     public static final String PERSON_FOR_MODEL = "person";
     public static final String PERSONS_FOR_MODEL = "persons";
     public static final String KEYWORD_FOR_MODEL = "keyword";
     public static final String RESULT_FOR_MODEL = "result";
-    public static final String NAME_OF_PAGE_FOR_MODEL = "nameOfPage";
-    public static final String PERSON_INFO_PAGE_NAME = "Person info";
+    public static final String ERROR_EXCEPTION = "error/exception";
+    public static final String ERROR_FOR_MODEL = "error";
+    public static final String PERSON_PERSON_ADD_INFO_VIEW = "person/person-add-info";
+    public static final String PERSON_PERSON_ADD_FOR_HISTORY_VIEW = "person/person-add-for-history";
+    public static final String PERSON_PATIENTS_VIEW = "person/patients";
+    public static final String PERSON_SEARCH_PERSON_VIEW = "person/search-person";
+    public static final String PERSON_SEARCH_PERSONAL_VIEW = "/person/search-personal";
+    public static final String PERSON_PERSON_INFO_VIEW = "person/person-info";
+    public static final String REDIRECT_PERSONS_VIEW = "redirect:/persons/1?sortField=surname&sortDirection=asc";
     private final PersonService personService;
     private final PersonAgeValidatorService personAgeValidatorService;
 
@@ -63,9 +68,10 @@ public class PersonController {
             var currentHistories=personService.getCurrentHistories(person);
             model.addAttribute("histories",currentHistories);
             model.addAttribute(PERSON_FOR_MODEL, person);
-            return "person/person-info";
+            return PERSON_PERSON_INFO_VIEW;
         } catch (PersonException e) {
-            return REDIRECT_PERSONS_PAGE;
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION;
         }
     }
 
@@ -74,7 +80,7 @@ public class PersonController {
     public String addNewPerson(Model model) {
         var person = new PersonDto();
         model.addAttribute(PERSON_FOR_MODEL, person);
-        return "person/person-add-info";
+        return PERSON_PERSON_ADD_INFO_VIEW;
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
@@ -82,7 +88,7 @@ public class PersonController {
     public String addNewPersonForHistory(Model model) {
         PersonDto personDto = new PersonDto();
         model.addAttribute(PERSON_FOR_MODEL, personDto);
-        return "person/person-add-for-history";
+        return PERSON_PERSON_ADD_FOR_HISTORY_VIEW;
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
@@ -95,7 +101,7 @@ public class PersonController {
            bindingResult.addError(error);
        }
        if (bindingResult.hasErrors()) {
-            return "person/person-add-info";
+            return PERSON_PERSON_ADD_INFO_VIEW;
         } else {
             personService.createPersonFromPersonDtoAndSave(personDto);
             return "redirect:/addPatientToNewHistory";
@@ -109,9 +115,10 @@ public class PersonController {
         try {
             var personDto = personService.createPersonDtoFromPerson(id);
             model.addAttribute(PERSON_FOR_MODEL, personDto);
-            return "person/person-add-info";
+            return PERSON_PERSON_ADD_INFO_VIEW;
         } catch (PersonException e) {
-            return REDIRECT_PERSONS_PAGE;
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION;
         }
     }
 
@@ -121,7 +128,7 @@ public class PersonController {
     public String selectOfPatients(Model model) {
             List<Person> persons = personService.findAll();
             model.addAttribute(PERSONS_FOR_MODEL, persons);
-            return "person/patients";
+            return PERSON_PATIENTS_VIEW;
     }
 
     @GetMapping("/patient")
@@ -130,32 +137,34 @@ public class PersonController {
             return "redirect:/addNewHistory/" + id;
 
         var persons = personService.findAll();
-        model.addAttribute("error", true);
+        model.addAttribute(ERROR_FOR_MODEL, true);
         model.addAttribute(PERSON_FOR_MODEL, persons);
-        return "person/patients";
+        return PERSON_PATIENTS_VIEW;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/deletePerson/{id}")
-    public String deletePerson(@PathVariable Integer id) {
+    public String deletePerson(@PathVariable Integer id,
+                               Model model) {
         try {
             personService.deleteById(id);
         } catch (PersonException e) {
-        } finally {
-            return "redirect:/persons/1?sortField=surname&sortDirection=asc";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION;
         }
+        return REDIRECT_PERSONS_PAGE;
     }
 
     @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping("/searchPerson")
     public String searchPerson(@RequestParam("keyword") String keyword, Model model) {
         if (keyword.isEmpty()) {
-            return "redirect:/persons/1?sortField=surname&sortDirection=asc";
+            return REDIRECT_PERSONS_VIEW;
         } else {
             List<Person> resultPersons = personService.search(keyword);
             model.addAttribute(RESULT_FOR_MODEL, resultPersons);
             model.addAttribute(KEYWORD_FOR_MODEL, keyword);
-            return "person/search-person";
+            return PERSON_SEARCH_PERSON_VIEW;
 
         }
     }
@@ -168,7 +177,7 @@ public class PersonController {
             List<Person> resultPersons = personService.searchAndFilterPersons(keyword);
             model.addAttribute(KEYWORD_FOR_MODEL, keyword);
             model.addAttribute(RESULT_FOR_MODEL, resultPersons);
-            return "/person/search-personal";
+            return PERSON_SEARCH_PERSONAL_VIEW;
 
         }
     }
@@ -193,9 +202,10 @@ public class PersonController {
             var personal = personService.checkAndFindPersonal(id);
             model.addAttribute(PERSON_FOR_MODEL, personal);
         } catch (PersonException e) {
-            return "redirect:/searchPersonal/1";
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            return ERROR_EXCEPTION;
         }
-        return "person/person-info";
+        return PERSON_PERSON_INFO_VIEW;
     }
 
 }
