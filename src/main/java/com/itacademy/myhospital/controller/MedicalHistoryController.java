@@ -48,15 +48,12 @@ public class MedicalHistoryController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/history/{id}")
-    public String historyById(@PathVariable Integer id, Model model, Principal principal) {
-        try {
+    public String historyById(@PathVariable Integer id, Model model, Principal principal) throws MedicalHistoryException, UserException {
+
             var history = medicalHistoryService.checkPersonForViewHistory(id,principal.getName());
             model.addAttribute(HISTORY_FOR_MODEL, history);
             return "history/history-info";
-        } catch (MedicalHistoryException | UserException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/checkHistory")
@@ -72,25 +69,22 @@ public class MedicalHistoryController {
 
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     @GetMapping("/addNewHistory/{id}")
-    public String addNewHistory(@PathVariable Integer id, Model model, Principal principal) {
+    public String addNewHistory(@PathVariable Integer id, Model model, Principal principal) throws PersonException {
         MedicalHistoryDtoWithNumberOfProcesses medicalHistoryDto = new MedicalHistoryDtoWithNumberOfProcesses();
-        try {
+
             var diagnoses =diagnosisService.getDiagnosesOfPerson(principal.getName());
             medicalHistoryDto.setPatient(personService.findById(id));
             model.addAttribute(HISTORY_FOR_MODEL, medicalHistoryDto);
             model.addAttribute(DIAGNOSES_FOR_MODEL, diagnoses);
             return "history/history-add-info";
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/addProcessToMedicalHistory/{id}")
     public String addProcessToMedicalHistory(@PathVariable("id") Integer id,
-                                             Model model) {
-        try {
+                                             Model model) throws MedicalHistoryException {
+
            var history = medicalHistoryService.findById(id);
             if (!history.isDischargeStatus()) {
                 var medicalHistoryProcess = new MedicalHistoryProcess();
@@ -102,10 +96,7 @@ public class MedicalHistoryController {
             } else {
                 return "redirect:/history/" + history.getId();
             }
-        } catch (MedicalHistoryException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
@@ -126,35 +117,26 @@ public class MedicalHistoryController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/dischargePatient/{id}")
-    public String dischargePatient(@PathVariable Integer id,
-                                   Model model) {
-        try {
+    public String dischargePatient(@PathVariable Integer id) throws MedicalHistoryException {
+
             medicalHistoryService.dischargePatient(id);
             return "redirect:/history/" + id;
-        } catch (MedicalHistoryException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 
     @PreAuthorize("hasAuthority('ROLE_NURSE')")
     @GetMapping("/openHistory/{id}")
-    public String getAllHistories(@PathVariable Integer id, Model model){
+    public String getAllHistories(@PathVariable Integer id, Model model) throws PersonException {
 
-        try {
         var person = personService.findById(id);
         var historiesOfPerson = medicalHistoryService.findByPatient(person);
         model.addAttribute(HISTORIES_FOR_MODEL, historiesOfPerson);
             return "history/histories-of-patient";
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myMedicalHistory")
-    public String getHistoriesOfPatient(Principal principal, Model model) {
-        try {
+    public String getHistoriesOfPatient(Principal principal, Model model) throws PersonException {
             var  medicalHistories = medicalHistoryService.findHistoriesOfPatient(principal.getName());
         if (medicalHistories.isEmpty()){
                 model.addAttribute(IS_PERSON_HAS_HISTORY_FOR_MODEL, false);
@@ -163,10 +145,7 @@ public class MedicalHistoryController {
                 model.addAttribute(IS_PERSON_HAS_HISTORY_FOR_MODEL, true);
             }
         return "history/patient-medical-history";
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 }
 

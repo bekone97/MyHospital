@@ -82,6 +82,7 @@ body{
     background-color: #6d6e72;
     color: white;
 }
+
 .formForSearch {
     width: 100%;
     margin: auto;
@@ -115,9 +116,7 @@ body{
 .btnPersons:hover, .btnPersons:focus{
     background-color: #2980B9;
 }
-/*.btnsBottomPersons{*/
-/*    width: 80%;*/
-/*}*/
+
 .btnBottom{
     margin:5px 5px 0px 0px;
 }

@@ -61,17 +61,14 @@ public class PersonController {
 
     @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping(value = "person/{id}")
-    public String personById(@PathVariable Integer id, Model model) {
-        try {
+    public String personById(@PathVariable Integer id, Model model) throws PersonException {
+
             Person person = personService.findById(id);
             var currentHistories=personService.findCurrentHistories(person);
             model.addAttribute(HISTORIES_FOR_MODEL,currentHistories);
             model.addAttribute(PERSON_FOR_MODEL, person);
             return PERSON_PERSON_INFO_VIEW;
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")

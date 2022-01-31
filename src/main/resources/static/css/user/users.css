@@ -90,7 +90,6 @@ body{
     color: white;
 }
 .backbtn{
-
     appearance: none;
     border: 0;
     border-radius: 5px;
@@ -127,4 +126,41 @@ body{
 .backbtn:focus {
     outline: none;
     box-shadow: 0 0 0 2px #75aecb;
+}
+.formForSearch {
+    width: 80%;
+    margin: auto;
+    padding:20px;
+    box-sizing: border-box;
+
+}
+.formForSearch input[type=text]{
+    padding: 10px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.09);
+    border-radius: 8px;
+    width: 80%;
+    /*box-sizing: border-box;*/
+}
+.formForSearch input[type=submit]{
+    box-sizing: border-box;
+}
+.btnSearch{
+    background-color: #3498DB;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: cursive;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 17%;
+}
+.btnSearch:hover, .btnSearch:focus{
+    background-color: #2980B9;
+}
+.resultOfSearch{
+    position:relative;
+    margin-left: 150px;
+    margin-bottom: 5px;
 }

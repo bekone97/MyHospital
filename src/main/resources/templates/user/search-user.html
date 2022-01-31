@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/user/users.css"/>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
+    <title th:text="#{users.searchUser}">Search</title>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{users.searchUser}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <div class="searchPersonInput">
+        <form th:method="GET" th:action="@{~/searchUser}" class="formForSearch">
+            <input type="text" name="keyword" th:placeholder="#{users.placeholderForSearch}"/>
+            <button type="submit" class="btnSearch" th:text="#{searchPerson.buttonSearch}">Search</button>
+        </form>
+    </div>
+    <div th:unless="(__${keyword.isEmpty()}__)"
+         class="resultOfSearch">
+        <div id="resultString">
+            <a th:text="#{searchPerson.resultSearch}">Search Results for </a><a th:text="${keyword}" id="keyword"></a>
+        </div>
+    </div>
+    <div th:unless="(__${users.isEmpty()}__)">
+        <table class="tableOfUsers" id="tableOfUsers">
+            <thead>
+            <tr>
+                <th>
+                    <a th:text="#{users.img}"> User image</a>
+                </th>
+                <th>
+                    <div>
+                        <a th:text="#{users.username}">
+                            Username
+                        </a>
+                    </div>
+
+                </th>
+                <th><a th:text="#{users.verificationCode}">Verification code</a></th>
+                <th><a th:text="#{users.verificationStatus}">Verification status</a></th>
+                <th><a th:text="#{users.roles}">Roles</a></th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tbody id="bodyOfUsers">
+            <div th:each=" user : ${users}">
+                <div class="userTr">
+                    <tr>
+                        <td class="imgOfUser">
+                            <img th:src="@{${user.imagePath}}" class="img"/>
+                        </td>
+                        <td><a th:href="@{~/user/{id}(id=${user.getId()})}" th:text="${user.getUsername()}"></a></td>
+                        <td th:text="${user.verificationCode}"></td>
+                        <td th:text="${user.verificationStatus}"></td>
+                        <td>
+                            <div th:each="role,iterStat : ${user.getRoles()}">
+                                <p><a th:text="${role.getName()}">name of role</a></p>
+                            </div>
+                        </td>
+                        <td>
+                            <form th:action="@{~/userSettings/{id}(id=${user.getId()})}">
+                                <button type="submit" class="dropbtnForUser" th:text="#{users.edit}">Edit</button>
+                            </form>
+
+                            <form th:method="post" th:action="@{/deleteUser/{id}(id=${user.getId()})}">
+                                <button type="submit" class="dropbtnForUser" th:text="#{users.delete}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </div>
+            </div>
+            </tbody>
+        </table>
+    </div>
+    <form th:method="GET" th:action="@{~/users/1}">
+        <input type="hidden" value="username" name="sortField"/>
+        <input type="hidden" value="asc" name="sortDirection"/>
+        <button type="submit" class="backbtn" th:text="#{searchPerson.back}">Back</button>
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

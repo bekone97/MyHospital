@@ -5,7 +5,6 @@ public class Constants {
     public static final String LOCALHOST = "http://localhost:8080";
     public static final String ERROR_FOR_MODEL = "error";
     public static final String ERROR_EXCEPTION_PAGE = "error/exception";
-    public static final String ERROR_EMAIL_EXCEPTION_PAGE = "error/emailException";
     public static final String APPOINTMENTS_FOR_MODEL = "appointments";
     public static final String CURRENT_DATE_TIME_FOR_MODEL = "currentLocalDateTime";
     public static final String DATES_FOR_MODEL = "dates";

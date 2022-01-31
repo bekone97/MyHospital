@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 
 public interface UserService{
@@ -57,5 +58,6 @@ public interface UserService{
     boolean saveUpdatedUser(UserDto user,MultipartFile multipartFile) throws UserException, IOException, MessagingException, PersonException;
     boolean checkChangeOfRoles(UserDto user);
     UserDto getDtoByUsernameForProfile(String username);
+    List<User> findByUsernameIsStartingWith(String keyword);
 
 }

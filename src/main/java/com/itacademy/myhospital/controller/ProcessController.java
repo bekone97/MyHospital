@@ -31,21 +31,17 @@ public class ProcessController {
     public String selectQuantityOfProcesses(@Valid @ModelAttribute("history") MedicalHistoryDtoWithNumberOfProcesses historyDto,
                                             BindingResult bindingResult,
                                             Principal principal,
-                                            Model model){
+                                            Model model) throws ProcessException {
             if (bindingResult.hasErrors()){
                 return "history/history-add-info";
             }else {
                 Person personal = personService.findPersonByUsernameOfUser(principal.getName());
                 if (personal!=null) {
-                try {
                 var dto =medicalHistoryService
                         .getMedicalHistoryDtoWithProcessesFromDtoWithNumbers(historyDto,personal);
                 model.addAttribute(HISTORY_FOR_MODEL, dto);
                 return "process/select-processes";
-                } catch (ProcessException e) {
-                    model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-                    return ERROR_EXCEPTION_PAGE;
-                }
+
             }else {
                 return "redirect:/";
             }

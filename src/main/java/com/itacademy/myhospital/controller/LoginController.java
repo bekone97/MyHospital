@@ -43,7 +43,7 @@ public class LoginController {
     @PostMapping("/authorization")
     public String authorization(@Valid @ModelAttribute("user") UserDto user,
                                 BindingResult bindingResult,
-                                Model model){
+                                Model model) throws MessagingException, UnsupportedEncodingException {
        if (bindingResult.hasErrors()){
            return "authorization";
        }
@@ -53,19 +53,16 @@ public class LoginController {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
             model.addAttribute(USER_FOR_MODEL,user);
             return "authorization";
-        } catch (MessagingException |UnsupportedEncodingException e) {
-            return ERROR_EMAIL_EXCEPTION_PAGE;
         }
         return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/verification")
-    public String makeVerification(@RequestParam("code") String verificationCode, Model model){
+    public String makeVerification(@RequestParam("code") String verificationCode) throws UserException {
 
        if (!userService.checkAndChangeVerificationStatus(verificationCode)){
-           model.addAttribute(ERROR_FOR_MODEL,"There is no user with the code :"+verificationCode);
-           return ERROR_EXCEPTION_PAGE;
+           throw new UserException("There is no user with the code :"+verificationCode);
        }else {
            return "redirect:/";
        }

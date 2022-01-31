@@ -9,7 +9,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -19,7 +18,6 @@ import java.util.Date;
 
 
 @Aspect
-@RestController
 @Component
 public class LoggingAspect {
 
@@ -55,9 +53,8 @@ public class LoggingAspect {
 
     @AfterThrowing(pointcut = "applicationExceptionPackage()",throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e){
-        LOGGER.error("Exception in {}.{} with cause  = {} , with message =  {}",
+        LOGGER.error("Exception in {}.{}  with message =  {}",
                 joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName(),
-                e.getCause()!=null? e.getCause(): "NULL",
                 e.getMessage()!=null? e.getMessage(): "NULL"
                 );
     }
@@ -70,7 +67,6 @@ public class LoggingAspect {
 
     @Pointcut("within(@org.springframework.stereotype.Service *)")
     public void applicationServiceBean(){
-
     }
 
     @Around("applicationControllerBean() && applicationControllerPackage()")
@@ -99,16 +95,17 @@ public class LoggingAspect {
     public Object logAroundHospitalErrorController(ProceedingJoinPoint joinPoint) throws Throwable {
 
         var returnValue =joinPoint.proceed();
-
         LOGGER.error("Exception for {}.{}   with result = [s]={} ,{}",
                 joinPoint.getSignature().getDeclaringTypeName(),
                 joinPoint.getSignature().getName(),
                 Arrays.toString(joinPoint.getArgs()),
                 returnValue.toString() );
         return returnValue;
+
     }
     @Pointcut("within(com.itacademy.myhospital.errorController.HospitalErrorController)")
     public void applicationHospitalErrorControllerPackage(){
+
     }
 
 

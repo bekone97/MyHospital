@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/css/user/users.css"/>
     <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <meta charset="UTF-8"/>
     <title th:text="#{users.tittle}">Users</title>
 </head>
 <body>
@@ -18,7 +19,12 @@
     </div>
 </div>
 <a th:text="${error}">Value of error</a>
-
+<div class="searchPersonInput">
+    <form th:method="GET" th:action="@{~/searchUser}" class="formForSearch">
+        <input type="text" name="keyword" placeholder="enter name"/>
+        <button type="submit" class="btnSearch" th:text="#{searchPerson.buttonSearch}"></button>
+    </form>
+</div>
     <table class="tableOfUsers" id="tableOfUsers">
         <thead>
         <tr>
@@ -103,26 +109,3 @@
 <script src="/js/dropList.js"></script>>
 </body>
 </html>
-<!--                <form th:action="@{~/updatePasswordOfUser/{id}(id=${user.getId()})}">-->
-<!--                    <button type="submit" class="dropbtnForUser">Change Password</button>-->
-<!--                </form>-->
-<!--                <form th:action="@{~/uploadImgForUser/{id}(id=${user.getId()})}">-->
-<!--                    <button type="submit" class="dropbtnForUser">Upload Image</button>-->
-<!--                </form>-->
-<!--<div class="modelOfUsers" id="modelOfUser" sec:authorize="isAuthenticated()">-->
-<!--        Username: <p th:text="${user.getUsername()}" id="username">value</p>-->
-<!--        Name: <p th:text="${user.getPerson().getFIO()}" id="FIO">value</p>-->
-<!--        Address: <p th:text="${user.getPerson().getAddress()}" id="address">value</p>-->
-<!--        DateOfBirthday: <p th:text="${user.getPerson().getDateOfBirthday()}" id="dateOfBirthday">value</p>-->
-<!--        <form th:method="GET" th:action="@{~/updateUser/{id}(id=${user.getId()})}">-->
-<!--            <input type="submit" value="changePassword"/>-->
-<!--        </form>-->
-<!--        <form th:method="GET" th:action="@{~/updatePerson/{id}(id=${user.getPerson().getId()})}">-->
-<!--            <input type="submit" value="Change information of User"/>-->
-<!--        </form>-->
-<!--</div>-->
-<!--<form th:method="get" th:action="@{/addNewUser}">-->
-<!--    <button type="submit" class="btn-addUser">Create User</button>-->
-<!--</form>-->
-<!--<div th:unless="${error}==null">-->
-<!--</div>-->

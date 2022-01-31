@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -226,6 +227,11 @@ public class UserServiceImpl implements UserService {
     public UserDto getDtoByUsernameForProfile(String username) {
         var user = findByUsername(username);
         return getDtoFromUserForUserProfile(user);
+    }
+
+    @Override
+    public List<User> findByUsernameIsStartingWith(String keyword) {
+        return userRepository.findByUsernameIsStartingWith(keyword);
     }
 
     public UserDto getDtoByUsernameForSettings(String username) {

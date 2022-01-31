@@ -27,48 +27,32 @@ public class HistoryOfCompletingProcessController {
     @PostMapping("/executionProcess/{id}")
     public String executionOfProcess(@PathVariable Integer id,
                                      @RequestParam("result") String result,
-                                     Principal principal,
-                                     Model model) {
-        try {
+                                     Principal principal) throws HistoryOfCompletingProcessException, MedicalHistoryProcessException {
             var person = personService.findPersonByUsernameOfUser(principal.getName());
             var medicalHistoryProcess = medicalHistoryProcessService.findById(id);
                 historyOfCompletingProcessService.checkNumberOfExecutionsAndCreateNewExecution(medicalHistoryProcess, person, result);
                 return "redirect:/history/" + medicalHistoryProcess.getMedicalHistory().getId();
-
-        } catch (MedicalHistoryProcessException | HistoryOfCompletingProcessException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
     }
 
     @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping("/processExecutionHistory/{id}")
-    public String processExecutionHistory(@PathVariable Integer id, Model model) {
-        try {
+    public String processExecutionHistory(@PathVariable Integer id, Model model) throws MedicalHistoryProcessException {
             var medicalProcess = medicalHistoryProcessService.findById(id);
             var historiesOfCompletingProcess =
                     historyOfCompletingProcessService.findByMedicalHistoryProcess(medicalProcess);
             model.addAttribute(EXECUTION_HISTORY_FOR_MODEL, historiesOfCompletingProcess);
             model.addAttribute(PROCESS_FOR_MODEL, medicalProcess);
             return "historyOfCompletingProcess/executions-of-process";
-        } catch (MedicalHistoryProcessException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/deleteProcess/{id}")
-    public String deleteProcess(@PathVariable Integer id,
-                                Model model) {
-        try {
+    public String deleteProcess(@PathVariable Integer id) throws MedicalHistoryProcessException {
             var process = medicalHistoryProcessService.findById(id);
             historyOfCompletingProcessService.removeHistoryOfCompletingProcessesByMedicalHistoryProcess(process);
             medicalHistoryProcessService.deleteById(id);
             return "redirect:/history/" + process.getMedicalHistory().getId();
-        } catch (MedicalHistoryProcessException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
     }
 }
