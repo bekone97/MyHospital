@@ -11,5 +11,5 @@ public interface RoleService {
     void saveAndFlush(Role item);
     void deleteById(Integer id);
 
-    Role findByName(String name);
+
 }

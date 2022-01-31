@@ -41,7 +41,7 @@ public class MedicalHistory {
     private List<MedicalHistoryProcess> medicalHistoryProcesses;
 
     @Column(name = "status")
-    private boolean status;
+    private boolean dischargeStatus;
 
     @Column(name = "complain")
     private String complain;

@@ -35,10 +35,10 @@
                 <td><a th:text="${history.diagnosis.name}"/></td>
                 <td><a th:text="${history.diagnosis.getPersonal().getFIO()}"/></td>
                 <td><a th:text="${history.receiptDate}"/></td>
-                <div th:if="${history.isStatus()}">
+                <div th:if="${history.isDischargeStatus()}">
                     <td><a th:text="${history.dischargeDate}"></a></td>
                 </div>
-                <div th:unless="${history.isStatus()}">
+                <div th:unless="${history.isDischargeStatus()}">
                     <td><a>-</a></td>
                 </div>
                 <td>

@@ -11,13 +11,10 @@ import java.util.List;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment,Integer> {
-    public boolean existsByDateOfAppointment(Timestamp dateOfAppointment);
-    public List<Appointment> findByDateOfAppointmentBetweenAndPersonal(Timestamp firstDate,
-                                                                       Timestamp secondDate,
-                                                                       Person personal);
-    public List<Appointment> findByUserPatient(User user);
-    public List<Appointment> findByUserPatientAndDateOfAppointmentAfter(User user, Timestamp dateOfAppointment);
-    public List<Appointment> findAppointmentsByPersonalAndAndDateOfAppointmentBetween(Person person,
+    boolean existsByDateOfAppointment(Timestamp dateOfAppointment);
+    List<Appointment> findByUserPatient(User user);
+    List<Appointment> findByUserPatientAndDateOfAppointmentAfter(User user, Timestamp dateOfAppointment);
+    List<Appointment> findAppointmentsByPersonalAndAndDateOfAppointmentBetween(Person person,
                                                                                       Timestamp dateOfAppointmentAfter,
                                                                                       Timestamp dateOfAppointmentBefore);
 }

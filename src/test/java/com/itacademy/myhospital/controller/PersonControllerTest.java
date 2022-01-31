@@ -50,7 +50,7 @@ class PersonControllerTest {
 
     private User user1;
     private User user2;
-    private UserDto userDto1;
+
     List<Person> personList;
     private Person person1;
     private Person person2;
@@ -81,15 +81,6 @@ class PersonControllerTest {
                 .email("Adsdn@mail.ru")
 
                 .build();
-        userDto1 = UserDto.builder()
-                .id(user1.getId())
-                .username(user1.getUsername())
-                .password(user1.getPassword())
-                .img(user1.getImg())
-                .email(user1.getEmail())
-                .authenticationStatus(user1.getAuthenticationStatus())
-                .build();
-
         person1 = Person.builder()
                 .id(1)
                 .firstName("Myachin")
@@ -142,7 +133,7 @@ class PersonControllerTest {
                 .build();
         medicalHistory = MedicalHistory.builder()
                 .id(1)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -151,7 +142,7 @@ class PersonControllerTest {
                 .build();
         medicalHistory2 = MedicalHistory.builder()
                 .id(2)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -239,7 +230,7 @@ class PersonControllerTest {
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE"})
     void personByIdTest() throws Exception {
         when(personService.findById(1)).thenReturn(person1);
-        when(personService.getCurrentHistories(person1)).thenReturn(medicalHistories);
+        when(personService.findCurrentHistories(person1)).thenReturn(medicalHistories);
         this.mockMvc.perform(get("/person/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -251,14 +242,14 @@ class PersonControllerTest {
                 .andExpect(xpath("//*[@id='historiesTBody']/div").nodeCount(2));
 
         verify(personService, times(1)).findById(1);
-        verify(personService, times(1)).getCurrentHistories(person1);
+        verify(personService, times(1)).findCurrentHistories(person1);
     }
 
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE"})
     void personByIdFailTest1() throws Exception {
         when(personService.findById(10)).thenThrow(PersonException.class);
-        when(personService.getCurrentHistories(person1)).thenReturn(medicalHistories);
+        when(personService.findCurrentHistories(person1)).thenReturn(medicalHistories);
         this.mockMvc.perform(get("/person/10"))
                 .andDo(print())
                 .andExpect(authenticated())
@@ -267,14 +258,14 @@ class PersonControllerTest {
                 .andExpect(view().name("error/exception"));
 
         verify(personService, times(1)).findById(10);
-        verify(personService, times(0)).getCurrentHistories(person1);
+        verify(personService, times(0)).findCurrentHistories(person1);
     }
 
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT"})
     void personByIdFailTest2() throws Exception {
         when(personService.findById(10)).thenThrow(PersonException.class);
-        when(personService.getCurrentHistories(person1)).thenReturn(medicalHistories);
+        when(personService.findCurrentHistories(person1)).thenReturn(medicalHistories);
         this.mockMvc.perform(get("/person/10"))
                 .andDo(print())
                 .andExpect(authenticated())

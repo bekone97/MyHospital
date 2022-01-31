@@ -2,6 +2,7 @@ package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithProcesses;
+import com.itacademy.myhospital.exception.AppointmentException;
 import com.itacademy.myhospital.exception.MedicalHistoryProcessException;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
 import com.itacademy.myhospital.model.entity.NameOfProcess;
@@ -10,7 +11,7 @@ import com.itacademy.myhospital.model.repository.MedicalHistoryProcessRepository
 import com.itacademy.myhospital.service.MedicalHistoryProcessService;
 import com.itacademy.myhospital.service.NameOfProcessService;
 import org.springframework.stereotype.Service;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Service
 public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessService {
 
-    public static final String NO_MEDICAL_HISTORY_PROCESS_WITH_ID_EXCEPTION = "There is no medical history process with id :";
+
     private final MedicalHistoryProcessRepository medicalHistoryProcessRepository;
     private final NameOfProcessService nameOfProcessService;
 
@@ -36,12 +37,8 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
 
     @Override
     public MedicalHistoryProcess findById(Integer id) throws MedicalHistoryProcessException {
-        var optional = medicalHistoryProcessRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new MedicalHistoryProcessException(NO_MEDICAL_HISTORY_PROCESS_WITH_ID_EXCEPTION + id);
-        }
+        return medicalHistoryProcessRepository.findById(id)
+                .orElseThrow(()->new MedicalHistoryProcessException(NO_MEDICAL_HISTORY_EXCEPTION+ id));
     }
 
     @Override
@@ -55,18 +52,12 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
             medicalHistoryProcessRepository.deleteById(id);
             return true;
         } else {
-            throw new MedicalHistoryProcessException(NO_MEDICAL_HISTORY_PROCESS_WITH_ID_EXCEPTION + id);
+            throw new MedicalHistoryProcessException(NO_MEDICAL_HISTORY_EXCEPTION + id);
         }
     }
 
 
-    /**
-     * This method gets list of MedicalHistoryProcess and adds them to new MedicalHistoryDtoWithProcesses,and adds complain
-     * ,a patient from historyDto
-     * @param mapOfProcesses - where a key is a process and a value is a quantity of this process
-     * @param historyDto - HistoryDtoWithNumberOfProcesses with complain, a patient for new HistoryDtoWithProcesses
-     * @return new MedicalHistoryDtoWithProcesses
-     */
+
     @Override
     public MedicalHistoryDtoWithProcesses createMedicalHistoryProcessesAndAddToHistory(Map<Process, Integer> mapOfProcesses,
                                                                                        MedicalHistoryDtoWithNumberOfProcesses historyDto) {
@@ -99,13 +90,8 @@ public class MedicalHistoryProcessServiceImpl implements MedicalHistoryProcessSe
         return medicalHistoryProcesses;
     }
 
-    /**
-     * This method checks the NameOfProcess for MedicalHistoryProcess and saves MedicalHistoryProcess
-     * @param medicalHistoryProcess - list of MedicalHistoryProcesses
-     * @return checked MedicalHistoryProcess
-     */
-    @Transactional
 
+    @Transactional
     public MedicalHistoryProcess checkAndSaveMedicalHistoryProcess(MedicalHistoryProcess medicalHistoryProcess){
         var nameOfProcess=nameOfProcessService.checkIfExist(medicalHistoryProcess.getNameOfProcess());
         medicalHistoryProcess.setNameOfProcess(nameOfProcess);

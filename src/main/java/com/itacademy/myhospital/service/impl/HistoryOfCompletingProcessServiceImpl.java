@@ -1,21 +1,21 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
+import com.itacademy.myhospital.exception.ProcessException;
 import com.itacademy.myhospital.model.entity.HistoryOfCompletingProcess;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.repository.HistoryOfCompletingProcessRepository;
 import com.itacademy.myhospital.service.HistoryOfCompletingProcessService;
 import org.springframework.stereotype.Service;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Service
 public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletingProcessService {
 
-    public static final String NO_COMPLETING_PROCESS_WITH_ID = "There is no completing process with id : ";
-    public static final String MEDICAL_HISTORY_PROCESS_COMPLETED_EXCEPTION = "The medical history process is completed";
+
     private final HistoryOfCompletingProcessRepository historyOfCompletingProcessRepository;
 
     public HistoryOfCompletingProcessServiceImpl(HistoryOfCompletingProcessRepository historyOfCompletingProcessRepository) {
@@ -30,12 +30,8 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
 
     @Override
     public HistoryOfCompletingProcess findById(Integer id) throws HistoryOfCompletingProcessException {
-        var optional = historyOfCompletingProcessRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new HistoryOfCompletingProcessException(NO_COMPLETING_PROCESS_WITH_ID + id);
-        }
+        return historyOfCompletingProcessRepository.findById(id)
+                .orElseThrow(()->new HistoryOfCompletingProcessException(NO_COMPLETING_PROCESS_WITH_ID + id));
     }
 
     @Override
@@ -57,16 +53,7 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
         return historyOfCompletingProcessRepository.findByMedicalHistoryProcess(medicalHistoryProcess);
     }
 
-    /**
-     * This method checks the MedicalHistoryProcess and creates  a new HistoryOfCompletingProcess with the personal, the result,the date of
-     * execution,and with the MedicalHistoryProcess
-     * @param medicalHistoryProcess - what process was executed
-     * @param person - by whom the process was executed
-     * @param result - execution result
-     * @return true
-     * @throws HistoryOfCompletingProcessException if the status of MedicalHistoryProcess is true or if the number
-     * of executed processes equal or more than the number of required
-     */
+
     public boolean checkNumberOfExecutionsAndCreateNewExecution(MedicalHistoryProcess medicalHistoryProcess,
                                                                                    Person person,
                                                                                    String result) throws HistoryOfCompletingProcessException {

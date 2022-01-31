@@ -18,7 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -29,9 +29,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
 
-    public static final String ERROR_FOR_MODEL = "error";
-    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
-    public static final String ERROR_EMAIL_EXCEPTION_PAGE = "error/emailException";
+
     private final UserService userService;
     private final PersonService personService;
     private final RoleService roleService;
@@ -49,12 +47,13 @@ public class UserController {
         try {
             var page = userService.findAll(pageNumber, sortField, sortDirection);
             var users = page.getContent();
-            model.addAttribute("page", page);
-            model.addAttribute("users", users);
-            model.addAttribute("sortField", sortField);
-            String reverseSortDirection = sortDirection.equals("asc") ? "desc" : "asc";
-            model.addAttribute("sortDirection", sortDirection);
-            model.addAttribute("reverseSortDirection", reverseSortDirection);
+            model.addAttribute(PAGE_FOR_MODEL, page);
+            model.addAttribute(USERS_FOR_MODEL, users);
+            model.addAttribute(SORT_FIELD_FOR_MODEL, sortField);
+            String reverseSortDirection = sortDirection.equals(ASC_FOR_SORT_DIRECTION) ?
+                    DESC_FOR_SORT_DIRECTION : ASC_FOR_SORT_DIRECTION;
+            model.addAttribute(SORT_DIRECTION_FOR_MODEL, sortDirection);
+            model.addAttribute(REVERSE_SORT_DIRECTION_FOR_MODEL, reverseSortDirection);
         } catch (UserException e) {
             return "redirect:/users/1?sortField=id&sortDirection=asc";
         }
@@ -65,7 +64,7 @@ public class UserController {
     @GetMapping(value = "/userProfile")
     public String userInfo(Principal principal, Model model) {
         var user = userService.getDtoByUsernameForProfile(principal.getName());
-        model.addAttribute("user", user);
+        model.addAttribute(USER_FOR_MODEL, user);
         return "user/user-info";
     }
 
@@ -74,7 +73,7 @@ public class UserController {
     public String userById(@PathVariable int id, Model model) {
         try {
             var user = userService.getDtoById(id);
-            model.addAttribute("user", user);
+            model.addAttribute(USER_FOR_MODEL, user);
             return "user/user-info";
         } catch (UserException e) {
             model.addAttribute(ERROR_FOR_MODEL, e.getMessage());
@@ -87,7 +86,7 @@ public class UserController {
     public String userSettingsForUser(Principal principal,
                                       Model model) {
         var user = userService.getDtoByUsernameForSettings(principal.getName());
-        model.addAttribute("user", user);
+        model.addAttribute(USER_FOR_MODEL, user);
         return "user/edit-user";
     }
 
@@ -98,8 +97,8 @@ public class UserController {
         try {
             var user = userService.getDtoByIdForSettings(id);
             var roles = roleService.findAll();
-            model.addAttribute("roles", roles);
-            model.addAttribute("user", user);
+            model.addAttribute(ROLES_FOR_MODEL, roles);
+            model.addAttribute(USER_FOR_MODEL, user);
         } catch (UserException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
             return ERROR_EXCEPTION_PAGE;

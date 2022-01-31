@@ -7,17 +7,16 @@ import com.itacademy.myhospital.model.entity.Appointment;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.AppointmentRepository;
-import com.itacademy.myhospital.service.JobService;
 import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.AppointmentService;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.service.emailService.EmailService;
+import com.itacademy.myhospital.service.EmailService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
@@ -35,7 +34,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PersonService personService;
     private final UserService userService;
     private final EmailService emailService;
-    public static final int ROLE_ID_FOR_PERSONAL = 2;
+
 
 
     public AppointmentServiceImpl(AppointmentRepository appointmentRepository, PersonService personService, UserService userService, EmailService emailService) {
@@ -48,7 +47,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Page<Appointment> findAll(int pageNumber, String sortField, String sortDirection) {
         Sort sort = Sort.by(sortField);
-        sort = sortDirection.equals("asc") ? sort.ascending() : sort.descending();
+        sort = sortDirection.equals(ASC_FOR_SORT_DIRECTION) ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(pageNumber - 1, 2, sort);
         return appointmentRepository.findAll(pageable);
     }
@@ -60,14 +59,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment findById(Integer id) throws AppointmentException {
-        Appointment appointment;
-        var optional = appointmentRepository.findById(id);
-        if (optional.isPresent()) {
-            appointment = optional.get();
-        } else {
-            throw new AppointmentException("The appointment doesn't exist");
-        }
-        return appointment;
+        return appointmentRepository.findById(id)
+                .orElseThrow(()->new AppointmentException(NO_APPOINTMENT_EXCEPTION));
     }
 
     @Override
@@ -81,7 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointmentRepository.existsById(id)) {
             appointmentRepository.deleteById(id);
         } else {
-            throw new AppointmentException("Not found an appointment");
+            throw new AppointmentException(NO_APPOINTMENT_EXCEPTION);
         }
     }
 
@@ -90,23 +83,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.existsByDateOfAppointment(dateOfAppointment);
     }
 
-    /**
-     * This method returns all user appointments
-     * @param user - searching of appointments by this user
-     * @return list of appointments
-     */
+
     @Override
     public List<Appointment> findByUserPatient(User user) {
 
         return appointmentRepository.findByUserPatient(user);
     }
 
-    /**
-     * This method returns all future user appointments
-     * @param user  - searching of appointments by this user
-     * @param dateOfAppointment - after what date to search
-     * @return list of appointments
-     */
+
     @Override
     @Transactional
     public List<Appointment> findByUserPatientAndDateOfAppointmentAfter(User user,
@@ -115,11 +99,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 dateOfAppointment);
     }
 
-    /**
-     * This method creates appointments for the doctor for a week
-     * @param username - name of user for the doctor
-     * @throws PersonException if a user doesn't have a person
-     */
+
     @Transactional
     public void addAppointmentsForNewDoctorForWeek(String username) throws PersonException {
         var person = personService.findPersonByUsernameOfUser(username);
@@ -130,29 +110,21 @@ public class AppointmentServiceImpl implements AppointmentService {
             personList.add(person);
             checkAppointmentsExistForEveryDayAndCreateAppointments(currentDate, limitDate, personList);
         }else {
-            throw new PersonException("User doesn't have a person");
+            throw new PersonException(USER_WITHOUT_A_PERSON_EXCEPTION);
         }
     }
 
-    /**
-     * This method finds persons with the ROLE_DOCTOR, checks and, if necessary, creates appointments
-     * @param currentDate - The date from which to start creating appointments
-     * @param limitDate - The date from which to finish creating appointments
-     * @throws AppointmentException if there are no persons with the role
-     */
+
     @Transactional
     public void addAppointmentsForPersonalForWeek(LocalDateTime currentDate, LocalDateTime limitDate) throws AppointmentException {
-            var personalList = personService.findPersonsByRoleId(ROLE_ID_FOR_PERSONAL);
+            var personalList = personService.findPersonsByRoleId(ROLE_DOCTOR_ID);
             checkAppointmentsExistForEveryDayAndCreateAppointments(currentDate, limitDate, personalList);
     }
 
-    /**
-     * This method find persons with the ROLE_DOCTOR , and creates appointments for them for the day
-     * @param dateOfAppointments  date for creating appointments
-     */
+
     @Transactional
     public void addAppointmentsForPersonalForDay(LocalDateTime dateOfAppointments) {
-            var personalList = personService.findPersonsByRoleId(ROLE_ID_FOR_PERSONAL);
+            var personalList = personService.findPersonsByRoleId(ROLE_DOCTOR_ID);
             addAppointmentsForPersonal(dateOfAppointments, personalList);
     }
 
@@ -176,12 +148,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    /**
-     * This method checks for appointments by the date and if there is no appointments creates them
-     * @param dateOfAppointments - date for meetings
-     * @param personalList - list of persons with the ROLE_DOCTOR
-     */
-    //Complete once a day. Check if appointments exist by this date , if not  - create appointments of this day
+
     @Transactional
     public void addAppointmentsForPersonal(LocalDateTime dateOfAppointments, List<Person> personalList) {
         if (!existsByDateOfAppointment(Timestamp.valueOf(dateOfAppointments))) {
@@ -198,7 +165,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      * @param dateOfAppointments - date of appointments
      * @param person - the person for whom appointments are created
      */
-    void checkDatesAndSaveAppointmentsForPersonForDay(LocalDateTime dateOfAppointments, Person person) {
+    private void checkDatesAndSaveAppointmentsForPersonForDay(LocalDateTime dateOfAppointments, Person person) {
         if (!(dateOfAppointments.getDayOfWeek().getValue() == 6 || dateOfAppointments.getDayOfWeek().getValue() == 7)) {
             while (dateOfAppointments.getHour() < 18) {
                 createAndSaveAppointment(dateOfAppointments, person);
@@ -217,11 +184,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    /**
-     * This method creates list of dates for a week without holidays
-     * @param date - the date from which to start
-     * @return list of dates
-     */
+
     public List<LocalDate> createListOfDays(LocalDate date) {
         List<LocalDate> listOfDates = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -233,13 +196,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         return listOfDates;
     }
 
-    /**
-     * This method returns list of a person's appointments on a certain date
-     * @param date - date of appointments
-     * @param person - whose appointments
-     * @return list of appointments
-     */
-    public List<Appointment> getAppointmentsOfDayAndDoctor(String date, Person person) {
+
+    public List<Appointment> findAppointmentsOfDoctorOnDay(String date, Person person) {
         var parseDate = LocalDate.parse(date);
         var firstDate = Timestamp.valueOf(parseDate.atTime(0, 0));
         var secondDate = Timestamp.valueOf(parseDate.plusDays(1).atTime(0, 0));
@@ -247,18 +205,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    /**
-     * This method finds an appointment with the id ,user with the username in database,
-     * checks if appointment is not blocked and its time should be later than now. Then
-     * set isEngaged true, adds user to appointment and adds phone number to appointment,
-     * and sends message to user's email
-     * @param phoneNumber - phone number of user
-     * @param username - name of user
-     * @param id - id of appointment
-     * @return true
-     * @throws AppointmentException if there is no appointment with the id in database or the appointment is already blocked
-     * @throws MessagingException,UnsupportedEncodingException if there are some problem with sending a  message
-     */
+
     @Transactional
     public boolean changeAppointmentOnBlockedValue(String phoneNumber, String username, Integer id) throws AppointmentException, MessagingException, UnsupportedEncodingException {
         var user =userService.findByUsername(username);
@@ -271,20 +218,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             saveAndFlush(appointment);
             return true;
         }else {
-            throw new AppointmentException("Appointment is already blocked");
+            throw new AppointmentException(APPOINTMENT_IS_ALREADY_BLOCKED_EXCEPTION);
         }
     }
 
-    /**
-     * This method finds an appointment by id and a user by username. Checks if a user is a userPatient of the appointment
-     * Removes a user, a phone number and changes engaged status on false value. Save an appointment
-     * @param username - name of user
-     * @param appointmentId - id of appointment
-     * @return true value if the method has completed
-     * @throws AppointmentException if there is no appointment with the id in database
-     * @throws MessagingException,UnsupportedEncodingException if there are some problems with sending a message
-     * @throws UserException if there is no user with the username in database
-     */
+
     @Override
     @Transactional
     public boolean cancelAppointmentByUser(String username, Integer appointmentId) throws AppointmentException, MessagingException, UnsupportedEncodingException, UserException {
@@ -296,20 +234,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             saveAndFlush(appointment);
             return true;
         } else {
-            throw new AppointmentException("User doesn't has  permissions to cancel the appointment");
+            throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }
     }
 
-    /**
-     *  This method finds an appointment by id and a user by username. Checks if a user has enough permissions.
-     *    Removes a user, a phone number and changes engaged status on false value. Save an appointment
-     * @param appointmentId - id of appointment
-     * @param username - name of user
-     * @return true value if the method has completed
-     * @throws MessagingException,UnsupportedEncodingException if there are some problems with sending a message
-     * @throws AppointmentException if there is no appointment with the id in database
-     * @throws UserException if there is no user with the username in database
-     */
+
     @Override
     @Transactional
     public boolean cancelAppointmentByDoctor(Integer appointmentId, String username) throws MessagingException, UnsupportedEncodingException, AppointmentException, UserException {
@@ -323,7 +252,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             saveAndFlush(appointment);
             return true;
         } else {
-            throw new AppointmentException("User doesn't have permissions to cancel the appointment");
+            throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }
     }
 
@@ -331,7 +260,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private Person getPersonAndChekIt(User user) throws UserException {
         var doctor = personService.findByUser(user);
         if (doctor==null) {
-            throw new UserException("User doesn't have person object");
+            throw new UserException(USER_WITHOUT_A_PERSON_EXCEPTION);
         }
         return doctor;
     }
@@ -347,7 +276,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (user != null) {
             return user.equals(appointment.getUserPatient());
         } else {
-            throw new UserException("User doesn't exist with username");
+            throw new UserException(NO_USER_WITH_USERNAME_EXCEPTION);
         }
     }
 
@@ -360,9 +289,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     private boolean checkUserForCancelAppointmentByDoctor(User user) throws UserException {
         if (user != null) {
             return user.getRoles().stream()
-                    .anyMatch(role -> role.getName().equals("ROLE_DOCTOR"));
+                    .anyMatch(role -> role.getName().equals(ROLE_DOCTOR));
         } else {
-            throw new UserException("User doesn't exist with username");
+            throw new UserException(NO_USER_WITH_USERNAME_EXCEPTION);
         }
     }
 
@@ -376,14 +305,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setUserPatient(null);
     }
 
-    /**
-     * Thes method changes engaged status of the appointment on true value and save it
-     * @param id - id of appointment
-     * @param username - name of user
-     * @return true value if the method has completed
-     * @throws AppointmentException if there is no appointment with this id in database or user doesn't have enough
-     * permissions to block it
-     */
+
     @Transactional
     public boolean blockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
         var appointment =findById(id);
@@ -393,17 +315,10 @@ public class AppointmentServiceImpl implements AppointmentService {
             saveAndFlush(appointment);
             return true;
         }else {
-            throw new AppointmentException("User doesn't have permissions to block the appointment");
+            throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }
     }
-    /**
-     * Thes method changes engaged status of the appointment on false value and save it
-     * @param id - id of appointment
-     * @param username - name of user
-     * @return true value if the method has completed
-     * @throws AppointmentException if there is no appointment with this id in database or user doesn't have enough
-     * permissions to block it
-     */
+
     @Override
     @Transactional
     public boolean unblockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
@@ -414,17 +329,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             saveAndFlush(appointment);
             return true;
         }else {
-            throw new AppointmentException("User doesn't have permissions to unblock the appointment");
+            throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }
     }
 
-    /**
-     * This method returns a list of the person's appointments on the date
-     * @param date - date of appointment
-     * @param username - name of user
-     * @return list of appointments of this date
-     * @throws PersonException where is no person with the username of user in database
-     */
+
     @Override
     @Transactional
     public List<Appointment> getAppointmentsOfDoctorByDate(LocalDate date,String username) throws PersonException {
@@ -436,7 +345,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                     Timestamp.valueOf(dateAfter),
                     Timestamp.valueOf(dateBefore));
         }else {
-            throw new PersonException("Person doesn't exist");
+            throw new PersonException(NO_PERSON_EXCEPTION);
         }
     }
 

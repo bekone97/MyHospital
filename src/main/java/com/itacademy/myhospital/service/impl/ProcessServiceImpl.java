@@ -6,17 +6,14 @@ import com.itacademy.myhospital.model.entity.Process;
 import com.itacademy.myhospital.model.repository.ProcessRepository;
 import com.itacademy.myhospital.service.ProcessService;
 import org.springframework.stereotype.Service;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class ProcessServiceImpl implements ProcessService {
-    public static final String NO_PROCESS_WITH_ID_EXCEPTION = "There is no process with id : ";
-    public static final int OPERATION_ID = 1;
-    public static final int PROCEDURE_ID = 2;
-    public static final int MEDICATION_ID = 3;
+
     private final ProcessRepository processRepository;
 
 
@@ -31,12 +28,8 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public Process findById(Integer id) throws ProcessException {
-        var optional = processRepository.findById(id);
-        if(optional.isPresent()){
-            return optional.get();
-        }else {
-            throw new ProcessException(NO_PROCESS_WITH_ID_EXCEPTION +id);
-        }
+        return processRepository.findById(id)
+                .orElseThrow(()->new ProcessException(NO_PROCESS_WITH_ID_EXCEPTION +id));
     }
 
     @Override
@@ -54,22 +47,12 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
 
-//    Returned map with  key :operation, procedure,medication and value :quantity each of them
 
-    /**
-     * This method creates a map where a key is a process and a value is a quantity of it
-     * @param numberOfOperations  -  shows the number of operations
-     * @param numberOfProcedures -  shows the number of procedures
-     * @param numberOfMedications -  shows the number of medications
-     * @return Map<Process,Integer>
-     * @throws ProcessException if there is no process with the id
-     */
     @Override
     public Map<Process , Integer> getMapOfProcesses(int numberOfOperations,
                                                     int numberOfProcedures,
                                                     int numberOfMedications) throws ProcessException {
         Map<Process , Integer> mapOfProcesses = new HashMap<>();
-
 
         mapOfProcesses.put(findById(OPERATION_ID),numberOfOperations);
         mapOfProcesses.put(findById(PROCEDURE_ID),numberOfProcedures);

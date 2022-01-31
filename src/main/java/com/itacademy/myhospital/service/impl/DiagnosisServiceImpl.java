@@ -1,6 +1,7 @@
 package com.itacademy.myhospital.service.impl;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import com.itacademy.myhospital.exception.DiagnosisException;
+import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
 import com.itacademy.myhospital.model.entity.Diagnosis;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.repository.DiagnosisRepository;
@@ -13,7 +14,7 @@ import java.util.List;
 @Service
 public class DiagnosisServiceImpl implements DiagnosisService {
 
-    public static final String NO_DIAGNOSIS_WITH_ID_EXCEPTION = "There is no diagnosis with id : ";
+
 
     private final DiagnosisRepository diagnosisRepository;
     private final PersonService personService;
@@ -30,12 +31,8 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
     @Override
     public Diagnosis findById(Integer id) throws DiagnosisException {
-        var optional = diagnosisRepository.findById(id);
-        if(optional.isPresent()) {
-            return optional.get();
-        }else {
-            throw new DiagnosisException(NO_DIAGNOSIS_WITH_ID_EXCEPTION +id);
-        }
+        return diagnosisRepository.findById(id)
+                .orElseThrow(()->new DiagnosisException(NO_DIAGNOSIS_WITH_ID_EXCEPTION +id));
     }
 
     @Override

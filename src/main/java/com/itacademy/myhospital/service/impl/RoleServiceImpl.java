@@ -1,5 +1,6 @@
 package com.itacademy.myhospital.service.impl;
 
+import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
 import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.repository.RoleRepository;
 import com.itacademy.myhospital.service.RoleService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.itacademy.myhospital.constants.Constants.NO_COMPLETING_PROCESS_WITH_ID;
 
 @Service
 
@@ -19,10 +22,7 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository = roleRepository;
     }
 
-    @Override
-    public Role findByName(String name) {
-        return roleRepository.findByName(name);
-    }
+
 
     @Override
     public List<Role> findAll() {

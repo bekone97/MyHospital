@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 @Controller
 @RequiredArgsConstructor
 public class MainController {
@@ -18,7 +18,7 @@ public class MainController {
                            Model model){
         if (principal!=null) {
                 var user = userService.findByUsername(principal.getName());
-                model.addAttribute("user", user);
+                model.addAttribute(USER_FOR_MODEL, user);
         }
         return "home-page";
     }

@@ -75,7 +75,7 @@ class DiagnosisServiceImplTest {
     }
 
     @Test
-    void getDiagnosesOfPerson() {
+    void getDiagnosesOfPersonTest() {
        var person = Person.builder()
                 .id(1)
                 .build();

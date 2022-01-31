@@ -8,8 +8,6 @@ import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.PersonRepository;
 import com.itacademy.myhospital.model.repository.UserRepository;
-import com.itacademy.myhospital.service.AppointmentService;
-import com.itacademy.myhospital.service.JobService;
 import com.itacademy.myhospital.service.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -132,17 +130,17 @@ class PersonServiceImplTest {
     }
     @Test
     void findByIdFailTest() {
-        when(personRepository.findById(2)).thenReturn(Optional.ofNullable(null));
+        when(personRepository.findById(2)).thenReturn(Optional.empty());
         PersonException exception=assertThrows(PersonException.class,
                 ()->personService.findById(2));
-        assertTrue(exception.getMessage().contains("The person doesn't exist with id"));
+        assertTrue(exception.getMessage().contains(NO_PERSON_EXCEPTION));
     }
     @Test
     void deleteByIdFailTest() {
         when(personRepository.existsById(2)).thenReturn(false);
         PersonException exception = assertThrows(PersonException.class,
                 ()->personService.deleteById(2));
-        assertTrue(exception.getMessage().contains("The person doesn't exist with id"));
+        assertTrue(exception.getMessage().contains(NO_PERSON_EXCEPTION));
     }
 
     @Test
@@ -174,13 +172,13 @@ class PersonServiceImplTest {
     void getPageOfPersonWithRoleIdFailTest(){
         int numberOfPage = 1;
         int roleId = 1;
-        Pageable pageable = PageRequest.of(numberOfPage-1,2);
+        Pageable pageable = PageRequest.of(0,2);
         when(personRepository.findNumberOfPersonWithRoleId(roleId)).thenReturn(0);
         when(personRepository.findLimitAndSortedPersonWithRoleId(1,pageable.getPageSize(),pageable.getOffset()))
                 .thenReturn(new ArrayList<>());
         Exception exception = assertThrows(PersonException.class,
                 ()->personService.getPageOfPersonWithRoleId(roleId,numberOfPage));
-        assertTrue(exception.getMessage().contains("There are no persons with the role"));
+        assertTrue(exception.getMessage().contains(NO_PERSONS_WITH_ROLE_EXCEPTION));
     }
 
     @Test
@@ -198,11 +196,11 @@ class PersonServiceImplTest {
     }
     @Test
     void createPersonDtoFromPersonFailTest()  {
-        when(personRepository.findById(20)).thenReturn(Optional.ofNullable(null));
+        when(personRepository.findById(20)).thenReturn(Optional.empty());
     Exception exception = assertThrows(PersonException.class,
             ()->personService.createPersonDtoFromPerson(20));
 
-        assertTrue(exception.getMessage().contains("The person doesn't exist with id"));
+        assertTrue(exception.getMessage().contains(NO_PERSON_EXCEPTION));
         verify(personRepository,times(1)).findById(20);
     }
 
@@ -215,7 +213,7 @@ class PersonServiceImplTest {
     }
     @Test
     void checkRequestParameterFromSelectTestOne() {
-        when(personRepository.findById(1)).thenReturn(Optional.ofNullable(null));
+        when(personRepository.findById(1)).thenReturn(Optional.empty());
         boolean isChecked=personService.checkRequestParameterFromSelect("1");
         verify(personRepository,times(1)).findById(1);
         assertFalse(isChecked);
@@ -254,7 +252,7 @@ class PersonServiceImplTest {
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(user1);
         Exception exception = assertThrows(PersonException.class,
                 ()->personService.addUserToPerson(person1.getKeyForUser(),user1.getUsername()));
-        assertTrue(exception.getMessage().contains("Person also has a user or no person with this key"));
+        assertTrue(exception.getMessage().contains(PERSON_HAS_A_USER_EXCEPTION));
     }
     @Test
     void addUserToPersonFailTest2() {
@@ -263,7 +261,7 @@ class PersonServiceImplTest {
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(user1);
         Exception exception = assertThrows(PersonException.class,
                 ()->personService.addUserToPerson(person1.getKeyForUser(),user1.getUsername()));
-        assertTrue(exception.getMessage().contains("Person also has a user or no person with this key"));
+        assertTrue(exception.getMessage().contains(PERSON_HAS_A_USER_EXCEPTION));
     }
     @Test
     void addUserToPersonFailTest3() {
@@ -271,7 +269,7 @@ class PersonServiceImplTest {
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(user1);
         Exception exception = assertThrows(UserException.class,
                 ()->personService.addUserToPerson(person1.getKeyForUser(),user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User also has a person"));
+        assertTrue(exception.getMessage().contains(USER_HAS_A_PERSON_EXCEPTION));
     }
     @Test
     void addUserToPersonFailTest4() {
@@ -279,7 +277,7 @@ class PersonServiceImplTest {
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(null);
         Exception exception = assertThrows(UserException.class,
                 ()->personService.addUserToPerson(person1.getKeyForUser(),user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User also has a person"));
+        assertTrue(exception.getMessage().contains(USER_HAS_A_PERSON_EXCEPTION));
     }
 
     @Test
@@ -293,17 +291,17 @@ class PersonServiceImplTest {
     @Test
     void getCurrentHistories() {
        var current= MedicalHistory.builder()
-                .status(false)
+                .dischargeStatus(false)
                 .build();
        var notCurrent= MedicalHistory.builder()
-                .status(true)
+                .dischargeStatus(true)
                 .build();
        List<MedicalHistory> histories = new ArrayList<>();
        histories.add(current);
        histories.add(notCurrent);
        person1.setHistories(histories);
-       var currentHistories=personService.getCurrentHistories(person1);
+       var currentHistories=personService.findCurrentHistories(person1);
        assertEquals(1,currentHistories.size());
-       assertFalse(currentHistories.stream().findAny().get().isStatus());
+       assertFalse(currentHistories.stream().findAny().get().isDischargeStatus());
     }
 }

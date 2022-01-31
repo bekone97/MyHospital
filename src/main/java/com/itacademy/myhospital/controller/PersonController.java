@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -23,12 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonController {
     public static final String REDIRECT_PERSONS_PAGE = "redirect:/persons/1?sortField=surname&sortDirection=asc";
-    public static final String PERSON_FOR_MODEL = "person";
-    public static final String PERSONS_FOR_MODEL = "persons";
-    public static final String KEYWORD_FOR_MODEL = "keyword";
-    public static final String RESULT_FOR_MODEL = "result";
-    public static final String ERROR_EXCEPTION = "error/exception";
-    public static final String ERROR_FOR_MODEL = "error";
+
     public static final String PERSON_PERSON_ADD_INFO_VIEW = "person/person-add-info";
     public static final String PERSON_PERSON_ADD_FOR_HISTORY_VIEW = "person/person-add-for-history";
     public static final String PERSON_PATIENTS_VIEW = "person/patients";
@@ -36,6 +32,8 @@ public class PersonController {
     public static final String PERSON_SEARCH_PERSONAL_VIEW = "/person/search-personal";
     public static final String PERSON_PERSON_INFO_VIEW = "person/person-info";
     public static final String REDIRECT_PERSONS_VIEW = "redirect:/persons/1?sortField=surname&sortDirection=asc";
+
+
     private final PersonService personService;
     private final PersonAgeValidatorService personAgeValidatorService;
 
@@ -48,11 +46,12 @@ public class PersonController {
         try {
             Page<Person> personsPage = personService.findAll(pageNumber, sortField, sortDirection);
             var listOfPerson = personsPage.getContent();
-            var reverseSortDirection = sortDirection.equals("asc") ? "desc" : "asc";
-            model.addAttribute("sortField", sortField);
-            model.addAttribute("sortDirection", sortDirection);
-            model.addAttribute("reverseSortDirection", reverseSortDirection);
-            model.addAttribute("page", personsPage);
+            var reverseSortDirection = sortDirection.equals(ASC_FOR_SORT_DIRECTION) ?
+                    DESC_FOR_SORT_DIRECTION : ASC_FOR_SORT_DIRECTION;
+            model.addAttribute(SORT_FIELD_FOR_MODEL, sortField);
+            model.addAttribute(SORT_DIRECTION_FOR_MODEL, sortDirection);
+            model.addAttribute(REVERSE_SORT_DIRECTION_FOR_MODEL, reverseSortDirection);
+            model.addAttribute(PAGE_FOR_MODEL, personsPage);
             model.addAttribute(PERSONS_FOR_MODEL, listOfPerson);
             return "person/persons";
         } catch (PersonException e) {
@@ -65,13 +64,13 @@ public class PersonController {
     public String personById(@PathVariable Integer id, Model model) {
         try {
             Person person = personService.findById(id);
-            var currentHistories=personService.getCurrentHistories(person);
-            model.addAttribute("histories",currentHistories);
+            var currentHistories=personService.findCurrentHistories(person);
+            model.addAttribute(HISTORIES_FOR_MODEL,currentHistories);
             model.addAttribute(PERSON_FOR_MODEL, person);
             return PERSON_PERSON_INFO_VIEW;
         } catch (PersonException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION;
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -97,7 +96,7 @@ public class PersonController {
                                 BindingResult bindingResult) {
        var message= personAgeValidatorService.validatePersonAge(personDto.getDateOfBirthday());
        if (message!=null){
-           ObjectError error = new ObjectError("dateOfBirthday",message);
+           ObjectError error = new ObjectError(DATE_OF_BIRTHDAY_FOR_MODEL,message);
            bindingResult.addError(error);
        }
        if (bindingResult.hasErrors()) {
@@ -118,7 +117,7 @@ public class PersonController {
             return PERSON_PERSON_ADD_INFO_VIEW;
         } catch (PersonException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION;
+            return ERROR_EXCEPTION_PAGE;
         }
     }
 
@@ -150,7 +149,7 @@ public class PersonController {
             personService.deleteById(id);
         } catch (PersonException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION;
+            return ERROR_EXCEPTION_PAGE;
         }
         return REDIRECT_PERSONS_PAGE;
     }
@@ -187,9 +186,9 @@ public class PersonController {
         try {
             Page<Person> personPage = personService.getPageOfPersonWithRoleId(3, pageNumber);
             var personList = personPage.getContent();
-            model.addAttribute("page", personPage);
+            model.addAttribute(PAGE_FOR_MODEL, personPage);
             model.addAttribute(PERSONS_FOR_MODEL, personList);
-            model.addAttribute("pageNumber", pageNumber);
+            model.addAttribute(PAGE_NUMBER_FOR_MODEL, pageNumber);
             return "person/personal-list";
         } catch (PersonException e) {
             return "redirect:/searchPersonal/1";
@@ -203,7 +202,7 @@ public class PersonController {
             model.addAttribute(PERSON_FOR_MODEL, personal);
         } catch (PersonException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION;
+            return ERROR_EXCEPTION_PAGE;
         }
         return PERSON_PERSON_INFO_VIEW;
     }

@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -20,8 +21,7 @@ import java.security.Principal;
 public class ProcessController {
 
 
-    public static final String ERROR_FOR_MODEL = "error";
-    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
+
     private final PersonService personService;
     private final MedicalHistoryService medicalHistoryService;
 
@@ -40,7 +40,7 @@ public class ProcessController {
                 try {
                 var dto =medicalHistoryService
                         .getMedicalHistoryDtoWithProcessesFromDtoWithNumbers(historyDto,personal);
-                model.addAttribute("history", dto);
+                model.addAttribute(HISTORY_FOR_MODEL, dto);
                 return "process/select-processes";
                 } catch (ProcessException e) {
                     model.addAttribute(ERROR_FOR_MODEL,e.getMessage());

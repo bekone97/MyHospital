@@ -2,10 +2,7 @@ package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithProcesses;
-import com.itacademy.myhospital.exception.MedicalHistoryException;
-import com.itacademy.myhospital.exception.PersonException;
-import com.itacademy.myhospital.exception.ProcessException;
-import com.itacademy.myhospital.exception.UserException;
+import com.itacademy.myhospital.exception.*;
 import com.itacademy.myhospital.model.entity.Diagnosis;
 import com.itacademy.myhospital.model.entity.MedicalHistory;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
@@ -14,7 +11,7 @@ import com.itacademy.myhospital.model.repository.MedicalHistoryRepository;
 import com.itacademy.myhospital.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.List;
@@ -23,8 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
-    public static final String NO_HISTORY_EXCEPTION = "Medical history doesn't exist with id: ";
-    public static final String ROLE_NURSE = "ROLE_NURSE";
+
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final UserService userService;
     private final PersonService personService;
@@ -40,12 +36,8 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
     @Override
     public MedicalHistory findById(Integer id) throws MedicalHistoryException {
-        var optional = medicalHistoryRepository.findById(id);
-        if(optional.isPresent()) {
-        return optional.get();
-        }else {
-            throw new MedicalHistoryException(NO_HISTORY_EXCEPTION + id);
-        }
+        return medicalHistoryRepository.findById(id)
+                .orElseThrow(()->new MedicalHistoryException(NO_MEDICAL_HISTORY_EXCEPTION+ id));
     }
 
     @Override
@@ -59,7 +51,7 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         if (medicalHistoryRepository.existsById(id)) {
             medicalHistoryRepository.deleteById(id);
         }else {
-            throw new MedicalHistoryException(NO_HISTORY_EXCEPTION);
+            throw new MedicalHistoryException(NO_MEDICAL_HISTORY_EXCEPTION);
         }
     }
 
@@ -70,38 +62,25 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
     }
 
 
-    /**
-     * This method changes status of Medical History, MedicalHistoryProcesses on true and set Discharge Date and save the history
-     * @param id - id of Medical History
-     * @return Medical History
-     * @throws MedicalHistoryException if there is no Medical History with this id in database and
-     * if Medical History is already discharged
-     */
-//    Change status of processes of medical history and medical history on true and set Discharge Date and save history
+
+
     @Override
     @Transactional
     public boolean dischargePatient(Integer id) throws MedicalHistoryException {
         var medicalHistory =findById(id);
-        if (!medicalHistory.isStatus()){
+        if (!medicalHistory.isDischargeStatus()){
         medicalHistory.setDischargeDate(new Timestamp(System.currentTimeMillis()));
         medicalHistory.getMedicalHistoryProcesses()
                 .forEach(process->process.setStatus(true));
-        medicalHistory.setStatus(true);
+        medicalHistory.setDischargeStatus(true);
         saveAndFlush(medicalHistory);
         return true;
         }else {
-            throw new MedicalHistoryException("Medical history has already discharged");
+            throw new MedicalHistoryException(MEDICAL_HISTORY_HAS_ALREADY_DISCHARGED_EXCEPTION);
         }
     }
 
-    /**
-     * This method checks whether the user is a patient in this medical history or he has enough permissions to view
-     * @param historyId - id of MedicalHistory
-     * @param username - name of User
-     * @return MedicalHistory
-     * @throws MedicalHistoryException if there is no MedicalHistory with this id in database
-     * @throws UserException if there is no user with the username in database or user doesn't have enough permissions
-     */
+
     @Override
     public MedicalHistory checkPersonForViewHistory(Integer historyId, String username) throws MedicalHistoryException, UserException {
         var history = findById(historyId);
@@ -114,9 +93,9 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
             if ((currentPerson == history.getPatient() || hasRoleNurse)) {
                 return history;
             }
-            throw new UserException("User doesn't have enough permissions");
+            throw new UserException(USER_HAS_NO_PERMISSIONS);
         } else {
-            throw new UserException("User doesn't exist with name " + username);
+            throw new UserException(NO_USER_WITH_USERNAME_EXCEPTION + username);
         }
     }
 
@@ -141,30 +120,19 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         return history;
     }
 
-    /**
-     * This method returns all medical histories of the patient
-     * @param username - name of User
-     * @return list of Medical Histories
-     * @throws PersonException if there is no person with the user
-     */
-    public List<MedicalHistory> getHistoriesOfPatient(String username) throws PersonException {
+
+    public List<MedicalHistory> findHistoriesOfPatient(String username) throws PersonException {
         var person = personService.findPersonByUsernameOfUser(username);
         if (person!=null) {
             return  findByPatient(person);
         }else {
-            throw new PersonException("User doesn't have a person");
+            throw new PersonException(USER_WITHOUT_A_PERSON_EXCEPTION);
         }
     }
 
-    /**
-     *This method returns a  MedicalHistoryDtoWithProcesses with added MedicalHistoryProcesses ,diagnosis ,complain,patient
-     * @param historyDto - MedicalHistoryDtoWithNumberOfProcesses
-     * @param personal - who is a doctor in this MedicalHistory
-     * @return MedicalHistoryDtoWithProcesses
-     * @throws ProcessException if there is no process with id in database
-     */
-    //make tests and description
-    public MedicalHistoryDtoWithProcesses getMedicalHistoryDtoWithProcessesFromDtoWithNumbers(MedicalHistoryDtoWithNumberOfProcesses historyDto,Person personal) throws ProcessException {
+
+    public MedicalHistoryDtoWithProcesses getMedicalHistoryDtoWithProcessesFromDtoWithNumbers(MedicalHistoryDtoWithNumberOfProcesses historyDto,
+                                                                                              Person personal) throws ProcessException {
         var diagnosis = diagnosisService.findOrCreateDiagnosis(historyDto.getDiagnosis().getName(), personal);
         var mapOfProcesses = processService.getMapOfProcesses(historyDto.getNumberOfOperations(),
                 historyDto.getNumberOfProcedures(),

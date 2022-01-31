@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,7 +143,7 @@ class MedicalHistoryProcessServiceImplTest {
         when(medicalHistoryProcessRepository.findById(4)).thenReturn(Optional.empty());
         Exception exception = assertThrows(MedicalHistoryProcessException.class,
                 () -> medicalHistoryProcessService.findById(4));
-        assertTrue(exception.getMessage().contains("There is no medical history process with id :"));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
         verify(medicalHistoryProcessRepository, times(1)).findById(4);
     }
 
@@ -160,7 +160,7 @@ class MedicalHistoryProcessServiceImplTest {
         when(medicalHistoryProcessRepository.existsById(4)).thenReturn(false);
         Exception exception = assertThrows(MedicalHistoryProcessException.class,
                 () -> medicalHistoryProcessService.deleteById(4));
-        assertTrue(exception.getMessage().contains("There is no medical history process with id :"));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
         verify(medicalHistoryProcessRepository, times(1)).existsById(4);
         verify(medicalHistoryProcessRepository, times(0)).deleteById(4);
     }

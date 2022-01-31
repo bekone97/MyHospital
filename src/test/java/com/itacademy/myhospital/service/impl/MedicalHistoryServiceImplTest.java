@@ -9,22 +9,20 @@ import com.itacademy.myhospital.model.repository.MedicalHistoryRepository;
 import com.itacademy.myhospital.model.repository.PersonRepository;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.*;
-import com.itacademy.myhospital.service.emailService.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -164,7 +162,7 @@ class MedicalHistoryServiceImplTest {
                 .build();
         medicalHistory =MedicalHistory.builder()
                 .id(1)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -173,7 +171,7 @@ class MedicalHistoryServiceImplTest {
                 .build();
         medicalHistory2 =MedicalHistory.builder()
                 .id(2)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -197,7 +195,7 @@ class MedicalHistoryServiceImplTest {
         when(medicalHistoryRepository.findById(3)).thenReturn(Optional.empty());
         Exception exception = assertThrows(MedicalHistoryException.class,
                 ()->medicalHistoryService.findById(3));
-        assertTrue(exception.getMessage().contains("Medical history doesn't exist with id: "));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
         verify(medicalHistoryRepository,times(1)).findById(3);
     }
 
@@ -206,7 +204,7 @@ class MedicalHistoryServiceImplTest {
         when(medicalHistoryRepository.existsById(3)).thenReturn(false);
         Exception exception = assertThrows(MedicalHistoryException.class,
                 ()->medicalHistoryService.deleteById(3));
-        assertTrue(exception.getMessage().contains("Medical history doesn't exist with id: "));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
         verify(medicalHistoryRepository,times(1)).existsById(3);
     }
 
@@ -214,7 +212,7 @@ class MedicalHistoryServiceImplTest {
     void dischargePatientTest() throws MedicalHistoryException {
         when(medicalHistoryRepository.findById(1)).thenReturn(Optional.of(medicalHistory));
         medicalHistoryService.dischargePatient(1);
-        assertTrue(medicalHistory.isStatus());
+        assertTrue(medicalHistory.isDischargeStatus());
         assertNotNull(medicalHistory.getDischargeDate());
         for (MedicalHistoryProcess process:
              medicalHistory.getMedicalHistoryProcesses()) {
@@ -228,15 +226,15 @@ class MedicalHistoryServiceImplTest {
         when(medicalHistoryRepository.findById(1)).thenReturn(Optional.empty());
         Exception exception = assertThrows(MedicalHistoryException.class,
                 ()->medicalHistoryService.dischargePatient(1));
-        assertTrue(exception.getMessage().contains("Medical history doesn't exist with id: "));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
     }
     @Test
     void dischargePatientFailTest2() {
-        medicalHistory.setStatus(true);
+        medicalHistory.setDischargeStatus(true);
         when(medicalHistoryRepository.findById(1)).thenReturn(Optional.of(medicalHistory));
         Exception exception = assertThrows(MedicalHistoryException.class,
                 ()->medicalHistoryService.dischargePatient(1));
-        assertTrue(exception.getMessage().contains("Medical history has already discharged"));
+        assertTrue(exception.getMessage().contains(MEDICAL_HISTORY_HAS_ALREADY_DISCHARGED_EXCEPTION));
         verify(medicalHistoryRepository,(times(1))).findById(1);
     }
 
@@ -251,7 +249,7 @@ class MedicalHistoryServiceImplTest {
         verify(userRepository,times(1)).findUserByUsername(user1.getUsername());
         verify(personRepository,times(1)).findByUser(user1);
     }
-    //    when user doesn't have ROLE_NURSE but He is a patient of medicalHistory
+
     @Test
     void checkPersonForViewHistoryTest2() throws UserException, MedicalHistoryException {
         person2.setUser(user2);
@@ -269,7 +267,7 @@ class MedicalHistoryServiceImplTest {
         when(medicalHistoryRepository.findById(1)).thenReturn(Optional.empty());
         Exception exception =assertThrows(MedicalHistoryException.class,
                 ()->medicalHistoryService.checkPersonForViewHistory(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("Medical history doesn't exist with id: "));
+        assertTrue(exception.getMessage().contains(NO_MEDICAL_HISTORY_EXCEPTION));
         verify(medicalHistoryRepository,times(1)).findById(1);
     }
     @Test
@@ -278,7 +276,7 @@ class MedicalHistoryServiceImplTest {
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(null);
         Exception exception =assertThrows(UserException.class,
                 ()->medicalHistoryService.checkPersonForViewHistory(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't exist with name "));
+        assertTrue(exception.getMessage().contains(NO_USER_WITH_USERNAME_EXCEPTION));
         verify(medicalHistoryRepository,times(1)).findById(1);
         verify(userRepository,times(1)).findUserByUsername(user1.getUsername());
     }
@@ -300,7 +298,7 @@ class MedicalHistoryServiceImplTest {
     @Test
     void getHistoriesOfPatientTest() throws PersonException {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
-        medicalHistoryService.getHistoriesOfPatient(user1.getUsername());
+        medicalHistoryService.findHistoriesOfPatient(user1.getUsername());
        verify(personRepository,times(1)).findPersonByUsernameOfUser(user1.getUsername());
        verify(medicalHistoryRepository,times(1)).findByPatient(person1);
 
@@ -309,8 +307,8 @@ class MedicalHistoryServiceImplTest {
     void getHistoriesOfPatientFailTest() {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(null);
         Exception exception =assertThrows(PersonException.class,
-                ()->medicalHistoryService.getHistoriesOfPatient(user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't have a person"));
+                ()->medicalHistoryService.findHistoriesOfPatient(user1.getUsername()));
+        assertTrue(exception.getMessage().contains(USER_WITHOUT_A_PERSON_EXCEPTION));
         verify(personRepository,times(1)).findPersonByUsernameOfUser(user1.getUsername());
         verify(medicalHistoryRepository,times(0)).findByPatient(person1);
 

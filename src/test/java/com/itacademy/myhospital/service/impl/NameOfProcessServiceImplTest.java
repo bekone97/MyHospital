@@ -1,11 +1,7 @@
 package com.itacademy.myhospital.service.impl;
 
-import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithProcesses;
-import com.itacademy.myhospital.exception.DiagnosisException;
-import com.itacademy.myhospital.exception.MedicalHistoryProcessException;
 import com.itacademy.myhospital.exception.NameOfProcessesException;
-import com.itacademy.myhospital.model.entity.MedicalHistory;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
 import com.itacademy.myhospital.model.entity.NameOfProcess;
 import com.itacademy.myhospital.model.entity.Process;
@@ -19,11 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,7 +104,7 @@ class NameOfProcessServiceImplTest {
         when(nameOfProcessRepository.findById(2)).thenReturn(Optional.empty());
         Exception exception = assertThrows(NameOfProcessesException.class,
                 ()->nameOfProcessService.findById(2));
-        assertTrue(exception.getMessage().contains("There is no name of process with id "));
+        assertTrue(exception.getMessage().contains(NO_NAME_OF_PROCESS_EXCEPTION));
         verify(nameOfProcessRepository,times(1)).findById(2);
     }
     @Test

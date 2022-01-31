@@ -139,7 +139,7 @@
     </tbody>
 </table>
    </div>
-   <div class="btnsBottomHistory" th:unless="${history.isStatus()}">
+   <div class="btnsBottomHistory" th:unless="${history.isDischargeStatus()}">
 <div sec:authorize="hasRole('DOCTOR')" class="addProcessToHistory">
     <form th:method="GET" th:action="@{/addProcessToMedicalHistory/{id}(id=${history.getId()})}">
         <button type="submit" class="btnHistory" th:text="#{historyInfo.addProcess}">Add Process</button>

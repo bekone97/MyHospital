@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -102,7 +102,7 @@ class HistoryOfCompletingProcessServiceImplTest {
         when(historyOfCompletingProcessRepository.findById(1)).thenReturn(Optional.empty());
         Exception exception = assertThrows(HistoryOfCompletingProcessException.class,
                 ()->historyOfCompletingProcessService.findById(1));
-        assertTrue(exception.getMessage().contains("There is no completing process with id :"));
+        assertTrue(exception.getMessage().contains(NO_COMPLETING_PROCESS_WITH_ID));
         verify(historyOfCompletingProcessRepository,times(1)).findById(1);
     }
 
@@ -118,7 +118,7 @@ class HistoryOfCompletingProcessServiceImplTest {
         when(historyOfCompletingProcessRepository.existsById(1)).thenReturn(false);
         Exception exception = assertThrows(HistoryOfCompletingProcessException.class,
                 ()->historyOfCompletingProcessService.deleteById(1));
-        assertTrue(exception.getMessage().contains("There is no completing process with id :"));
+        assertTrue(exception.getMessage().contains(NO_COMPLETING_PROCESS_WITH_ID));
         verify(historyOfCompletingProcessRepository,times(1)).existsById(1);
         verify(historyOfCompletingProcessRepository,times(0)).deleteById(1);
     }
@@ -142,7 +142,7 @@ class HistoryOfCompletingProcessServiceImplTest {
         Exception exception = assertThrows(HistoryOfCompletingProcessException.class,
                 ()->historyOfCompletingProcessService
                         .checkNumberOfExecutionsAndCreateNewExecution(medicalHistoryProcess,person1,"asda"));
-        assertTrue(exception.getMessage().contains("The medical history process is completed"));
+        assertTrue(exception.getMessage().contains(MEDICAL_HISTORY_PROCESS_COMPLETED_EXCEPTION));
         verify(historyOfCompletingProcessRepository,times(1))
                 .findByMedicalHistoryProcess(medicalHistoryProcess);
 

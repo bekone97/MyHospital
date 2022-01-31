@@ -165,7 +165,7 @@ class MedicalHistoryControllerTest {
                 .build();
         medicalHistory = MedicalHistory.builder()
                 .id(1)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -174,7 +174,7 @@ class MedicalHistoryControllerTest {
                 .build();
         medicalHistory2 = MedicalHistory.builder()
                 .id(2)
-                .status(false)
+                .dischargeStatus(false)
                 .diagnosis(diagnosis1)
                 .complain("Dadadada")
                 .patient(person2)
@@ -394,7 +394,7 @@ class MedicalHistoryControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE", "DOCTOR"})
     void addProcessToMedicalHistoryWithTrueStatusTest() throws Exception {
-        medicalHistory.setStatus(true);
+        medicalHistory.setDischargeStatus(true);
         when(medicalHistoryService.findById(10)).thenReturn(medicalHistory);
         this.mockMvc.perform(get("/addProcessToMedicalHistory/10"))
                 .andDo(print())
@@ -429,7 +429,7 @@ class MedicalHistoryControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE", "DOCTOR"})
     void addProcessToMedicalHistoryWithDischargedStatusTest() throws Exception {
-        medicalHistory.setStatus(true);
+        medicalHistory.setDischargeStatus(true);
         when(medicalHistoryService.findById(1)).thenReturn(medicalHistory);
         this.mockMvc.perform(get("/addProcessToMedicalHistory/1"))
                 .andDo(print())
@@ -559,7 +559,7 @@ class MedicalHistoryControllerTest {
     @WithMockUser(username = "user")
     void getHistoriesOfPatientTestWithHistories() throws Exception {
         when(principal.getName()).thenReturn(user1.getUsername());
-        when(medicalHistoryService.getHistoriesOfPatient(user1.getUsername())).thenReturn(medicalHistories);
+        when(medicalHistoryService.findHistoriesOfPatient(user1.getUsername())).thenReturn(medicalHistories);
         mockMvc.perform(get("/myMedicalHistory"))
                 .andDo(print())
                 .andExpect(authenticated())
@@ -569,14 +569,14 @@ class MedicalHistoryControllerTest {
                 .andExpect(model().attribute("isPersonHasHistory",true))
                 .andExpect(view().name("history/patient-medical-history"));
 
-        verify(medicalHistoryService,times(1)).getHistoriesOfPatient(user1.getUsername());
+        verify(medicalHistoryService,times(1)).findHistoriesOfPatient(user1.getUsername());
 
     }
     @Test
     @WithMockUser(username = "user")
     void getHistoriesOfPatientTestWithoutHistories() throws Exception {
         when(principal.getName()).thenReturn(user1.getUsername());
-        when(medicalHistoryService.getHistoriesOfPatient(user1.getUsername())).thenReturn(new ArrayList<>());
+        when(medicalHistoryService.findHistoriesOfPatient(user1.getUsername())).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/myMedicalHistory"))
                 .andDo(print())
                 .andExpect(authenticated())
@@ -585,14 +585,14 @@ class MedicalHistoryControllerTest {
                 .andExpect(model().attribute("isPersonHasHistory",false))
                 .andExpect(view().name("history/patient-medical-history"));
 
-        verify(medicalHistoryService,times(1)).getHistoriesOfPatient(user1.getUsername());
+        verify(medicalHistoryService,times(1)).findHistoriesOfPatient(user1.getUsername());
 
     }
     @Test
     @WithMockUser(username = "user")
     void getHistoriesOfPatientFailTest() throws Exception {
         when(principal.getName()).thenReturn(user1.getUsername());
-        when(medicalHistoryService.getHistoriesOfPatient(user1.getUsername())).thenThrow(PersonException.class);
+        when(medicalHistoryService.findHistoriesOfPatient(user1.getUsername())).thenThrow(PersonException.class);
         mockMvc.perform(get("/myMedicalHistory"))
                 .andDo(print())
                 .andExpect(authenticated())
@@ -600,7 +600,7 @@ class MedicalHistoryControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(view().name("error/exception"));
 
-        verify(medicalHistoryService,times(1)).getHistoriesOfPatient(user1.getUsername());
+        verify(medicalHistoryService,times(1)).findHistoriesOfPatient(user1.getUsername());
 
     }
 }

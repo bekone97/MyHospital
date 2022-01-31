@@ -210,7 +210,7 @@ class AppointmentControllerTest {
     @WithMockUser(username = "user", roles = {"PATIENT"})
     void makeChoiceTimeOfDayTest() throws Exception {
 
-        when(appointmentService.getAppointmentsOfDayAndDoctor(LocalDate.now().toString(),person1)).thenReturn(appointments);
+        when(appointmentService.findAppointmentsOfDoctorOnDay(LocalDate.now().toString(),person1)).thenReturn(appointments);
         this.mockMvc.perform(get("/choiceOfTime")
                 .flashAttr("appointmentDto",appointmentDto))
                 .andDo(print())
@@ -222,7 +222,7 @@ class AppointmentControllerTest {
                 .andExpect(model().attribute("phoneNumber",appointmentDto.getPhoneNumber()))
                 .andExpect(view().name("appointment/choice-time-of-appointment"))
                 .andExpect(xpath("//*[@id='buttonsOfTime']/div").nodeCount(3));
-        verify(appointmentService,times(1)).getAppointmentsOfDayAndDoctor(LocalDate.now().toString(),person1);
+        verify(appointmentService,times(1)).findAppointmentsOfDoctorOnDay(LocalDate.now().toString(),person1);
     }
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT"})

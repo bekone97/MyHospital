@@ -1,4 +1,4 @@
-package com.itacademy.myhospital.service.emailService;
+package com.itacademy.myhospital.service;
 
 import com.itacademy.myhospital.model.entity.Appointment;
 import com.itacademy.myhospital.model.entity.Person;
@@ -8,13 +8,13 @@ import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 public interface EmailService {
-    public void sendEmail(User user,String siteURL) throws MessagingException, UnsupportedEncodingException;
-    public void sendEmailAboutMakeAppointment(Appointment appointment, User user)
+    void sendEmail(User user,String siteURL) throws MessagingException, UnsupportedEncodingException;
+    void sendEmailAboutMakeAppointment(Appointment appointment, User user)
             throws MessagingException, UnsupportedEncodingException;
-    public void sendEmailAboutCanceledAppointmentByDoctor(Appointment appointment,
+    void sendEmailAboutCanceledAppointmentByDoctor(Appointment appointment,
                                                           Person person)
             throws MessagingException, UnsupportedEncodingException;
-    public void sendEmailAboutCanceledAppointmentByUser(Appointment appointment)
+    void sendEmailAboutCanceledAppointmentByUser(Appointment appointment)
             throws MessagingException, UnsupportedEncodingException;
-    public void sendEmailAboutChangeEmail(User user, String siteURL) throws MessagingException, UnsupportedEncodingException;
+    void sendEmailAboutChangeEmail(User user, String siteURL) throws MessagingException, UnsupportedEncodingException;
 }

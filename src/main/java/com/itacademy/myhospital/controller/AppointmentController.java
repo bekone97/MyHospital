@@ -1,5 +1,6 @@
 package com.itacademy.myhospital.controller;
 
+import com.itacademy.myhospital.constants.Constants;
 import com.itacademy.myhospital.dto.AppointmentDto;
 import com.itacademy.myhospital.exception.AppointmentException;
 import com.itacademy.myhospital.exception.PersonException;
@@ -26,17 +27,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.itacademy.myhospital.constants.Constants.*;
+
 @Controller
 @RequiredArgsConstructor
 public class AppointmentController {
-    public static final String ERROR_EMAIL_EXCEPTION_PAGE = "error/emailException";
-    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
-    public static final String ERROR_FOR_MODEL = "error";
-    public static final String APPOINTMENTS_FOR_MODEL = "appointments";
-    public static final String CURRENT_DATE_TIME_FOR_MODEL = "currentLocalDateTime";
-    public static final String DATES_FOR_MODEL = "dates";
-    public static final String CURRENT_DATE_FOR_MODEL = "currentDate";
-    public static final String USER_FOR_MODEL = "user";
+
+
+
     private final AppointmentService appointmentService;
     private final PersonService personService;
     private final UserService userService;
@@ -51,10 +49,10 @@ public class AppointmentController {
         var patient = personService.findPersonByUsernameOfUser(principal.getName());
         if (patient != null) {
             appointment.setPhoneNumber(patient.getPhoneNumber());
-            model.addAttribute("patient", patient);
+            model.addAttribute(PATIENT_FOR_MODEL, patient);
         }
-        model.addAttribute("listOfDoctors", listOfDoctors);
-        model.addAttribute("listOfDates", listOfDates);
+        model.addAttribute(DOCTORS_FOR_MODEL, listOfDoctors);
+        model.addAttribute(DATES_FOR_MODEL, listOfDates);
         model.addAttribute("appointmentDto", appointment);
 
         return "appointment/choiceOfDateAndPersonal";
@@ -69,17 +67,17 @@ public class AppointmentController {
         if (bindingResult.hasErrors()) {
             var listOfDays = appointmentService.createListOfDays(LocalDate.now());
             var listOfDoctors = personService.findPersonsByRoleId(2);
-            model.addAttribute("listOfDoctors", listOfDoctors);
-            model.addAttribute("listOfDates", listOfDays);
+            model.addAttribute(DOCTORS_FOR_MODEL, listOfDoctors);
+            model.addAttribute(DATES_FOR_MODEL, listOfDays);
             return "appointment/choiceOfDateAndPersonal";
         }
         try {
             var appointmentsOfDay =
-                    appointmentService.getAppointmentsOfDayAndDoctor(appointmentDto.getDateOfAppointment(),
+                    appointmentService.findAppointmentsOfDoctorOnDay(appointmentDto.getDateOfAppointment(),
                             appointmentDto.getPersonal());
             model.addAttribute(APPOINTMENTS_FOR_MODEL, appointmentsOfDay);
-            model.addAttribute("date", appointmentDto.getDateOfAppointment());
-            model.addAttribute("phoneNumber", appointmentDto.getPhoneNumber());
+            model.addAttribute(DATE_FOR_MODEL, appointmentDto.getDateOfAppointment());
+            model.addAttribute(PHONE_NUMBER_FOR_MODEL, appointmentDto.getPhoneNumber());
             model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
             return "appointment/choice-time-of-appointment";
         } catch (AppointmentException e) {
@@ -201,7 +199,7 @@ public class AppointmentController {
                     .getAppointmentsOfDoctorByDate(LocalDate.now(),principal.getName());
          List<LocalDate> dates = appointmentService.createListOfDays(LocalDate.now());
             model.addAttribute(APPOINTMENTS_FOR_MODEL,appointments);
-            model.addAttribute(DATES_FOR_MODEL,dates);
+            model.addAttribute(Constants.DATES_FOR_MODEL,dates);
             model.addAttribute(CURRENT_DATE_FOR_MODEL,LocalDate.now());
         model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
             return "appointment/appointments-schedule";
@@ -218,7 +216,7 @@ public class AppointmentController {
                     .getAppointmentsOfDoctorByDate(LocalDate.parse(date),principal.getName());
         List<LocalDate> dates = appointmentService.createListOfDays(LocalDate.now());
         model.addAttribute(APPOINTMENTS_FOR_MODEL,appointments);
-        model.addAttribute(DATES_FOR_MODEL,dates);
+        model.addAttribute(Constants.DATES_FOR_MODEL,dates);
         model.addAttribute(CURRENT_DATE_FOR_MODEL,LocalDate.parse(date));
         model.addAttribute(CURRENT_DATE_TIME_FOR_MODEL,LocalDateTime.now());
         return "appointment/appointments-schedule";

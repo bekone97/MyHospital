@@ -1,20 +1,14 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.UserDto;
-import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.Person;
-import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.RoleService;
-import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.service.emailService.EmailService;
-import org.junit.Assert;
+import com.itacademy.myhospital.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,15 +17,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.Optional;
 
+import static com.itacademy.myhospital.constants.Constants.LOCALHOST;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
 class UserServiceTest {
-    public static final String LOCALHOST = "http://localhost:8080";
+
     @Autowired
     private UserServiceImpl userService;
 
@@ -126,7 +118,6 @@ class UserServiceTest {
         when(bCryptPasswordEncoder.encode("aspdlap")).thenReturn("dadada");
         var isUserSaved= userService.createCodeAndSaveUser(user1Dto);
         verify(userRepository, times(1)).findUserByUsername(user1Dto.getUsername());
-        verify(userRepository, times(1)).findByVerificationCode(uuid);
         assertTrue(isUserSaved);
     }
 
@@ -150,7 +141,7 @@ class UserServiceTest {
     }
 
     @Test
-    void saveUpdatedUser() throws MessagingException, UserException, IOException, PersonException {
+    void saveUpdatedUser() throws MessagingException, UserException, IOException {
         var userDto1 = UserDto.builder()
                 .id(2)
                 .username("Dima")

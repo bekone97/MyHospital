@@ -1,8 +1,5 @@
 package com.itacademy.myhospital.service.impl;
 
-import com.itacademy.myhospital.exception.DiagnosisException;
-import com.itacademy.myhospital.exception.MedicalHistoryProcessException;
-import com.itacademy.myhospital.exception.NameOfProcessesException;
 import com.itacademy.myhospital.exception.ProcessException;
 import com.itacademy.myhospital.model.entity.Process;
 import com.itacademy.myhospital.model.repository.ProcessRepository;
@@ -15,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,7 +49,7 @@ public void setUp(){
 }
     @Test
     void findByIdFailTest() {
-    when(processRepository.findById(4)).thenReturn(Optional.ofNullable(null));
+    when(processRepository.findById(4)).thenReturn(Optional.empty());
     Exception exception = assertThrows(ProcessException.class,
             ()->processService.findById(4));
     assertTrue(exception.getMessage().contains(NO_PROCESS_WITH_ID_EXCEPTION));

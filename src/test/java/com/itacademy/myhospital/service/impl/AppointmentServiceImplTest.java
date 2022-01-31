@@ -10,7 +10,7 @@ import com.itacademy.myhospital.model.repository.AppointmentRepository;
 import com.itacademy.myhospital.model.repository.PersonRepository;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.AppointmentService;
-import com.itacademy.myhospital.service.emailService.EmailService;
+import com.itacademy.myhospital.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
@@ -127,8 +127,8 @@ class AppointmentServiceImplTest {
 
     @Test
     void createListOfDays() {
-        var listOfDays = appointmentService.createListOfDays(LocalDate.now());
-        assertEquals(5, listOfDays.size());
+        var listOfDays = appointmentService.createListOfDays(LocalDate.of(2022,1,12));
+        assertEquals(6, listOfDays.size());
     }
 
 
@@ -157,7 +157,7 @@ class AppointmentServiceImplTest {
                 () -> appointmentService.changeAppointmentOnBlockedValue(person2.getPhoneNumber(),
                        user2.getUsername(),
                         2));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(2);
         verify(userRepository,times(1)).findUserByUsername(user2.getUsername());
     }
@@ -169,7 +169,7 @@ class AppointmentServiceImplTest {
                 () -> appointmentService.changeAppointmentOnBlockedValue(person2.getPhoneNumber(),
                         user2.getUsername(),
                         2));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(2);
         verify(userRepository,times(1)).findUserByUsername(user2.getUsername());
     }
@@ -182,7 +182,7 @@ class AppointmentServiceImplTest {
                 () -> appointmentService.changeAppointmentOnBlockedValue(person2.getPhoneNumber(),
                         user2.getUsername(),
                         2));
-        assertTrue(exception.getMessage().contains("Appointment is already blocked"));
+        assertTrue(exception.getMessage().contains(APPOINTMENT_IS_ALREADY_BLOCKED_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(2);
         verify(userRepository,times(1)).findUserByUsername(user2.getUsername());
     }
@@ -212,7 +212,7 @@ class AppointmentServiceImplTest {
 
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.cancelAppointmentByUser(user2.getUsername(),2));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
     }
     @Test
     void cancelAppointmentByUserFailTest2(){
@@ -224,7 +224,7 @@ class AppointmentServiceImplTest {
 
         Exception exception = assertThrows(UserException.class,
                 ()->appointmentService.cancelAppointmentByUser(user2.getUsername(),1));
-        assertTrue(exception.getMessage().contains("User doesn't exist with username"));
+        assertTrue(exception.getMessage().contains(NO_USER_WITH_USERNAME_EXCEPTION));
     }
 
     @Test
@@ -251,7 +251,7 @@ class AppointmentServiceImplTest {
 
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.cancelAppointmentByDoctor(2,user2.getUsername()));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(2);
     }
     @Test
@@ -260,7 +260,7 @@ class AppointmentServiceImplTest {
         when(userRepository.findUserByUsername("dadada")).thenReturn(null);
         Exception exception = assertThrows(UserException.class,
                 ()->appointmentService.cancelAppointmentByDoctor(1,"dadada"));
-        assertTrue(exception.getMessage().contains("User doesn't have person object"));
+        assertTrue(exception.getMessage().contains(USER_WITHOUT_A_PERSON_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(1);
         verify(userRepository, times(1)).findUserByUsername("dadada");
     }
@@ -271,7 +271,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findByUser(user2)).thenReturn(null);
         Exception exception = assertThrows(UserException.class,
                 ()->appointmentService.cancelAppointmentByDoctor(1,user2.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't have person object"));
+        assertTrue(exception.getMessage().contains(USER_WITHOUT_A_PERSON_EXCEPTION));
         verify(appointmentRepository, times(1)).findById(1);
         verify(userRepository, times(1)).findUserByUsername(user2.getUsername());
         verify(personRepository,times(1)).findByUser(user2);
@@ -283,7 +283,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findByUser(user2)).thenReturn(person2);
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.cancelAppointmentByDoctor(1,user2.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't have permissions to cancel the appointment"));
+        assertTrue(exception.getMessage().contains(USER_HAS_NO_PERMISSIONS));
         verify(appointmentRepository, times(1)).findById(1);
         verify(userRepository, times(1)).findUserByUsername(user2.getUsername());
         verify(personRepository,times(1)).findByUser(user2);
@@ -307,7 +307,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.blockAppointmentByDoctor(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
         verify(appointmentRepository,times(1)).findById(1);
     }
     @Test
@@ -317,7 +317,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(null);
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.blockAppointmentByDoctor(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't have permissions to block the appointment"));
+        assertTrue(exception.getMessage().contains(USER_HAS_NO_PERMISSIONS));
         verify(appointmentRepository,times(1)).findById(1);
     }
     @Test
@@ -337,7 +337,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.unblockAppointmentByDoctor(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("The appointment doesn't exist"));
+        assertTrue(exception.getMessage().contains(NO_APPOINTMENT_EXCEPTION));
         verify(appointmentRepository,times(1)).findById(1);
     }
     @Test
@@ -347,7 +347,7 @@ class AppointmentServiceImplTest {
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(null);
         Exception exception = assertThrows(AppointmentException.class,
                 ()->appointmentService.unblockAppointmentByDoctor(1,user1.getUsername()));
-        assertTrue(exception.getMessage().contains("User doesn't have permissions to unblock the appointment"));
+        assertTrue(exception.getMessage().contains(USER_HAS_NO_PERMISSIONS));
         verify(appointmentRepository,times(1)).findById(1);
     }
 }

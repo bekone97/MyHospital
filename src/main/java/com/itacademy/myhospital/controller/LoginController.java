@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
+import static com.itacademy.myhospital.constants.Constants.*;
+
 
 @Controller
 @RequestMapping()
@@ -32,7 +34,7 @@ public class LoginController {
     public String authorization(Model model){
        UserDto user = new UserDto();
 
-       model.addAttribute("user",user);
+       model.addAttribute(USER_FOR_MODEL,user);
 
        return "authorization";
 
@@ -48,11 +50,11 @@ public class LoginController {
         try {
             userService.createCodeAndSaveUser(user);
         } catch (UserException e) {
-            model.addAttribute("error",e.getMessage());
-            model.addAttribute("user",user);
+            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
+            model.addAttribute(USER_FOR_MODEL,user);
             return "authorization";
         } catch (MessagingException |UnsupportedEncodingException e) {
-            return "error/emailException";
+            return ERROR_EMAIL_EXCEPTION_PAGE;
         }
         return "redirect:/";
     }
@@ -62,8 +64,8 @@ public class LoginController {
     public String makeVerification(@RequestParam("code") String verificationCode, Model model){
 
        if (!userService.checkAndChangeVerificationStatus(verificationCode)){
-           model.addAttribute("error","There is no user with the code :"+verificationCode);
-           return "error/exception";
+           model.addAttribute(ERROR_FOR_MODEL,"There is no user with the code :"+verificationCode);
+           return ERROR_EXCEPTION_PAGE;
        }else {
            return "redirect:/";
        }
@@ -73,8 +75,8 @@ public class LoginController {
     public String loginPage(Model model, HttpServletRequest request){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication==null || authentication instanceof AnonymousAuthenticationToken) {
-            if (request.getParameterMap().get("error") != null)
-                model.addAttribute("error", "You entered wrong parameters. Please try again");
+            if (request.getParameterMap().get(ERROR_FOR_MODEL) != null)
+                model.addAttribute(ERROR_FOR_MODEL, "You entered wrong parameters. Please try again");
             return "login";
         }else{
             return "redirect:/";

@@ -1,13 +1,14 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.UserDto;
+import com.itacademy.myhospital.exception.DiagnosisException;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.service.emailService.EmailService;
+import com.itacademy.myhospital.service.EmailService;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,10 +33,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.itacademy.myhospital.constants.Constants.*;
+
 @Service
 public class UserServiceImpl implements UserService {
 
-    public static final String LOCALHOST = "http://localhost:8080";
+
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -64,12 +68,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public User findById(Integer id) throws UserException {
-        var optional = userRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new UserException("User doesn't exist with id: "+id);
-        }
+        return userRepository.findById(id)
+                .orElseThrow(()->new UserException(NO_USER_EXCEPTION +id));
     }
 
     public boolean saveAndFlush(User item) {
@@ -102,12 +102,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
-    /**
-     *  This method is for encoding and changing password of user .
-     * @param user this is Dto of user.
-     * @return If the method has completed  return true
-     * @throws UserException if there is no user with UserDto.getId in the database
-     */
+
     @Transactional
     public boolean updatePasswordOfUser(UserDto user) throws UserException {
         var updatedUser = findById(user.getId());
@@ -116,17 +111,10 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    /**
-     * This method checks username, creates a verification code for new user, encodes the password of new user, sends an
-     * email message to a new user and saves a new user.
-     * @param userDto This is dto of new user.
-     * @return  If the method is successful, true is returned
-     * @throws UserException If a user with the same name already exists, the method throws an error
-     * @throws MessagingException,UnsupportedEncodingException If there are some problems with sending a message
-     */
+
     @Transactional
     public boolean createCodeAndSaveUser(UserDto userDto) throws UserException, MessagingException, UnsupportedEncodingException {
-        if (findByUsername(userDto.getUsername())!=null) {
+        if (findByUsername(userDto.getUsername())==null) {
             var user = User.builder()
                     .username(userDto.getUsername())
                     .verificationCode(createRandomCode())
@@ -139,7 +127,7 @@ public class UserServiceImpl implements UserService {
             saveAndFlush(user);
             return true;
         }else {
-            throw new UserException("User with this username also exist");
+            throw new UserException(USER_WITH_THIS_USERNAME_ALSO_EXIST);
         }
     }
 
@@ -148,12 +136,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    /**
-     * This method changes a verification status on true value, adds the role_patient to a user,
-     * makes verification code equals null and saves a user
-     * @param code - the verification code of user
-     * @return true if a user exists and its status is false or false if there is no user with the code or its status is true
-     */
+
     @Transactional
     public boolean checkAndChangeVerificationStatus(String code) {
         var user = findByVerificationCode(code);
@@ -170,14 +153,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    /**
-     * This method checks changing of an email , img , roles and makes these changes and saves a user.
-     * @param user - a userDto with changes.
-     * @param multipartFile - an img of user.
-     * @return true
-     * @throws UserException If there is no user with userDto.getId()
-     * @throws IOException,MessagingException if there are some problems with sending message
-     */
+
     @Transactional
     public boolean saveUpdatedUser(UserDto user, MultipartFile multipartFile) throws UserException, IOException, MessagingException {
         var updatedUser = findById(user.getId());

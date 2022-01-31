@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+import static com.itacademy.myhospital.constants.Constants.*;
+
 @Controller
 @RequiredArgsConstructor
 public class HistoryOfCompletingProcessController {
 
-    public static final String ERROR_FOR_MODEL = "error";
-    public static final String ERROR_EXCEPTION_PAGE = "error/exception";
     private final HistoryOfCompletingProcessService historyOfCompletingProcessService;
     private final PersonService personService;
     private final MedicalHistoryProcessService medicalHistoryProcessService;
@@ -48,8 +48,8 @@ public class HistoryOfCompletingProcessController {
             var medicalProcess = medicalHistoryProcessService.findById(id);
             var historiesOfCompletingProcess =
                     historyOfCompletingProcessService.findByMedicalHistoryProcess(medicalProcess);
-            model.addAttribute("executionHistory", historiesOfCompletingProcess);
-            model.addAttribute("process", medicalProcess);
+            model.addAttribute(EXECUTION_HISTORY_FOR_MODEL, historiesOfCompletingProcess);
+            model.addAttribute(PROCESS_FOR_MODEL, medicalProcess);
             return "historyOfCompletingProcess/executions-of-process";
         } catch (MedicalHistoryProcessException e) {
             model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
