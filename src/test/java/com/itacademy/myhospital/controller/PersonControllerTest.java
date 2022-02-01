@@ -1,7 +1,6 @@
 package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.dto.PersonDto;
-import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.model.entity.*;
 import com.itacademy.myhospital.service.PersonService;
@@ -28,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.itacademy.myhospital.constants.Constants.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -210,7 +210,9 @@ class PersonControllerTest {
                         .param("sortDirection", "asc"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
 
     }
@@ -219,11 +221,11 @@ class PersonControllerTest {
     void personsFailTest3() throws Exception {
         when(personService.findAll(10, "id", "asc")).thenThrow(PersonException.class);
         this.mockMvc.perform(get("/persons/10")
-                        .param("sortField", "id")
-                        .param("sortDirection", "asc"))
+                        .param(SORT_FIELD_FOR_MODEL, "id")
+                        .param(SORT_DIRECTION_FOR_MODEL, ASC_FOR_SORT_DIRECTION))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -236,8 +238,8 @@ class PersonControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(authenticated())
                 .andExpect(model().size(2))
-                .andExpect(model().attribute("histories", medicalHistories))
-                .andExpect(model().attribute("person", person1))
+                .andExpect(model().attribute(HISTORIES_FOR_MODEL, medicalHistories))
+                .andExpect(model().attribute(PERSON_FOR_MODEL, person1))
                 .andExpect(view().name("person/person-info"))
                 .andExpect(xpath("//*[@id='historiesTBody']/div").nodeCount(2));
 
@@ -254,8 +256,8 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(personService, times(1)).findById(10);
         verify(personService, times(0)).findCurrentHistories(person1);
@@ -269,7 +271,9 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/person/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -281,7 +285,7 @@ class PersonControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(authenticated())
                 .andExpect(model().size(1))
-                .andExpect(model().attribute("person", person))
+                .andExpect(model().attribute(PERSON_FOR_MODEL, person))
                 .andExpect(view().name("person/person-add-info"));
     }
 
@@ -290,7 +294,9 @@ class PersonControllerTest {
     void addNewPersonFailTest() throws Exception {
         this.mockMvc.perform(get("/addNewPerson"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -302,7 +308,7 @@ class PersonControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(authenticated())
                 .andExpect(model().size(1))
-                .andExpect(model().attribute("person", person))
+                .andExpect(model().attribute(PERSON_FOR_MODEL, person))
                 .andExpect(view().name("person/person-add-for-history"));
     }
 
@@ -312,25 +318,22 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/addNewPersonForHistory"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE", "DOCTOR"})
     void saveNewPersonTest() throws Exception {
         personDto.setKeyForUser(null);
-        personDto.setPhoneNumber("9829832983212");
+        personDto.setPhoneNumber("375297342979");
         this.mockMvc.perform(post("/saveNewPerson")
-                        .param("firstName", personDto.getFirstName())
-                        .param("surname", personDto.getSurname())
-                        .param("patronymic", personDto.getPatronymic())
-                        .param("phoneNumber", personDto.getPhoneNumber())
-                        .param("address", personDto.getAddress())
-                        .param("dateOfBirthday", LocalDate.now().minusDays(10).toString()))
+                        .flashAttr("person",personDto))
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().is3xxRedirection())
-                        .andExpect(redirectedUrl("/addPatientToNewHistory"));
+                .andExpect(redirectedUrl("/addPatientToNewHistory"));
 
         verify(personService, times(1)).createPersonFromPersonDtoAndSave(personDto);
     }
@@ -363,7 +366,9 @@ class PersonControllerTest {
                         .param("address", personDto.getAddress())
                         .param("dateOfBirthday", LocalDate.now().minusDays(10).toString()))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -388,7 +393,9 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/updatePerson/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService, times(0)).createPersonDtoFromPerson(1);
     }
 
@@ -400,8 +407,8 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService, times(1)).createPersonDtoFromPerson(20);
     }
 
@@ -422,7 +429,9 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/deletePerson/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService, times(0)).deleteById(1);
     }
 
@@ -434,8 +443,8 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService, times(1)).deleteById(20);
     }
 
@@ -504,7 +513,9 @@ class PersonControllerTest {
                         .param("keyword", keyword))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(personService, times(0)).search(keyword);
     }
@@ -515,8 +526,8 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/searchPerson")
                         .param("keyword", keyword))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
 
     }
 
@@ -619,8 +630,9 @@ class PersonControllerTest {
         this.mockMvc.perform(get("/personal/10"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService, times(1)).checkAndFindPersonal(10);
     }
 }

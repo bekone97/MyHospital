@@ -2,14 +2,13 @@ package com.itacademy.myhospital.dto;
 
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.validator.PersonAgeConstraint;
-import com.itacademy.myhospital.validator.PersonPhoneNumberConstraint;
+import com.itacademy.myhospital.validator.PhoneNumberConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 
@@ -41,7 +40,7 @@ public class PersonDto {
     @PersonAgeConstraint
     private String dateOfBirthday;
 
-    @PersonPhoneNumberConstraint
+    @PhoneNumberConstraint
     private String phoneNumber;
 
     private User user;

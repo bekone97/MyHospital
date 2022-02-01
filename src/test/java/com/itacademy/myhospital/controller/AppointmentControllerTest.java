@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
 class AppointmentControllerTest {
+
     @Autowired
     private WebApplicationContext context;
 
@@ -154,10 +155,10 @@ class AppointmentControllerTest {
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
                 .andExpect(model().size(4))
-                .andExpect(model().attribute("patient", patient))
-                .andExpect(model().attribute("listOfDates", dates))
-                .andExpect(model().attribute("listOfDoctors", personList))
-                .andExpect(model().attribute("appointmentDto", AppointmentDto.builder()
+                .andExpect(model().attribute(PATIENT_FOR_MODEL, patient))
+                .andExpect(model().attribute(DATES_FOR_MODEL, dates))
+                .andExpect(model().attribute(DOCTORS_FOR_MODEL, personList))
+                .andExpect(model().attribute(APPOINTMENT_DTO_FOR_MODEL, AppointmentDto.builder()
                         .phoneNumber(patient.getPhoneNumber())
                         .build()))
                 .andExpect(view().name("appointment/choiceOfDateAndPersonal"))
@@ -185,9 +186,9 @@ class AppointmentControllerTest {
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
                 .andExpect(model().size(3))
-                .andExpect(model().attribute("listOfDates", dates))
-                .andExpect(model().attribute("listOfDoctors", personList))
-                .andExpect(model().attribute("appointmentDto", new AppointmentDto()))
+                .andExpect(model().attribute(DATES_FOR_MODEL, dates))
+                .andExpect(model().attribute(DOCTORS_FOR_MODEL, personList))
+                .andExpect(model().attribute(APPOINTMENT_DTO_FOR_MODEL, new AppointmentDto()))
                 .andExpect(view().name("appointment/choiceOfDateAndPersonal"))
                 .andExpect(xpath("//*[@id='doctors']/div").nodeCount(2))
                 .andExpect(xpath("//*[@id='date']/div").nodeCount(3))
@@ -196,20 +197,12 @@ class AppointmentControllerTest {
         verify(personService, times(1)).findPersonsByRoleId(2);
         verify(personService, times(1)).findPersonByUsernameOfUser(user1.getUsername());
     }
-    @Test
-    void makeChoiceOfDateAndDoctorWithoutUserTest() throws Exception {
-
-        this.mockMvc.perform(get("/choiceOfDateAndDoctor"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-    }
 
 
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT"})
     void makeChoiceTimeOfDayTest() throws Exception {
-
+        appointmentDto.setPhoneNumber("375297342979");
         when(appointmentService.findAppointmentsOfDoctorOnDay(LocalDate.now().toString(),person1)).thenReturn(appointments);
         this.mockMvc.perform(get("/choiceOfTime")
                 .flashAttr("appointmentDto",appointmentDto))
@@ -217,9 +210,9 @@ class AppointmentControllerTest {
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
                 .andExpect(model().size(5))
-                .andExpect(model().attribute("appointments",appointments))
-                .andExpect(model().attribute("date",appointmentDto.getDateOfAppointment()))
-                .andExpect(model().attribute("phoneNumber",appointmentDto.getPhoneNumber()))
+                .andExpect(model().attribute(APPOINTMENTS_FOR_MODEL,appointments))
+                .andExpect(model().attribute(DATE_FOR_MODEL,appointmentDto.getDateOfAppointment()))
+                .andExpect(model().attribute(PHONE_NUMBER_FOR_MODEL,appointmentDto.getPhoneNumber()))
                 .andExpect(view().name("appointment/choice-time-of-appointment"))
                 .andExpect(xpath("//*[@id='buttonsOfTime']/div").nodeCount(3));
         verify(appointmentService,times(1)).findAppointmentsOfDoctorOnDay(LocalDate.now().toString(),person1);
@@ -236,8 +229,8 @@ class AppointmentControllerTest {
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
                 .andExpect(model().size(3))
-                .andExpect(model().attribute("listOfDoctors",personList))
-                .andExpect(model().attribute("listOfDates",dates))
+                .andExpect(model().attribute(DOCTORS_FOR_MODEL,personList))
+                .andExpect(model().attribute(DATES_FOR_MODEL,dates))
                 .andExpect(view().name("appointment/choiceOfDateAndPersonal"));
 
         verify(appointmentService,times(1)).createListOfDays(LocalDate.now());
@@ -269,8 +262,8 @@ class AppointmentControllerTest {
                         .param("phoneNumber",patient.getPhoneNumber()))
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(appointmentService,times(1))
                 .changeAppointmentOnBlockedValue(patient.getPhoneNumber(),user1.getUsername(), 1);
@@ -344,8 +337,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(userService,times(1)).findById(1);
     }
@@ -356,7 +349,8 @@ class AppointmentControllerTest {
         this.mockMvc.perform(get("/allAppointmentsOfUser/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(userService,times(0)).findById(1);
     }
@@ -382,8 +376,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(appointmentService,times(1)).cancelAppointmentByUser(user1.getUsername(),1);
     }
 
@@ -408,8 +402,8 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(appointmentService,times(1)).cancelAppointmentByDoctor(1,user1.getUsername());
     }
     @Test
@@ -420,7 +414,9 @@ class AppointmentControllerTest {
         this.mockMvc.perform(post("/cancelAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -451,8 +447,8 @@ class AppointmentControllerTest {
         this.mockMvc.perform(get("/mySchedule"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now(),user1.getUsername());
     }
     @Test
@@ -461,7 +457,9 @@ class AppointmentControllerTest {
         when(appointmentService.createListOfDays(LocalDate.now())).thenReturn(dates);
         this.mockMvc.perform(get("/mySchedule"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -476,9 +474,9 @@ class AppointmentControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().size(4))
-                .andExpect(model().attribute("appointments",appointments))
-                .andExpect(model().attribute("dates",dates))
-                .andExpect(model().attribute("currentDate",LocalDate.now().plusDays(2)))
+                .andExpect(model().attribute(APPOINTMENTS_FOR_MODEL,appointments))
+                .andExpect(model().attribute(DATES_FOR_MODEL,dates))
+                .andExpect(model().attribute(CURRENT_DATE_FOR_MODEL,LocalDate.now().plusDays(2)))
                 .andExpect(view().name("appointment/appointments-schedule"));
         verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),
                 user1.getUsername());
@@ -491,20 +489,20 @@ class AppointmentControllerTest {
         when(appointmentService.getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),user1.getUsername()))
                 .thenThrow(PersonException.class);
         this.mockMvc.perform(get("/myScheduleByDate")
-                        .param("date",LocalDate.now().plusDays(2).toString()))
+                        .param(DATES_FOR_MODEL,LocalDate.now().plusDays(2).toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
-        verify(appointmentService,times(1)).getAppointmentsOfDoctorByDate(LocalDate.now().plusDays(2),
-                user1.getUsername());
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT","NURSE"})
     void getMyAppointmentsScheduleByDateFailTest2() throws Exception {
         this.mockMvc.perform(get("/myScheduleByDate"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
@@ -525,8 +523,8 @@ class AppointmentControllerTest {
         this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(appointmentService,times(1)).blockAppointmentByDoctor(1,user1.getUsername());
     }
     @Test
@@ -534,7 +532,9 @@ class AppointmentControllerTest {
     void blockAppointmentByDoctorFailTest2() throws Exception {
         this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
@@ -555,8 +555,8 @@ class AppointmentControllerTest {
         this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(appointmentService,times(1)).unblockAppointmentByDoctor(1,user1.getUsername());
     }
     @Test
@@ -564,6 +564,8 @@ class AppointmentControllerTest {
     void unblockAppointmentByDoctorFailTest2() throws Exception {
         this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 }

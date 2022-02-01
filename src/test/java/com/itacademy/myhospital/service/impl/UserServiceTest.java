@@ -6,6 +6,7 @@ import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.EmailService;
+import com.itacademy.myhospital.service.UUIDService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.itacademy.myhospital.constants.Constants.ERROR_EXCEPTION_PAGE;
+import static com.itacademy.myhospital.constants.Constants.LOGIN_PAGE;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -142,8 +144,8 @@ class UserControllerTest {
         when(userService.findAll(1,"asc","id")).thenReturn(usersPage);
         this.mockMvc.perform(get("/users/1").param("sortField","asc").param("sortDirection","id"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
@@ -151,7 +153,9 @@ class UserControllerTest {
         when(userService.findAll(1,"asc","id")).thenReturn(usersPage);
         this.mockMvc.perform(get("/users/1").param("sortField","asc").param("sortDirection","id"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -173,8 +177,8 @@ class UserControllerTest {
     void userInfoWithoutUser() throws Exception {
         this.mockMvc.perform(get("/userProfile"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = ("ADMIN"))
@@ -196,8 +200,8 @@ class UserControllerTest {
         this.mockMvc.perform(get("/user/20"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(userService,times(1)).getDtoById(20);
     }
     @Test
@@ -205,15 +209,17 @@ class UserControllerTest {
     void userByIdFailTest2() throws Exception {
         this.mockMvc.perform(get("/user/20"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
     void userByIdWithoutUserFailTest3() throws Exception {
         this.mockMvc.perform(get("/user/20"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -234,8 +240,8 @@ class UserControllerTest {
     void userSettingsWithoutUser() throws Exception {
         this.mockMvc.perform(get("/userSettings"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -260,8 +266,8 @@ class UserControllerTest {
     void userSettingsForAdminFailTest1() throws Exception {
         this.mockMvc.perform(get("/userSettings/1"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = ("ADMIN"))
@@ -270,8 +276,8 @@ class UserControllerTest {
         this.mockMvc.perform(get("/userSettings/20"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(userService,times(1)).getDtoByIdForSettings(20);
     }
     @Test
@@ -279,7 +285,9 @@ class UserControllerTest {
     void userSettingsForAdminFailTest3() throws Exception {
         this.mockMvc.perform(get("/userSettings/1"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = "PATIENT")
@@ -333,8 +341,8 @@ class UserControllerTest {
                         .param("email",userDto1.getEmail())
                         .param("userImg","userImg"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -382,7 +390,9 @@ class UserControllerTest {
                         .param("email",userDto1.getEmail())
                         .param("userImg","userImg"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     void updateUserByAdminWithoutUser() throws Exception {
@@ -400,8 +410,8 @@ class UserControllerTest {
                         .param("email",userDto1.getEmail())
                         .param("userImg","userImg"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = ("ADMIN"))
@@ -443,8 +453,9 @@ class UserControllerTest {
         this.mockMvc.perform(post("/deleteUser/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(userService,times(1)).deleteById(1);
     }
     @Test
@@ -453,7 +464,9 @@ class UserControllerTest {
         when(userService.deleteById(1)).thenThrow(UserException.class);
         this.mockMvc.perform(post("/deleteUser/1"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(userService,times(0)).deleteById(1);
     }
 
@@ -470,8 +483,8 @@ class UserControllerTest {
     void userAuthenticationFailTest() throws Exception {
         this.mockMvc.perform(get("/userAuthentication"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -496,8 +509,9 @@ class UserControllerTest {
                         .param("key",person.getKeyForUser()))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/userProfile"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
     }
     @Test
@@ -520,8 +534,8 @@ class UserControllerTest {
         this.mockMvc.perform(post("/authentication")
                         .param("key",person.getKeyForUser()))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
 
     @Test
@@ -565,8 +579,8 @@ class UserControllerTest {
                         .param("id",userDto1.getId().toString())
                         .param("img",userDto1.getImg()))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = {"ADMIN"})
@@ -611,6 +625,8 @@ class UserControllerTest {
                         .param("img",userDto1.getImg()))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 }

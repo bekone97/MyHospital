@@ -2,9 +2,7 @@ package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.service.UserService;
-import org.apache.catalina.connector.RequestFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -14,20 +12,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static com.itacademy.myhospital.constants.Constants.ERROR_EXCEPTION_PAGE;
+import static com.itacademy.myhospital.constants.Constants.LOGIN_PAGE;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,7 +35,6 @@ class LoginControllerTest {
     private UserService userService;
 
     private UserDto userDto1;
-    private User user1;
     @BeforeEach
     public void setUp(){
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
@@ -50,13 +43,6 @@ class LoginControllerTest {
                 .password("password")
                 .email("User@mail.ru")
                 .authenticationStatus(false)
-                .build();
-        user1 = User.builder()
-                .id(1)
-                .username("user")
-                .password("password")
-                .email("User@mail.ru")
-                .img("asldaldk")
                 .build();
     }
     @Test
@@ -74,7 +60,9 @@ class LoginControllerTest {
     void authorizationGetFailTest() throws Exception {
         this.mockMvc.perform(get("/authorization"))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -119,7 +107,9 @@ class LoginControllerTest {
         this.mockMvc.perform(post("/authorization")
                         .flashAttr("user",userDto1))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user",roles = "PATIENT")
@@ -140,8 +130,8 @@ class LoginControllerTest {
         this.mockMvc.perform(get("/verification")
                         .param("code",code))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
         verify(userService,times(0)).checkAndChangeVerificationStatus(code);
     }
 

@@ -1,7 +1,6 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.PersonDto;
-import com.itacademy.myhospital.exception.NameOfProcessesException;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.MedicalHistory;
@@ -9,6 +8,7 @@ import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.PersonRepository;
 import com.itacademy.myhospital.service.PersonService;
+import com.itacademy.myhospital.service.UUIDService;
 import com.itacademy.myhospital.service.UserService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;

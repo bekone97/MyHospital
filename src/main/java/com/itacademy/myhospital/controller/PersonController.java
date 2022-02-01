@@ -99,15 +99,11 @@ public class PersonController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping("/updatePerson/{id}")
     public String infoUpdatePerson(@PathVariable Integer id,
-                                   Model model) {
-        try {
+                                   Model model) throws PersonException {
+
             var personDto = personService.createPersonDtoFromPerson(id);
             model.addAttribute(PERSON_FOR_MODEL, personDto);
             return PERSON_PERSON_ADD_INFO_VIEW;
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_DOCTOR')")
@@ -132,14 +128,9 @@ public class PersonController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/deletePerson/{id}")
-    public String deletePerson(@PathVariable Integer id,
-                               Model model) {
-        try {
+    public String deletePerson(@PathVariable Integer id) throws PersonException {
+
             personService.deleteById(id);
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
         return REDIRECT_PERSONS_PAGE;
     }
 
@@ -185,14 +176,10 @@ public class PersonController {
     }
 
     @GetMapping("/personal/{id}")
-    public String getPersonal(@PathVariable("id") Integer id, Model model) {
-        try {
+    public String getPersonal(@PathVariable("id") Integer id, Model model) throws PersonException {
             var personal = personService.checkAndFindPersonal(id);
             model.addAttribute(PERSON_FOR_MODEL, personal);
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            return ERROR_EXCEPTION_PAGE;
-        }
+
         return PERSON_PERSON_INFO_VIEW;
     }
 

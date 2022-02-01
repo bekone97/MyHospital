@@ -1,4 +1,4 @@
-package com.itacademy.myhospital.service.impl;
+package com.itacademy.myhospital.service;
 
 public interface UUIDService {
     String getRandomString();

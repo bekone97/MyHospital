@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.itacademy.myhospital.constants.Constants.ERROR_EXCEPTION_PAGE;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -162,6 +163,8 @@ class ProcessControllerTest {
                         .flashAttr("history",dtoWithNumberOfProcesses))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 }

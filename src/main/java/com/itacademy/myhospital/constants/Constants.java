@@ -1,10 +1,12 @@
 package com.itacademy.myhospital.constants;
 
 public class Constants {
-
+    public static final String EXCEPTION_NAME_FOR_MODEL = "exceptionName";
     public static final String LOCALHOST = "http://localhost:8080";
+    public static final String LOGIN_PAGE = "/login";
     public static final String ERROR_FOR_MODEL = "error";
     public static final String ERROR_EXCEPTION_PAGE = "error/exception";
+    public static final String APPOINTMENT_DTO_FOR_MODEL = "appointmentDto";
     public static final String APPOINTMENTS_FOR_MODEL = "appointments";
     public static final String CURRENT_DATE_TIME_FOR_MODEL = "currentLocalDateTime";
     public static final String DATES_FOR_MODEL = "dates";
@@ -57,6 +59,8 @@ public class Constants {
     public static final String PERSON_HAS_A_USER_EXCEPTION = "Person also has a user";
     public static final String NO_PAGE_WITH_NUMBER_EXCEPTION = "There is no page with the number : ";
     public static final String NO_PROCESS_WITH_ID_EXCEPTION = "There is no process with id : ";
+    public static final String PRINCIPAL_WITHOUT_USER = "no user";
+    public static final String HANDLER_MESSAGE = "The {} was handled in defaultExceptionHandler. The method was invoked by :'{}'. URL = {}";
     public static final int OPERATION_ID = 1;
     public static final int PROCEDURE_ID = 2;
     public static final int MEDICATION_ID = 3;

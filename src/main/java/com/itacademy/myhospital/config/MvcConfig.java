@@ -2,7 +2,6 @@ package com.itacademy.myhospital.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -10,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import javax.websocket.Session;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -45,9 +43,5 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
-            @Bean
-        public MethodValidationPostProcessor methodValidationPostProcessor() {
-            return new MethodValidationPostProcessor();
-        }
 
     }

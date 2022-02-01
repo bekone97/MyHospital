@@ -3,9 +3,9 @@ package com.itacademy.myhospital.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class PersonPhoneNumberValidator implements ConstraintValidator<PersonPhoneNumberConstraint,String> {
+public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberConstraint,String> {
     @Override
-    public void initialize(PersonPhoneNumberConstraint constraintAnnotation) {
+    public void initialize(PhoneNumberConstraint constraintAnnotation) {
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.dto.UserDto;
-import com.itacademy.myhospital.exception.DiagnosisException;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Role;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.model.repository.UserRepository;
 import com.itacademy.myhospital.service.RoleService;
+import com.itacademy.myhospital.service.UUIDService;
 import com.itacademy.myhospital.service.UserService;
 import com.itacademy.myhospital.service.EmailService;
 import org.apache.tomcat.util.http.fileupload.FileUtils;

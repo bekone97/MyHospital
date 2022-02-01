@@ -21,10 +21,12 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -166,7 +168,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      * @param person - the person for whom appointments are created
      */
     private void checkDatesAndSaveAppointmentsForPersonForDay(LocalDateTime dateOfAppointments, Person person) {
-        if (!(dateOfAppointments.getDayOfWeek().getValue() == 6 || dateOfAppointments.getDayOfWeek().getValue() == 7)) {
+        if (!(Arrays.asList(DayOfWeek.SUNDAY, DayOfWeek.SATURDAY).contains(dateOfAppointments.getDayOfWeek()))){
             while (dateOfAppointments.getHour() < 18) {
                 createAndSaveAppointment(dateOfAppointments, person);
                 dateOfAppointments = dateOfAppointments.plusMinutes(30);
@@ -188,7 +190,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<LocalDate> createListOfDays(LocalDate date) {
         List<LocalDate> listOfDates = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            if (date.getDayOfWeek().getValue() != 6 && date.getDayOfWeek().getValue() != 7) {
+            if (!Arrays.asList(DayOfWeek.SUNDAY, DayOfWeek.SATURDAY).contains(date.getDayOfWeek())) {
                 listOfDates.add(date);
             }
             date = date.plusDays(1);

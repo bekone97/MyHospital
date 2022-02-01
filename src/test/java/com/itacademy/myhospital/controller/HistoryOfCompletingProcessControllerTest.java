@@ -19,21 +19,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import static com.itacademy.myhospital.constants.Constants.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -149,8 +149,8 @@ class HistoryOfCompletingProcessControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService,times(1)).findPersonByUsernameOfUser("user");
         verify(medicalHistoryProcessService,times(1)).findById(1);
         verify(historyOfCompletingProcessService,times(1))
@@ -168,8 +168,8 @@ class HistoryOfCompletingProcessControllerTest {
                         .param("result",result))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService,times(1)).findPersonByUsernameOfUser("user");
         verify(medicalHistoryProcessService,times(1)).findById(1);
 
@@ -182,7 +182,9 @@ class HistoryOfCompletingProcessControllerTest {
                         .param("result",result))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -212,8 +214,8 @@ class HistoryOfCompletingProcessControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryProcessService,times(1)).findById(1);
     }
@@ -224,7 +226,9 @@ class HistoryOfCompletingProcessControllerTest {
         this.mockMvc.perform(get("/processExecutionHistory/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -253,7 +257,8 @@ class HistoryOfCompletingProcessControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(view().name("error/405"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryProcessService,times(1)).findById(1);
     }
@@ -263,6 +268,8 @@ class HistoryOfCompletingProcessControllerTest {
         this.mockMvc.perform(get("/deleteProcess/1"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 }

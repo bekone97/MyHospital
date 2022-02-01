@@ -2,12 +2,11 @@ package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithNumberOfProcesses;
 import com.itacademy.myhospital.dto.MedicalHistoryDtoWithProcesses;
-import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.MedicalHistoryException;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.*;
 import com.itacademy.myhospital.model.entity.Process;
+import com.itacademy.myhospital.model.entity.*;
 import com.itacademy.myhospital.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,11 +32,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.itacademy.myhospital.constants.Constants.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -72,7 +73,6 @@ class MedicalHistoryControllerTest {
 
     private User user1;
     private User user2;
-    private UserDto userDto1;
     List<Person> personList;
     private Person person1;
     private Person person2;
@@ -103,14 +103,6 @@ class MedicalHistoryControllerTest {
                 .password("asdadaw")
                 .email("Adsdn@mail.ru")
 
-                .build();
-        userDto1 = UserDto.builder()
-                .id(user1.getId())
-                .username(user1.getUsername())
-                .password(user1.getPassword())
-                .img(user1.getImg())
-                .email(user1.getEmail())
-                .authenticationStatus(user1.getAuthenticationStatus())
                 .build();
 
         person1 = Person.builder()
@@ -218,8 +210,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryService, times(1)).checkPersonForViewHistory(15, user1.getUsername());
     }
@@ -233,8 +225,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryService, times(1)).checkPersonForViewHistory(15, user1.getUsername());
     }
@@ -243,8 +235,8 @@ class MedicalHistoryControllerTest {
     void historyByIdFailTest3() throws Exception {
         this.mockMvc.perform(get("/history/15"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(status().isOk())
+                .andExpect(view().name(LOGIN_PAGE));
 
         verify(medicalHistoryService, times(0)).checkPersonForViewHistory(15, user1.getUsername());
     }
@@ -290,7 +282,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(post("/checkHistory")
                         .flashAttr("history", dtoWithProcesses))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
     }
 
@@ -336,8 +330,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(diagnosisService, times(1)).getDiagnosesOfPerson(user1.getUsername());
         verify(personService, times(1)).findById(10);
@@ -349,7 +343,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/addNewHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(diagnosisService, times(0)).getDiagnosesOfPerson(user1.getUsername());
         verify(personService, times(0)).findById(10);
@@ -360,15 +356,15 @@ class MedicalHistoryControllerTest {
     void addProcessToMedicalHistoryTest() throws Exception {
         List<Process> processes = new ArrayList<>();
         processes.add(Process.builder()
-                .id(1)
+                .id(OPERATION_ID)
                 .name("OPERATION")
                 .build());
         processes.add(Process.builder()
-                .id(2)
+                .id(PROCEDURE_ID)
                 .name("PROCEDURE")
                 .build());
         processes.add(Process.builder()
-                .id(3)
+                .id(MEDICATION_ID)
                 .name("MEDICATION")
                 .build());
         var medicalHistoryProcess = MedicalHistoryProcess.builder()
@@ -412,8 +408,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(medicalHistoryService, times(1)).findById(10);
     }
 
@@ -424,7 +420,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/addProcessToMedicalHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT", "NURSE", "DOCTOR"})
@@ -476,7 +474,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(post("/addProcessToMedicalHistory")
                         .flashAttr("medicalHistoryProcess", medicalHistoryProcess))
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -499,8 +499,9 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryService,times(1)).dischargePatient(10);
     }
@@ -511,7 +512,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/dischargePatient/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryService,times(0)).dischargePatient(10);
     }
@@ -540,8 +543,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
         verify(personService,times(1)).findById(10);
         verify(medicalHistoryService,times(0)).findByPatient(person1);
     }
@@ -552,7 +555,9 @@ class MedicalHistoryControllerTest {
         this.mockMvc.perform(get("/openHistory/10"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
     @Test
@@ -597,8 +602,8 @@ class MedicalHistoryControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(view().name("error/exception"));
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
 
         verify(medicalHistoryService,times(1)).findHistoriesOfPatient(user1.getUsername());
 

@@ -91,7 +91,7 @@ public class MedicalHistoryController {
                 medicalHistoryProcess.setMedicalHistory(history);
                 var processes = processService.findAll();
                 model.addAttribute(MEDICAL_HISTORY_PROCESS_FOR_MODEL, medicalHistoryProcess);
-                model.addAttribute(PROCESS_FOR_MODEL, processes);
+                model.addAttribute(PROCESSES_FOR_MODEL, processes);
                 return "history/add-process-to-medical-history";
             } else {
                 return "redirect:/history/" + history.getId();

@@ -53,7 +53,7 @@ public class AppointmentController {
         }
         model.addAttribute(DOCTORS_FOR_MODEL, listOfDoctors);
         model.addAttribute(DATES_FOR_MODEL, listOfDates);
-        model.addAttribute("appointmentDto", appointment);
+        model.addAttribute(APPOINTMENT_DTO_FOR_MODEL, appointment);
 
         return "appointment/choiceOfDateAndPersonal";
 
