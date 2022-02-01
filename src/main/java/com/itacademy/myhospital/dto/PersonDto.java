@@ -1,6 +1,8 @@
 package com.itacademy.myhospital.dto;
 
 import com.itacademy.myhospital.model.entity.User;
+import com.itacademy.myhospital.validator.PersonAgeConstraint;
+import com.itacademy.myhospital.validator.PersonPhoneNumberConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,11 +38,10 @@ public class PersonDto {
     @NotBlank(message = "adress of birthday is required field")
     private String address;
 
-    @NotBlank(message = "date of birthday is required field")
+    @PersonAgeConstraint
     private String dateOfBirthday;
 
-    @Pattern(regexp = "([^a-zA-Z][0-9]{12,15})",message = "Number must be between 12 - 15 symbols")
-    @NotBlank(message = "Phone number is required field")
+    @PersonPhoneNumberConstraint
     private String phoneNumber;
 
     private User user;

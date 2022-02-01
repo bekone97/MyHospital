@@ -4,29 +4,29 @@ package com.itacademy.myhospital.controller;
 import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.UserException;
-import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.service.AppointmentService;
 import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.validator.UserEmailValidatorService;
+import com.itacademy.myhospital.validator.UserEmailValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import static com.itacademy.myhospital.constants.Constants.*;
+
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
+import java.util.Objects;
+
+import static com.itacademy.myhospital.constants.Constants.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,15 +37,15 @@ public class UserController {
     private final PersonService personService;
     private final RoleService roleService;
     public final AppointmentService appointmentService;
-    public final UserEmailValidatorService userEmailValidatorService;
+    public final UserEmailValidator userEmailValidator;
 
-    @SneakyThrows
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/users/{pageNumber}")
     public String userListByPage(Model model,
                                  @PathVariable("pageNumber") int pageNumber,
                                  @RequestParam("sortField") String sortField,
-                                 @RequestParam("sortDirection") String sortDirection) {
+                                 @RequestParam("sortDirection") String sortDirection) throws UserException {
 
 
 
@@ -70,7 +70,7 @@ public class UserController {
         return "user/user-info";
     }
 
-    @PostAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/user/{id}")
     public String userById(@PathVariable int id, Model model) throws UserException {
             var user = userService.getDtoById(id);
@@ -105,7 +105,11 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute("user") UserDto user,
                              BindingResult bindingResult,
                              @RequestParam("userImg") MultipartFile multipartFile) throws IOException, MessagingException, UserException, PersonException {
-
+        var message = userEmailValidator.validate(user);
+        if (message!=null){
+            ObjectError error= new ObjectError("email",message);
+            bindingResult.addError(error);
+        }
         if (bindingResult.hasErrors()) {
             return "user/edit-user";
         }
@@ -119,8 +123,15 @@ public class UserController {
     public String updateUserByAdmin(@Valid @ModelAttribute("user") UserDto user,
                                     BindingResult bindingResult,
                                     @RequestParam("userImg") MultipartFile multipartFile) throws IOException, PersonException, MessagingException, UserException {
-            if (bindingResult.hasErrors())
-                return "user/edit-user-for-admin";
+        var message = userEmailValidator.validate(user);
+        if (message!=null){
+            ObjectError error= new ObjectError("email",message);
+            bindingResult.addError(error);
+        }
+        if (bindingResult.hasErrors()) {
+            user.setImg(StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+            return "user/edit-user-for-admin";
+        }
             if (userService.checkChangeOfRoles(user))
                 appointmentService.addAppointmentsForNewDoctorForWeek(user.getUsername());
             userService.saveUpdatedUser(user, multipartFile);
@@ -159,11 +170,6 @@ public class UserController {
     @PostMapping("/updatePasswordOfUser")
     public String updatePasswordOfUser(@Valid @ModelAttribute("user") UserDto user,
                                        BindingResult bindingResult) throws UserException {
-        var message =userEmailValidatorService.validateEmail(user.getEmail());
-        if (message!=null){
-            ObjectError emailError = new ObjectError("email",message);
-            bindingResult.addError(emailError);
-        }
         if (bindingResult.hasErrors()) {
             return "user/edit-user";
         } else {

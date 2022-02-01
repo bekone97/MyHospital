@@ -4,7 +4,6 @@ import com.itacademy.myhospital.dto.PersonDto;
 import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.service.PersonService;
-import com.itacademy.myhospital.validator.PersonAgeValidatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import static com.itacademy.myhospital.constants.Constants.*;
@@ -35,8 +33,6 @@ public class PersonController {
 
 
     private final PersonService personService;
-    private final PersonAgeValidatorService personAgeValidatorService;
-
     @PreAuthorize("hasAuthority('ROLE_NURSE')")
     @GetMapping(value = "/persons/{pageNumber}")
     public String persons(@PathVariable("pageNumber") int pageNumber,
@@ -91,11 +87,7 @@ public class PersonController {
     @PostMapping("/saveNewPerson")
     public String saveNewPerson(@Valid @ModelAttribute("person") PersonDto personDto,
                                 BindingResult bindingResult) {
-       var message= personAgeValidatorService.validatePersonAge(personDto.getDateOfBirthday());
-       if (message!=null){
-           ObjectError error = new ObjectError(DATE_OF_BIRTHDAY_FOR_MODEL,message);
-           bindingResult.addError(error);
-       }
+
        if (bindingResult.hasErrors()) {
             return PERSON_PERSON_ADD_INFO_VIEW;
         } else {

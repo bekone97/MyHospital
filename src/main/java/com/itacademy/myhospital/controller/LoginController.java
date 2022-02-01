@@ -4,6 +4,7 @@ package com.itacademy.myhospital.controller;
 import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.service.UserService;
+import com.itacademy.myhospital.validator.UserEmailValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -28,7 +30,7 @@ import static com.itacademy.myhospital.constants.Constants.*;
 public class LoginController {
 
     private final UserService userService;
-
+    private final UserEmailValidator userEmailValidator;
     @PreAuthorize("isAnonymous()")
    @GetMapping("/authorization")
     public String authorization(Model model){
@@ -44,6 +46,11 @@ public class LoginController {
     public String authorization(@Valid @ModelAttribute("user") UserDto user,
                                 BindingResult bindingResult,
                                 Model model) throws MessagingException, UnsupportedEncodingException {
+        var message = userEmailValidator.validate(user);
+        if (message!=null){
+            ObjectError error= new ObjectError("email",message);
+            bindingResult.addError(error);
+        }
        if (bindingResult.hasErrors()){
            return "authorization";
        }
