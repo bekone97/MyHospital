@@ -60,7 +60,6 @@ public class UserController {
         return "user/users";
     }
 
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
     @GetMapping(value = "/userProfile")
     public String userInfo(Principal principal, Model model) {
         var user = userService.getDtoByUsernameForProfile(principal.getName());
@@ -158,7 +157,7 @@ public class UserController {
             throws UserException, PersonException {
             var person = personService.addUserToPerson(key,principal.getName());
             if (person!=null) {
-                return "redirect:/person/" + person.getId();
+                return "redirect:/";
             }else {
                 model.addAttribute(ERROR_FOR_MODEL,"Wrong key");
                 return "authentication-key";

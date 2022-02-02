@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 
 import static com.itacademy.myhospital.constants.Constants.*;
 
@@ -62,15 +63,19 @@ public class LoginController {
         return "redirect:/";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/verification")
-    public String makeVerification(@RequestParam("code") String verificationCode) throws UserException {
 
-       if (!userService.checkAndChangeVerificationStatus(verificationCode)){
-           throw new UserException("There is no user with the code :"+verificationCode);
-       }else {
-           return "redirect:/";
-       }
+    @GetMapping("/verification")
+    public String makeVerification(@RequestParam("code") String verificationCode, Principal principal) throws UserException {
+
+        if (!userService.checkAndChangeVerificationStatus(verificationCode)) {
+            throw new UserException("There is no user with the code :" + verificationCode);
+        } else {
+            if (principal != null) {
+                return "redirect:/logout";
+            } else {
+                return "redirect:/";
+            }
+        }
     }
 
     @GetMapping("/login")

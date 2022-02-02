@@ -25,7 +25,7 @@ public class Diagnosis {
     @Size(min = 2)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "personal_id")
     private Person personal;
 

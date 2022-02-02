@@ -27,6 +27,8 @@
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" th:field="*{username}" id="username">
         <input type="hidden" th:field="*{password}">
+        <input type="hidden" th:field="*{verificationStatus}">
+        <input type="hidden" th:field="*{authenticationStatus}">
         <div class="userEmail">
             <div th:if="${#fields.hasErrors('email')}" class="constraint">
                 <span th:text="#{constraint.email}"></span>

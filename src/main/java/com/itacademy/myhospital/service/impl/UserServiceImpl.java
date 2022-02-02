@@ -143,7 +143,6 @@ public class UserServiceImpl implements UserService {
             user.setVerificationStatus(true);
             Set<Role> roles = new HashSet<>();
             roles.add(roleService.findById(4));
-            user.setVerificationCode(null);
             user.setRoles(roles);
             saveAndFlush(user);
             return true;
@@ -271,6 +270,8 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
+                .authenticationStatus(user.getAuthenticationStatus())
+                .verificationStatus(user.getVerificationStatus())
                 .email(user.getEmail())
                 .img(user.getImg())
                 .roles(user.getRoles())

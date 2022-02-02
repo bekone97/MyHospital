@@ -29,7 +29,7 @@ public class NameOfProcess {
     private String name;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "process_id")
     private Process process;
 

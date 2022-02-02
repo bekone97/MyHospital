@@ -37,7 +37,7 @@ public class Appointment {
     @JoinColumn(name = "personal_id")
     private Person personal;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH})
     @JoinColumn(name = "user_patient_id")
     private User userPatient;
 
