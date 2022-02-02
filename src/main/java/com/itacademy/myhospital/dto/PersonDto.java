@@ -31,10 +31,11 @@ public class PersonDto {
 
     @Size(min = 2, message = "patronymic must be min 2 symbols ")
     @Size(max=30,message = "patronymic must be max 30 symbols")
-    @NotBlank(message = "patronymic is required field")
+    @NotBlank
     private String patronymic;
 
-    @NotBlank(message = "adress of birthday is required field")
+    @NotBlank
+    @Size(min = 6)
     private String address;
 
     @PersonAgeConstraint

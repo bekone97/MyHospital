@@ -22,14 +22,13 @@ public interface UserService{
     User findByVerificationCode(String verificationCode);
     User findByEmail(String email);
     /**
-     * This method checks username, creates a verification code for new user, encodes the password of new user, sends an
+     * This method  creates a verification code for new user, encodes the password of new user, sends an
      * email message to a new user and saves a new user.
      * @param userDto This is dto of new user.
      * @return  If the method is successful, true is returned
-     * @throws UserException If a user with the same name already exists, the method throws an error
      * @throws MessagingException,UnsupportedEncodingException If there are some problems with sending a message
      */
-    boolean createCodeAndSaveUser(UserDto userDto) throws UserException, MessagingException, UnsupportedEncodingException;
+    boolean createCodeAndSaveUser(UserDto userDto) throws MessagingException, UnsupportedEncodingException;
     /**
      * This method changes a verification status on true value, adds the role_patient to a user,
      * makes verification code equals null and saves a user

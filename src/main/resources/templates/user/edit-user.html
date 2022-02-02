@@ -28,7 +28,11 @@
         <input type="hidden" th:field="*{username}" id="username">
         <input type="hidden" th:field="*{roles}">
         <input type="hidden" th:field="*{password}">
+
         <div class="userEmail">
+            <div th:if="${#fields.hasErrors('email')}" class="constraint">
+                <span th:text="#{constraint.email}"></span>
+            </div>
             <input type="text" th:field="*{email}" id="userEmail" th:placeholder="#{editUser.placeholderForEmail}">
             <label for="userEmail" th:text="#{editUser.email}">Email</label>
         </div>

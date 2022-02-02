@@ -20,10 +20,10 @@ import java.util.Set;
 public class UserDto {
     private Integer id;
     @NotBlank(message = "username is required field")
-    @Size(min=4,message = "name must be min 6 symbols")
+    @Size(min=6, message = "username must be more than 6 symbols")
     private String username;
     @NotBlank(message = "password is required field")
-    @Size(min=4,message = "password must be min 6 symbols")
+    @Size(min=6,message = "password must be more than 6 symbols")
     private String password;
     private Set<Role> roles;
     @Email

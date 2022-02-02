@@ -333,7 +333,7 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/addPatientToNewHistory"));
+                .andExpect(redirectedUrl("/person/0"));
 
         verify(personService, times(1)).createPersonFromPersonDtoAndSave(personDto);
     }
@@ -351,7 +351,7 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(authenticated())
-                .andExpect(model().errorCount(6))
+                .andExpect(model().errorCount(7))
                 .andExpect(view().name("person/person-add-info"));
     }
 

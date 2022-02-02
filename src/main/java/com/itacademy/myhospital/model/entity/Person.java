@@ -41,7 +41,7 @@ public class Person {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -76,5 +76,4 @@ public class Person {
     public String getFIO(){
         return (this.firstName+" "+this.surname+" "+this.patronymic);
     }
-    // добавить номер телефона и email
 }

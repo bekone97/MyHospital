@@ -257,10 +257,11 @@ class PersonServiceImplTest {
     @Test
     void addUserToPersonFailTest2() {
         user1.setAuthenticationStatus(false);
-        when(personRepository.findByKeyForUser("kakaka")).thenReturn(null);
+        person1.setUser(user1);
+        when(personRepository.findByKeyForUser("kakaka")).thenReturn(person1);
         when(userRepository.findUserByUsername(user1.getUsername())).thenReturn(user1);
         Exception exception = assertThrows(PersonException.class,
-                ()->personService.addUserToPerson(person1.getKeyForUser(),user1.getUsername()));
+                ()->personService.addUserToPerson("kakaka",user1.getUsername()));
         assertTrue(exception.getMessage().contains(PERSON_HAS_A_USER_EXCEPTION));
     }
     @Test

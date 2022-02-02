@@ -121,7 +121,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void createPersonFromPersonDtoAndSave(PersonDto personDto){
+    public Integer createPersonFromPersonDtoAndSave(PersonDto personDto){
         String keyForUser = createKey();
         Person person = Person.builder()
                 .id(personDto.getId())
@@ -132,8 +132,10 @@ public class PersonServiceImpl implements PersonService {
                 .dateOfBirthday(LocalDate.parse(personDto.getDateOfBirthday()))
                 .phoneNumber(personDto.getPhoneNumber())
                 .keyForUser(keyForUser)
+                .user(personDto.getUser())
                 .build();
        saveAndFlush(person);
+       return person.getId();
     }
 
 
@@ -148,6 +150,7 @@ public class PersonServiceImpl implements PersonService {
                 .dateOfBirthday(person.getDateOfBirthday().toString())
                 .address(person.getAddress())
                 .user(person.getUser())
+                .phoneNumber(person.getPhoneNumber())
                 .keyForUser(person.getKeyForUser())
                 .build();
     }
@@ -184,17 +187,21 @@ public class PersonServiceImpl implements PersonService {
     public Person addUserToPerson(String key, String username) throws UserException, PersonException {
         var person = findByKeyForUser(key);
         var user = userService.findByUsername(username);
-        if (user!=null&&!user.getAuthenticationStatus()) {
-            if (person!=null&&person.getUser()==null) {
-                person.setUser(user);
-                user.setAuthenticationStatus(true);
-                saveAndFlush(person);
-                return person;
-            }else {
-                throw new PersonException(PERSON_HAS_A_USER_EXCEPTION + "or" +NO_PERSON_WITH_KEY_EXCEPTION);
+        if (person!=null) {
+            if (user != null && !user.getAuthenticationStatus()) {
+                if (person.getUser() == null) {
+                    person.setUser(user);
+                    user.setAuthenticationStatus(true);
+                    saveAndFlush(person);
+                    return person;
+                } else {
+                    throw new PersonException(PERSON_HAS_A_USER_EXCEPTION + "or" + NO_PERSON_WITH_KEY_EXCEPTION);
+                }
+            } else {
+                throw new UserException(USER_HAS_A_PERSON_EXCEPTION);
             }
         }else {
-            throw new UserException(USER_HAS_A_PERSON_EXCEPTION);
+            return null;
         }
     }
 

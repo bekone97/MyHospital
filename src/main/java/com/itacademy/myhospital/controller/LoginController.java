@@ -4,7 +4,7 @@ package com.itacademy.myhospital.controller;
 import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.validator.UserEmailValidator;
+import com.itacademy.myhospital.validator.UserEmailAndUsernameValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -30,37 +30,35 @@ import static com.itacademy.myhospital.constants.Constants.*;
 public class LoginController {
 
     private final UserService userService;
-    private final UserEmailValidator userEmailValidator;
+    private final UserEmailAndUsernameValidator userEmailAndUsernameValidator;
     @PreAuthorize("isAnonymous()")
-   @GetMapping("/authorization")
+   @GetMapping("/registration")
     public String authorization(Model model){
        UserDto user = new UserDto();
 
        model.addAttribute(USER_FOR_MODEL,user);
 
-       return "authorization";
+       return "registration";
 
    }
     @PreAuthorize("isAnonymous()")
-    @PostMapping("/authorization")
+    @PostMapping("/registration")
     public String authorization(@Valid @ModelAttribute("user") UserDto user,
-                                BindingResult bindingResult,
-                                Model model) throws MessagingException, UnsupportedEncodingException {
-        var message = userEmailValidator.validate(user);
-        if (message!=null){
-            ObjectError error= new ObjectError("email",message);
+                                BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException, UserException {
+        var emailMessage = userEmailAndUsernameValidator.validateEmail(user);
+        if (emailMessage!=null){
+            ObjectError error= new ObjectError("email",emailMessage);
+            bindingResult.addError(error);
+        }
+        var usernameMessage= userEmailAndUsernameValidator.validateUsername(user);
+        if (usernameMessage!=null){
+            ObjectError error= new ObjectError("username",emailMessage);
             bindingResult.addError(error);
         }
        if (bindingResult.hasErrors()){
-           return "authorization";
+           return "registration";
        }
-        try {
             userService.createCodeAndSaveUser(user);
-        } catch (UserException e) {
-            model.addAttribute(ERROR_FOR_MODEL,e.getMessage());
-            model.addAttribute(USER_FOR_MODEL,user);
-            return "authorization";
-        }
         return "redirect:/";
     }
 

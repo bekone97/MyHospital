@@ -1,6 +1,5 @@
 package com.itacademy.myhospital.controller;
 
-import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.entity.User;
 import com.itacademy.myhospital.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;

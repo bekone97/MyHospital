@@ -22,7 +22,7 @@ public class Diagnosis {
     private Integer id;
 
     @Column(name = "name")
-    @Size(min = 2, message = "Diagnosis name is required field")
+    @Size(min = 2)
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)

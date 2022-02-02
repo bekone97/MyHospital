@@ -39,7 +39,7 @@ class LoginControllerTest {
     public void setUp(){
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         userDto1=UserDto.builder()
-                .username("user")
+                .username("userasd")
                 .password("password")
                 .email("User@mail.ru")
                 .authenticationStatus(false)
@@ -48,17 +48,17 @@ class LoginControllerTest {
     @Test
     void authorizationGetTest() throws Exception {
         var dto = new UserDto();
-        this.mockMvc.perform(get("/authorization"))
+        this.mockMvc.perform(get("/registration"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().size(1))
                 .andExpect(model().attribute("user",dto))
-                .andExpect(view().name("authorization"));
+                .andExpect(view().name("registration"));
     }
     @Test
     @WithMockUser(username = "user",roles = "PATIENT")
     void authorizationGetFailTest() throws Exception {
-        this.mockMvc.perform(get("/authorization"))
+        this.mockMvc.perform(get("/registration"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().size(2))
@@ -68,7 +68,7 @@ class LoginControllerTest {
     @Test
     void authorizationPostTest() throws Exception {
         when(userService.createCodeAndSaveUser(userDto1)).thenReturn(true);
-        this.mockMvc.perform(post("/authorization")
+        this.mockMvc.perform(post("/registration")
                 .flashAttr("user",userDto1))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
@@ -81,30 +81,17 @@ class LoginControllerTest {
         userDto1.setEmail("adsq");
         userDto1.setUsername("as");
         userDto1.setPassword("as");
-        this.mockMvc.perform(post("/authorization")
+        this.mockMvc.perform(post("/registration")
                         .flashAttr("user",userDto1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().errorCount(3))
-                        .andExpect(view().name("authorization"));
-    }
-    @Test
-    void authorizationPostWrongFailTest1() throws Exception {
-       when(userService.createCodeAndSaveUser(userDto1)).thenThrow(new UserException("User with this username also exist"));
-        this.mockMvc.perform(post("/authorization")
-                        .flashAttr("user",userDto1))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(model().size(2))
-                .andExpect(model().attribute("error","User with this username also exist"))
-                .andExpect(model().attribute("user",userDto1))
-                .andExpect(view().name("authorization"));
-        verify(userService,times(1)).createCodeAndSaveUser(userDto1);
+                        .andExpect(view().name("registration"));
     }
     @Test
     @WithMockUser(username = "user",roles = "PATIENT")
     void authorizationPostWrongFailTest2() throws Exception {
-        this.mockMvc.perform(post("/authorization")
+        this.mockMvc.perform(post("/registration")
                         .flashAttr("user",userDto1))
                 .andDo(print())
                 .andExpect(status().isOk())

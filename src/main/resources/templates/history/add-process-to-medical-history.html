@@ -22,7 +22,7 @@
 <div class="bodyExceptHeader">
     <form th:method="POST" th:action="@{~/addProcessToMedicalHistory}" th:object="${medicalHistoryProcess}"
           class="inputForProcess">
-        <div class="labelForProcess">
+        <div class="labelForProcess label">
             <label for="selectOfProcess" th:text="#{addProces.select}">Select the process</label>
         </div>
         <div class="input">
@@ -33,23 +33,34 @@
             </select>
         </div>
 
-        <input type="hidden" th:field="*{medicalHistory}"/>
-        <div class="labelForProcess">
+
+        <div class="labelForProcess label">
             <label for="nameOfProcess" th:text="#{addProcess.processName}">Enter name</label>
+        </div>
+        <input type="hidden" th:field="*{medicalHistory}"/>
+        <div th:if="${#fields.hasErrors('nameOfProcess.name')}" class="constraint">
+            <span th:text="#{constraint.nameOfProcess}"></span>
         </div>
         <div class="input">
             <input type="text" th:field="*{nameOfProcess.name}" id="nameOfProcess"
                    th:placeholder="#{addProcess.placeholderForProcessName}"/>
         </div>
-        <div class="labelForProcess">
+        <div class="labelForProcess label" >
             <label for="quantityOfProcess" th:text="#{addProcess.number}">Enter number of days</label>
         </div>
+        <div th:if="${#fields.hasErrors('numberOfDays')}" class="constraint">
+            <span th:text="#{constraint.numberOfDays}"></span>
+        </div>
+
         <div class="input">
             <input type="number" th:field="*{numberOfDays}" id="quantityOfProcess"
                    th:placeholder="#{addProcess.placeholderForNumber}"/>
         </div>
-        <div class="labelForProcess">
+        <div class="labelForProcess label">
             <label for="quantityPerDayOfProcess" th:text="#{addProcess.quantity}">Enter quantity per day</label>
+        </div>
+        <div th:if="${#fields.hasErrors('numberOfDays')}" class="constraint">
+            <span th:text="#{constraint.quantityPerDay}"></span>
         </div>
         <div class="input">
             <input type="number" th:field="*{quantityPerDay}" id="quantityPerDayOfProcess"

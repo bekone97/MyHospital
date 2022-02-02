@@ -5,7 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{authentication.tittle}">Home Page</title>
-
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/registration.css"/>
 </head>
 <body>
 <div class="pageHead">
@@ -18,19 +19,21 @@
         <header th:insert="blocks/menu::menu"></header>
     </div>
 </div>
-<div th:if="${error}!=null">
-    <a th:text="${error}"></a>
-</div>
-<table>
-        <td>
-            <form th:method="POST" th:action="@{~/authentication}">
+<div class="bodyExceptHeader">
+            <form th:method="POST" th:action="@{~/authentication}" >
+                <div class="label">
                 <label for="keyForUser" th:text="#{authentication.key}">Enter the key</label>
-                <input type="text"  th:name="key" id="keyForUser" th:placeholder="#{authentication.placeholderForKey}">
-                <button type="submit" th:text="#{authentication.button}">Authentication Of User</button>
+                </div>
+                <div th:if="${error}!=null" class="constraint">
+                    <span th:text="#{constraint.key}"></span>
+
+                </div>
+                <input type="text"  th:name="key" id="keyForUser" th:placeholder="#{authentication.placeholderForKey}"
+                       class="input">
+                <button type="submit" th:text="#{authentication.button}"
+                        class="btnForRegistration">Authentication Of User</button>
             </form>
-        </td>
-
-
-</table>
+</div>
+<script src="/js/dropList.js"></script>
 </body>
 </html>

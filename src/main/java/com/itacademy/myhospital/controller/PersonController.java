@@ -91,8 +91,8 @@ public class PersonController {
        if (bindingResult.hasErrors()) {
             return PERSON_PERSON_ADD_INFO_VIEW;
         } else {
-            personService.createPersonFromPersonDtoAndSave(personDto);
-            return "redirect:/addPatientToNewHistory";
+            var id =personService.createPersonFromPersonDtoAndSave(personDto);
+            return "redirect:/person/"+id;
         }
     }
 
@@ -108,7 +108,6 @@ public class PersonController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_DOCTOR')")
     @GetMapping("/patients")
-    @ResponseStatus(HttpStatus.CREATED)
     public String selectOfPatients(Model model) {
             List<Person> persons = personService.findAll();
             model.addAttribute(PERSONS_FOR_MODEL, persons);

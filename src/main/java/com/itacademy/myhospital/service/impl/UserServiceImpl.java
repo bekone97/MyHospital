@@ -114,8 +114,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
-    public boolean createCodeAndSaveUser(UserDto userDto) throws UserException, MessagingException, UnsupportedEncodingException {
-        if (findByUsername(userDto.getUsername())==null) {
+    public boolean createCodeAndSaveUser(UserDto userDto) throws  MessagingException, UnsupportedEncodingException {
             var user = User.builder()
                     .username(userDto.getUsername())
                     .verificationCode(createRandomCode())
@@ -127,9 +126,6 @@ public class UserServiceImpl implements UserService {
                     emailService.sendEmail(user,LOCALHOST);
             saveAndFlush(user);
             return true;
-        }else {
-            throw new UserException(USER_WITH_THIS_USERNAME_ALSO_EXIST);
-        }
     }
 
     private String createRandomCode() {

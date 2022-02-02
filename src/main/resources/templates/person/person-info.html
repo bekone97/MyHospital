@@ -30,16 +30,17 @@
             </div>
         </div>
         <div class="textInformationPerson">
-            <p><a th:text="#{personInfo.fio}"></a><strong th:text="${person.getFIO()}" id="allName" >FIO value</strong></p>
-            <p><a th:text="#{searchPerson.address}">Address:</a><strong th:text="${person.getAddress()}" id="address">value</strong></p>
+            <p><a th:text="#{personInfo.fio}"></a><a> </a><strong th:text="${person.getFIO()}" id="allName" >FIO value</strong></p>
+            <p><a th:text="#{searchPerson.address}">Address:</a><a> </a><strong th:text="${person.getAddress()}" id="address">value</strong></p>
 
-            <p><a th:text="#{searchPerson.dateOfBirthday}">Date of Birthday:</a><strong th:text="${person.getDateOfBirthday()}"
+            <p><a th:text="#{searchPerson.dateOfBirthday}">Date of Birthday:</a><a> </a><strong th:text="${person.getDateOfBirthday()}"
                                            id="dateOfBirthday">value</strong></p>
 
-            <p><a th:text="#{searchPerson.phoneNumber}">Phone number: </a><strong th:text="${person.getPhoneNumber()}" id="phoneNumber">value</strong></p>
+            <p><a th:text="#{searchPerson.phoneNumber}">Phone number: </a><a> </a><strong th:text="${person.getPhoneNumber()}"
+                                                                                  id="phoneNumber">value</strong></p>
 
             <div th:if="${person.getUser()}==null" sec:authorize="hasRole('ADMIN')">
-                <p><a th:text="#{personInfo.key}">Person key : </a><strong th:text="${person.getKeyForUser()}">Value</strong></p>
+                <p><a th:text="#{personInfo.key}">Person key : </a><a> </a><strong th:text="${person.getKeyForUser()}">Value</strong></p>
             </div>
         </div>
     </div>

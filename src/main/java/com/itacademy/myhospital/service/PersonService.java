@@ -33,7 +33,7 @@ public interface PersonService  {
     Page<Person> getPageOfPersonWithRoleId(Integer roleId,int numberOfPage) throws PersonException;
     Person findPersonByIdAndRoleId(Integer personId, Integer roleId) throws PersonException;
 
-    void createPersonFromPersonDtoAndSave(PersonDto personDto);
+    Integer createPersonFromPersonDtoAndSave(PersonDto personDto);
     /**
      * This method is for creating a personDto from a person with the id.
      * @param id - id of person

@@ -26,13 +26,13 @@
        <div class="verticalBodyTable">
        <tr class="verticalOdd">
        <td><a class="verticalBodyTable" th:text="#{historyInfo.patient}">Patient</a></td>
-       <td><a class="verticalBodyTable" th:text="#{historyInfo.id}">Id</a></td>
+       <td><a class="verticalBodyTable" th:text="#{userAppointments.doctor}">Doctor</a></td>
        <td><a class="verticalBodyTable" th:text="#{historyInfo.receipt}">Receipt Date</a></td>
        <td><a class="verticalBodyTable" th:text="#{historyInfo.discharge}">Discharge Date</a></td>
        </tr>
        <tr>
        <td><a th:text="${history.getPatient().getFIO()}" class="verticalBodyTable">value</a></td>
-       <td><a th:text="${history.getId()}" class="verticalBodyTable">value</a></td>
+       <td><a th:text="${history.getDiagnosis().getPersonal().getFIO()}" class="verticalBodyTable">value</a></td>
        <td><a th:text="${history.getReceiptDate()}" class="verticalBodyTable">value</a></td>
        <td><a th:text="${history.getDischargeDate()}" iclass="verticalBodyTable">value</a></td>
        </tr>
@@ -70,12 +70,13 @@
                     <div th:if="${process.isStatus()}"><a th:text="#{historyInfo.done}">Done</a></div>
                     <div th:unless="${process.isStatus()}"><a/></div>
                 </td>
+                <div sec:authorize="hasRole('NURSE')">
                 <td>
                     <form th:method="GET" th:action="@{/processExecutionHistory/{id}(id=${process.getId()})}">
                         <button type="submit" class="btnForProcess" th:text="#{historyInfo.information}">More information</button>
                     </form>
                 </td>
-
+                </div>
 
             </tr>
             </div>
@@ -99,12 +100,13 @@
                     <div th:if="${process.isStatus()}"><a>Done</a></div>
                     <div th:unless="${process.isStatus()}"><a/></div>
                 </td>
+                <div sec:authorize="hasRole('NURSE')">
                 <td>
                     <form th:method="GET" th:action="@{/processExecutionHistory/{id}(id=${process.getId()})}">
                         <button type="submit" class="btnForProcess" th:text="#{historyInfo.information}">More information</button>
                     </form>
                 </td>
-
+                </div>
             </tr>
         </div>
         <div th:if="(__${process.getNameOfProcess().getProcess().getId()}__)==3" class="medication">
@@ -127,12 +129,13 @@
                     <div th:if="${process.isStatus()}"><a>Done</a></div>
                     <div th:unless="${process.isStatus()}"><a/></div>
                 </td>
+                <div sec:authorize="hasRole('NURSE')">
                 <td>
                     <form th:method="GET" th:action="@{/processExecutionHistory/{id}(id=${process.getId()})}">
                         <button type="submit" class="btnForProcess" th:text="#{historyInfo.information}">More information</button>
                     </form>
                 </td>
-
+                </div>
             </tr>
     </div>
     </div>
@@ -145,10 +148,11 @@
         <button type="submit" class="btnHistory" th:text="#{historyInfo.addProcess}">Add Process</button>
     </form>
 </div>
-
+<div sec:authorize="hasRole('DOCTOR')">
 <form th:method="GET" th:action="@{~/dischargePatient/{id}(id=${history.getId()})}">
     <button type="submit"  class="btnHistory" th:text="#{historyInfo.patientDischarge}">Discharge the patient</button>
 </form>
+</div>
    </div>
    <script src="/js/dropList.js"></script>
 </body>

@@ -185,17 +185,17 @@ public class AppointmentController {
     @PostMapping("/blockAppointmentByDoctor/{id}")
     public String blockAppointmentByDoctor(@PathVariable("id") Integer id,
                                            Principal principal) throws AppointmentException {
-           appointmentService.blockAppointmentByDoctor(id,principal.getName());
+           var dateOfAppointment=appointmentService.blockAppointmentByDoctor(id,principal.getName());
 
-        return "redirect:/mySchedule";
+        return "redirect:/myScheduleByDate?date="+dateOfAppointment;
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping("/unblockAppointmentByDoctor/{id}")
     public String unblockAppointmentByDoctor(@PathVariable("id") Integer id,
                                              Principal principal) throws AppointmentException {
-            appointmentService.unblockAppointmentByDoctor(id,principal.getName());
+           var dateOfAppointment= appointmentService.unblockAppointmentByDoctor(id,principal.getName());
 
-        return "redirect:/mySchedule";
+        return "redirect:/myScheduleByDate?date="+dateOfAppointment;
     }
 
 }

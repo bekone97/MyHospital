@@ -6,19 +6,27 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class UserEmailValidatorImpl implements UserEmailValidator{
+public class UserEmailAndUsernameValidatorImpl implements UserEmailAndUsernameValidator {
     private final UserService userService;
 
-    public UserEmailValidatorImpl(UserService userService) {
+    public UserEmailAndUsernameValidatorImpl(UserService userService) {
         this.userService = userService;
     }
 
     @Override
-    public String validate(UserDto userDto) {
+    public String validateEmail(UserDto userDto) {
         String message =null;
        var user= userService.findByEmail(userDto.getEmail());
     if((user!=null && !user.getUsername().equals(userDto.getUsername())))
          message="Email also exists";
-            return message;
+    return message;
+    }
+    @Override
+    public String validateUsername(UserDto userDto) {
+        String message =null;
+        var user= userService.findByUsername(userDto.getEmail());
+        if(user!=null)
+            message="User with this username also exists";
+        return message;
     }
 }

@@ -507,12 +507,13 @@ class AppointmentControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
     void blockAppointmentByDoctorTest() throws Exception {
+        var dateOfAppointment = appointment1.getDateOfAppointment().toLocalDateTime().toLocalDate();
         when(principal.getName()).thenReturn(user1.getUsername());
-        when(appointmentService.blockAppointmentByDoctor(1,user1.getUsername())).thenReturn(true);
+        when(appointmentService.blockAppointmentByDoctor(1,user1.getUsername())).thenReturn(dateOfAppointment);
         this.mockMvc.perform(post("/blockAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/mySchedule"));
+                .andExpect(redirectedUrl("/myScheduleByDate?date="+dateOfAppointment));
         verify(appointmentService,times(1)).blockAppointmentByDoctor(1,user1.getUsername());
     }
     @Test
@@ -539,12 +540,14 @@ class AppointmentControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"PATIENT","NURSE","DOCTOR"})
     void unblockAppointmentByDoctorTest() throws Exception {
+        var dateOfAppointment = appointment1.getDateOfAppointment().toLocalDateTime().toLocalDate();
         when(principal.getName()).thenReturn(user1.getUsername());
-        when(appointmentService.unblockAppointmentByDoctor(1,user1.getUsername())).thenReturn(true);
+        when(appointmentService.unblockAppointmentByDoctor(1,user1.getUsername())).thenReturn(appointment1
+                .getDateOfAppointment().toLocalDateTime().toLocalDate());
         this.mockMvc.perform(post("/unblockAppointmentByDoctor/1"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/mySchedule"));
+                .andExpect(redirectedUrl("/myScheduleByDate?date="+dateOfAppointment));
         verify(appointmentService,times(1)).unblockAppointmentByDoctor(1,user1.getUsername());
     }
     @Test

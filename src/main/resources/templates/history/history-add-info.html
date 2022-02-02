@@ -26,10 +26,11 @@
         <div class="labelForInput">
             <label for="selectOfDiagnoses" th:text="#{historyAdd.diagnosis}">Diagnosis</label>
         </div>
-        <div th:if="${#fields.hasErrors('diagnosis.name')}">
-            <span th:errors="*{diagnosis.name}"></span>
-        </div>
+
         <div class="selectOfDiagnoses" id="selectOfDiagnoses">
+            <div th:if="${#fields.hasErrors('diagnosis.name')}" class="constraint">
+                <span th:text="#{constraint.diagnosisName}"></span>
+            </div>
             <input autocomplete="off" list="diagnoses" type="text" th:field="*{diagnosis.name}"
                    th:placeholder="#{historyAdd.placeholderForDiagnosis}"/>
             <datalist id="diagnoses">
@@ -43,14 +44,15 @@
             <label for="complain" th:text="#{historyAdd.complain}">Write the complain of pacient</label>
         </div>
         <div class="inputForHistory">
+
             <input type="text" th:field="*{complain}" id="complain" class="inputForHistory"
                    th:placeholder="#{historyAdd.placeholderForComplains}"/>
         </div>
         <div class="labelForInput" >
             <label for="quantityOfOperations" th:text="#{historyAdd.quantityOperations}">Enter quantity of operations</label>
         </div>
-        <div th:if="${#fields.hasErrors('numberOfOperations')}">
-            <span th:errors="*{numberOfOperations}"></span>
+        <div th:if="${#fields.hasErrors('numberOfOperations')}" class="constraint">
+            <span th:text="#{constraint.numberOfOperation}"></span>
         </div>
         <div class="inputForHistory">
             <input type="number" id="quantityOfOperations"  th:field="*{numberOfOperations}"
@@ -59,8 +61,8 @@
         <div class="labelForInput">
             <label for="quantityOfProcedures" th:text="#{historyAdd.quantityProcedures}">Enter quantity of procedures</label>
         </div>
-        <div th:if="${#fields.hasErrors('numberOfProcedures')}">
-        <span th:errors="*{numberOfProcedures}"></span>
+        <div th:if="${#fields.hasErrors('numberOfProcedures')}" class="constraint">
+        <span th:text="#{constraint.numberOfProcedure}"></span>
         </div>
         <div class="inputForHistory">
             <input type="number" id="quantityOfProcedures" th:field="*{numberOfProcedures}"
@@ -69,8 +71,8 @@
         <div class="labelForInput">
             <label for="quantityOfMedications" th:text="#{historyAdd.quantityMedications}">Enter quantity of medications</label>
         </div>
-        <div th:if="${#fields.hasErrors('numberOfMedications')}">
-            <span th:errors="*{numberOfMedications}"></span>
+        <div th:if="${#fields.hasErrors('numberOfMedications')}" class="constraint">
+            <span th:text="#{constraint.numberOfMedication}"></span>
         </div>
         <div class="inputForHistory">
             <input type="number" id="quantityOfMedications" th:field="*{numberOfMedications}"

@@ -102,7 +102,7 @@
             </th>
             <th th:text="#{searchPerson.phoneNumber}">Phone number</th>
             <div sec:authorize="hasRole('ROLE_DOCTOR')">
-                <th></th>
+                <th> </th>
             </div>
         </tr>
         </thead>
@@ -123,7 +123,7 @@
             <div sec:authorize="hasRole('ROLE_DOCTOR')">
                 <td>
                     <form th:method="get" th:action="@{/updatePerson/{id}(id=${person.getId()})}">
-                        <button type="submit" class="btn btn-updateUser" th:text="#{searchPerson.delete}">Update Person</button>
+                        <button type="submit" class="btn btn-updateUser" th:text="#{searchPerson.edit}">Update Person</button>
                     </form>
                     <form th:method="get" th:action="@{/deletePerson/{id}(id=${person.getId()})}">
                         <button type="submit" class="btn btn-deleteUser" th:text="#{searchPerson.delete}">Delete Person</button>
@@ -134,15 +134,16 @@
         </div>
         </tbody>
     </table>
-    <div class="btnsBottomPersons">
+    <div class="btnsBottomPersons" sec:authorize="hasRole('DOCTOR')">
         <form th:method="get" th:action="@{/addNewPerson}">
             <button type="submit" class="btnBottom btnPersons" th:text="#{persons.add}">Create Person</button>
         </form>
+    </div>
         <form th:method="GET" th:action="@{~/}">
             <button type="submit" class="btnBottom btnPersons" th:text="#{homePage}">Back to home page</button>
         </form>
     </div>
-</div>
+
 <div class="pagination">
     <p><a th:text="#{persons.number}">Number of persons</a> <a th:text="${page.getTotalElements()}">Number Of Elements</a>
         <a th:text="#{page}">-Page </a><a th:text="(__${page.number}__+1)"/>

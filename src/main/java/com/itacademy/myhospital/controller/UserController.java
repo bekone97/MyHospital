@@ -8,12 +8,11 @@ import com.itacademy.myhospital.service.AppointmentService;
 import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.UserService;
-import com.itacademy.myhospital.validator.UserEmailValidator;
+import com.itacademy.myhospital.validator.UserEmailAndUsernameValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,6 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Objects;
 
 import static com.itacademy.myhospital.constants.Constants.*;
 
@@ -37,7 +35,7 @@ public class UserController {
     private final PersonService personService;
     private final RoleService roleService;
     public final AppointmentService appointmentService;
-    public final UserEmailValidator userEmailValidator;
+    public final UserEmailAndUsernameValidator userEmailValidator;
 
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -105,12 +103,13 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute("user") UserDto user,
                              BindingResult bindingResult,
                              @RequestParam("userImg") MultipartFile multipartFile) throws IOException, MessagingException, UserException, PersonException {
-        var message = userEmailValidator.validate(user);
+        var message = userEmailValidator.validateEmail(user);
         if (message!=null){
             ObjectError error= new ObjectError("email",message);
             bindingResult.addError(error);
         }
         if (bindingResult.hasErrors()) {
+        user.setImg(userService.findById(user.getId()).getImg());
             return "user/edit-user";
         }
             userService.saveUpdatedUser(user, multipartFile);
@@ -123,13 +122,13 @@ public class UserController {
     public String updateUserByAdmin(@Valid @ModelAttribute("user") UserDto user,
                                     BindingResult bindingResult,
                                     @RequestParam("userImg") MultipartFile multipartFile) throws IOException, PersonException, MessagingException, UserException {
-        var message = userEmailValidator.validate(user);
+        var message = userEmailValidator.validateEmail(user);
         if (message!=null){
             ObjectError error= new ObjectError("email",message);
             bindingResult.addError(error);
         }
         if (bindingResult.hasErrors()) {
-            user.setImg(StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+            user.setImg(userService.findById(user.getId()).getImg());
             return "user/edit-user-for-admin";
         }
             if (userService.checkChangeOfRoles(user))
@@ -155,15 +154,15 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @PostMapping("/authentication")
-    public String makeAuthentication(@RequestParam("key") String key, Principal principal, Model model) throws UserException {
-        try {
-            var person = personService.addUserToPerson(key, principal.getName());
-            return "redirect:/person/" + person.getId();
-        } catch (PersonException e) {
-            model.addAttribute(ERROR_FOR_MODEL, "Person also has a user or no person with this key");
-            return "authentication-key";
-        }
-
+    public String makeAuthentication(@RequestParam("key") String key, Principal principal, Model model)
+            throws UserException, PersonException {
+            var person = personService.addUserToPerson(key,principal.getName());
+            if (person!=null) {
+                return "redirect:/person/" + person.getId();
+            }else {
+                model.addAttribute(ERROR_FOR_MODEL,"Wrong key");
+                return "authentication-key";
+            }
     }
 
     @PreAuthorize("isAuthenticated()")

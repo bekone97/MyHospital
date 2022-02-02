@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.orh/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{authorization.tittle}">Authorization</title>
+    <link rel="stylesheet" type="text/css" href="/header.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/registration.css"/>
+</head>
+<body>
+<div class="pageHead">
+    <header th:insert="blocks/header::header"></header>
+
+    <div class="headerPageTable">
+        <div class="nameOfPage">
+            <a th:text="#{authorization.name}"/>
+        </div>
+        <header th:insert="blocks/menu::menu"></header>
+    </div>
+</div>
+<div class="bodyExceptHeader">
+    <form th:method="POST" th:action="@{/registration}" th:object="${user}">
+        <input type="hidden" th:field="*{roles}">
+        <input type="hidden" th:field="*{authenticationStatus}">
+
+        <p>
+        <div class="label">
+            <label for="username" th:text="#{authorization.username}">Enter username</label>
+        </div>
+        <div th:if="${#fields.hasErrors('username')}" class="constraint">
+            <span th:text="#{constraint.username}"></span>
+        </div>
+        <input type="text" th:field="*{username}" id="username" th:placeholder="#{authorization.username}"
+               class="input">
+        </p>
+
+        <p>
+        <div class="label">
+            <label for="password" th:text="#{authorization.password}">Enter password</label>
+        </div>
+        <div th:if="${#fields.hasErrors('password')}" class="constraint">
+            <span th:text="#{constraint.password}"></span>
+        </div>
+        <input type="password" th:field="*{password}" id="password" th:placeholder="#{authorization.password}"
+               class="input">
+        </p>
+
+        <p>
+        <div class="label">
+            <label for="email" th:text="#{authorization.email}">Enter email</label>
+        </div>
+        <div th:if="${#fields.hasErrors('email')}" class="constraint">
+            <span th:text="#{constraint.email}"></span>
+        </div>
+        <input type="text" th:field="*{email}" id="email" th:placeholder="#{authorization.email}" class="input">
+        </p>
+        <button type="submit" th:text="#{authorization.button}" class="btnForRegistration">Authorization</button>
+    </form>
+</div>
+<script src="/js/dropList.js"></script>
+</body>
+</html>

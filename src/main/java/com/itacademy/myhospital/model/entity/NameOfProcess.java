@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -24,7 +25,7 @@ public class NameOfProcess {
     private Integer id;
 
     @Column(name = "name")
-    @NotBlank(message = "Name is required field")
+    @Size(min = 2)
     private String name;
 
 

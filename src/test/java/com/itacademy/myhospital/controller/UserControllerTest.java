@@ -1,7 +1,7 @@
 package com.itacademy.myhospital.controller;
-
-import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.PersonException;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import com.itacademy.myhospital.dto.UserDto;
 import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.entity.Role;
@@ -10,6 +10,7 @@ import com.itacademy.myhospital.service.AppointmentService;
 import com.itacademy.myhospital.service.PersonService;
 import com.itacademy.myhospital.service.RoleService;
 import com.itacademy.myhospital.service.UserService;
+import com.itacademy.myhospital.validator.UserEmailAndUsernameValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +57,8 @@ class UserControllerTest {
 
     @MockBean
     private Principal principal;
-
+    @MockBean
+    private UserEmailAndUsernameValidator userEmailAndUsernameValidator;
     @MockBean
     private UserService userService;
 
@@ -64,9 +66,10 @@ class UserControllerTest {
     private AppointmentService appointmentService;
     @MockBean
     private RoleService roleService;
-
     @MockBean
     private PersonService personService;
+
+
     private User user1;
     private User user2;
     private Person person;
@@ -75,6 +78,7 @@ class UserControllerTest {
     private List<User> users;
     private Page<User> usersPage;
     private UserDto userDto1;
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
@@ -88,7 +92,7 @@ class UserControllerTest {
                 .build();
         user1 = User.builder()
                 .id(1)
-                .username("user")
+                .username("useror")
                 .password("password")
                 .email("User@mail.ru")
                 .img("asldaldk")
@@ -103,7 +107,7 @@ class UserControllerTest {
                 .build();
         user2 = User.builder()
                 .id(1)
-                .username("user")
+                .username("useror")
                 .password("password")
                 .email("User@mail.ru")
                 .build();
@@ -126,7 +130,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user",roles = "ADMIN")
+    @WithMockUser(username = "useror",roles = "ADMIN")
     void userListByPageTest() throws Exception {
     when(userService.findAll(1,"asc","id")).thenReturn(usersPage);
     this.mockMvc.perform(get("/users/1").param("sortField","asc").param("sortDirection","id"))
@@ -148,7 +152,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
     void userListByPageUserDoctorTest() throws Exception {
         when(userService.findAll(1,"asc","id")).thenReturn(usersPage);
         this.mockMvc.perform(get("/users/1").param("sortField","asc").param("sortDirection","id"))
@@ -158,21 +162,7 @@ class UserControllerTest {
                 .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
 
-    @Test
-    @WithMockUser(username = "user",roles = ("PATIENT"))
-    void userInfoWithUser() throws Exception {
-        userDto1.setAuthenticationStatus(false);
-        when(principal.getName()).thenReturn(user1.getUsername());
-        when(userService.getDtoByUsernameForProfile(user1.getUsername())).thenReturn(userDto1);
-        this.mockMvc.perform(get("/userProfile"))
-                .andDo(print())
-                .andExpect(authenticated())
-                .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(model().attribute("user",userDto1))
-                .andExpect(xpath("//*[@id='userTextInformation']/div").nodeCount(2));
-        verify(userService,times(1)).getDtoByUsernameForProfile(user1.getUsername());
-    }
+
     @Test
     void userInfoWithoutUser() throws Exception {
         this.mockMvc.perform(get("/userProfile"))
@@ -181,7 +171,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void userByIdTest() throws Exception {
         when(userService.getDtoById(1)).thenReturn(userDto1);
         this.mockMvc.perform(get("/user/1"))
@@ -194,7 +184,7 @@ class UserControllerTest {
         verify(userService,times(1)).getDtoById(1);
     }
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void userByIdFailTest1() throws Exception {
         when(userService.getDtoById(20)).thenThrow(UserException.class);
         this.mockMvc.perform(get("/user/20"))
@@ -205,7 +195,7 @@ class UserControllerTest {
         verify(userService,times(1)).getDtoById(20);
     }
     @Test
-    @WithMockUser(username = "user",roles = ("DOCTOR"))
+    @WithMockUser(username = "useror",roles = ("DOCTOR"))
     void userByIdFailTest2() throws Exception {
         this.mockMvc.perform(get("/user/20"))
                 .andDo(print())
@@ -222,20 +212,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
 
-    @Test
-    @WithMockUser(username = "user",roles = ("PATIENT"))
-    void userSettingsForUserTest() throws Exception {
-        when(principal.getName()).thenReturn(user1.getUsername());
-        when(userService.getDtoByUsernameForSettings(user1.getUsername())).thenReturn(userDto1);
-        this.mockMvc.perform(get("/userSettings"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(authenticated())
-                .andExpect(model().size(1))
-                .andExpect(model().attribute("user",userDto1))
-                .andExpect(view().name("user/edit-user"));
-        verify(userService,times(1)).getDtoByUsernameForSettings(user1.getUsername());
-    }
+
     @Test
     void userSettingsWithoutUser() throws Exception {
         this.mockMvc.perform(get("/userSettings"))
@@ -245,7 +222,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user",roles = "ADMIN")
+    @WithMockUser(username = "useror",roles = "ADMIN")
     void userSettingsForAdminTest() throws Exception {
         List<Role> listOfRoles= new ArrayList<>();
         listOfRoles.add(role1);
@@ -270,7 +247,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void userSettingsForAdminFailTest2() throws Exception {
         when(userService.getDtoByIdForSettings(20)).thenThrow(UserException.class);
         this.mockMvc.perform(get("/userSettings/20"))
@@ -281,7 +258,7 @@ class UserControllerTest {
         verify(userService,times(1)).getDtoByIdForSettings(20);
     }
     @Test
-    @WithMockUser(username = "user",roles = ("DOCTOR"))
+    @WithMockUser(username = "useror",roles = ("DOCTOR"))
     void userSettingsForAdminFailTest3() throws Exception {
         this.mockMvc.perform(get("/userSettings/1"))
                 .andDo(print())
@@ -290,7 +267,7 @@ class UserControllerTest {
                 .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = "PATIENT")
+    @WithMockUser(username = "useror",roles = "PATIENT")
     void updateUserTest() throws Exception {
         MockMultipartFile userImg
                 = new MockMultipartFile(
@@ -308,7 +285,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/userProfile"));
     }
     @Test
-    @WithMockUser(username = "user",roles = "PATIENT")
+    @WithMockUser(username = "useror",roles = "PATIENT")
     void updateUserWithWrongValidTest() throws Exception {
         MockMultipartFile userImg
                 = new MockMultipartFile(
@@ -316,15 +293,18 @@ class UserControllerTest {
                 "hello.txt",
                 MediaType.TEXT_PLAIN_VALUE,
                 "Hello, World!".getBytes());
+       when(userEmailAndUsernameValidator.validateEmail(userDto1)).thenReturn(null);
+       when(userService.findById(1)).thenReturn(user1);
         this.mockMvc.perform(multipart("/updateUser").file(userImg)
-                        .param("username","ka")
-                        .param("password","ba")
+                        .param("id","1")
+                        .param("username","")
+                        .param("password","")
                         .param("email",userDto1.getEmail())
                         .param("userImg","userImg"))
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().isOk())
-                .andExpect(model().errorCount(2))
+                .andExpect(model().errorCount(4))
                 .andExpect(view().name("user/edit-user"));
     }
     @Test
@@ -346,7 +326,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void updateUserByAdminTest() throws Exception {
         when(userService.checkChangeOfRoles(userDto1)).thenReturn(true);
         MockMultipartFile userImg
@@ -375,7 +355,7 @@ class UserControllerTest {
         verify(userService,times(1)).saveUpdatedUser(userDto1,userImg);
     }
     @Test
-    @WithMockUser(username = "user",roles = ("DOCTOR"))
+    @WithMockUser(username = "useror",roles = ("DOCTOR"))
     void updateUserByAdminFailTest() throws Exception {
         MockMultipartFile userImg
                 = new MockMultipartFile(
@@ -414,7 +394,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void updateUserByAdminWrongValid() throws Exception {
         MockMultipartFile userImg
                 = new MockMultipartFile(
@@ -422,7 +402,8 @@ class UserControllerTest {
                 "hello.txt",
                 MediaType.TEXT_PLAIN_VALUE,
                 "Hello, World!".getBytes());
-
+        when(userEmailAndUsernameValidator.validateEmail(userDto1)).thenReturn(null);
+        when(userService.findById(1)).thenReturn(user1);
         this.mockMvc.perform(multipart("/updateUserByAdmin").file(userImg)
                         .param("id",userDto1.getId().toString())
                         .param("username","ky")
@@ -436,7 +417,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user",roles = ("ADMIN"))
+    @WithMockUser(username = "useror",roles = ("ADMIN"))
     void deleteUserTest() throws Exception {
         when(userService.deleteById(1)).thenReturn(true);
         this.mockMvc.perform(post("/deleteUser/1"))
@@ -459,7 +440,7 @@ class UserControllerTest {
         verify(userService,times(1)).deleteById(1);
     }
     @Test
-    @WithMockUser(username = "user",roles = {"DOCTOR","NURSE","PATIENT"})
+    @WithMockUser(username = "useror",roles = {"DOCTOR","NURSE","PATIENT"})
     void deleteUserFailTest2() throws Exception {
         when(userService.deleteById(1)).thenThrow(UserException.class);
         this.mockMvc.perform(post("/deleteUser/1"))
@@ -487,48 +468,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
 
-    @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
-    void makeAuthenticationTest() throws Exception {
-        when(principal.getName()).thenReturn(user1.getUsername());
-        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenReturn(person);
-        this.mockMvc.perform(post("/authentication")
-                .param("key",person.getKeyForUser()))
-                .andDo(print())
-                .andExpect(authenticated())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/person/"+person.getId()));
-        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
-    }
-    @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
-    void makeAuthenticationFailTest1() throws Exception {
-        when(principal.getName()).thenReturn(user1.getUsername());
-        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenThrow(UserException.class);
-        this.mockMvc.perform(post("/authentication")
-                        .param("key",person.getKeyForUser()))
-                .andDo(print())
-                .andExpect(authenticated())
-                .andExpect(status().isOk())
-                .andExpect(model().size(2))
-                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
-        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
-    }
-    @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
-    void makeAuthenticationFailTest2() throws Exception {
-        when(principal.getName()).thenReturn(user1.getUsername());
-        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenThrow(PersonException.class);
-        this.mockMvc.perform(post("/authentication")
-                        .param("key",person.getKeyForUser()))
-                .andDo(print())
-                .andExpect(authenticated())
-                .andExpect(status().isOk())
-                .andExpect(model().size(1))
-                .andExpect(model().attribute("error","Person also has a user or no person with this key"))
-                .andExpect(view().name("authentication-key"));
-        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
-    }
+
     @Test
     void makeAuthenticationFailTest3() throws Exception {
         this.mockMvc.perform(post("/authentication")
@@ -539,7 +479,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
     void updatePasswordOfUserTest() throws Exception {
         when(userService.updatePasswordOfUser(userDto1)).thenReturn(true);
         this.mockMvc.perform(post("/updatePasswordOfUser")
@@ -554,7 +494,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/"));
     }
     @Test
-    @WithMockUser(username = "user",roles = {"PATIENT","NURSE","DOCTOR"})
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
     void updatePasswordOfUserFailTest1() throws Exception {
         when(userService.updatePasswordOfUser(userDto1)).thenReturn(true);
         this.mockMvc.perform(post("/updatePasswordOfUser")
@@ -583,7 +523,7 @@ class UserControllerTest {
                 .andExpect(view().name(LOGIN_PAGE));
     }
     @Test
-    @WithMockUser(username = "user",roles = {"ADMIN"})
+    @WithMockUser(username = "useror",roles = {"ADMIN"})
     void updatePasswordOfUserByAdminTest() throws Exception {
         when(userService.updatePasswordOfUser(userDto1)).thenReturn(true);
         this.mockMvc.perform(post("/updatePasswordOfUserByAdmin")
@@ -598,7 +538,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/user"+userDto1.getId()));
     }
     @Test
-    @WithMockUser(username = "user",roles = {"ADMIN"})
+    @WithMockUser(username = "useror",roles = {"ADMIN"})
     void updatePasswordOfUserByAdminFailTest1() throws Exception {
         when(userService.updatePasswordOfUser(userDto1)).thenReturn(true);
         this.mockMvc.perform(post("/updatePasswordOfUserByAdmin")
@@ -629,4 +569,87 @@ class UserControllerTest {
                 .andExpect(model().size(2))
                 .andExpect(view().name(ERROR_EXCEPTION_PAGE));
     }
+    @Test
+    @WithMockUser(username = "useror",roles = ("PATIENT"))
+    void userSettingsForUserTest() throws Exception {
+        userDto1=UserDto.builder()
+                .id(user1.getId())
+                .username(user1.getUsername())
+                .password(user1.getPassword())
+                .img(user1.getImg())
+                .email(user1.getEmail())
+                .authenticationStatus(user1.getAuthenticationStatus())
+                .build();
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(userService.getDtoByUsernameForSettings(user1.getUsername())).thenReturn(userDto1);
+        this.mockMvc.perform(get("/userSettings"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(authenticated())
+                .andExpect(model().size(1))
+                .andExpect(model().attribute("user",userDto1))
+                .andExpect(view().name("user/edit-user"));
+        verify(userService,times(1)).getDtoByUsernameForSettings(user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "useror",roles = ("PATIENT"))
+    void userInfoWithUser() throws Exception {
+        userDto1.setAuthenticationStatus(false);
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(userService.getDtoByUsernameForProfile(user1.getUsername())).thenReturn(userDto1);
+        this.mockMvc.perform(get("/userProfile"))
+                .andDo(print())
+                .andExpect(authenticated())
+                .andExpect(status().isOk())
+                .andExpect(model().size(1))
+                .andExpect(model().attribute("user",userDto1))
+                .andExpect(xpath("//*[@id='userTextInformation']/div").nodeCount(2));
+        verify(userService,times(1)).getDtoByUsernameForProfile(user1.getUsername());
+    }
+
+
+
+    @Test
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
+    void makeAuthenticationTest() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenReturn(person);
+        this.mockMvc.perform(post("/authentication")
+                        .param("key",person.getKeyForUser()))
+                .andDo(print())
+                .andExpect(authenticated())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/person/"+person.getId()));
+        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
+    void makeAuthenticationFailTest1() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenThrow(UserException.class);
+        this.mockMvc.perform(post("/authentication")
+                        .param("key",person.getKeyForUser()))
+                .andDo(print())
+                .andExpect(authenticated())
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
+        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
+    }
+    @Test
+    @WithMockUser(username = "useror",roles = {"PATIENT","NURSE","DOCTOR"})
+    void makeAuthenticationFailTest2() throws Exception {
+        when(principal.getName()).thenReturn(user1.getUsername());
+        when(personService.addUserToPerson(person.getKeyForUser(),user1.getUsername())).thenThrow(PersonException.class);
+        this.mockMvc.perform(post("/authentication")
+                        .param("key",person.getKeyForUser()))
+                .andDo(print())
+                .andExpect(authenticated())
+                .andExpect(status().isOk())
+                .andExpect(model().size(2))
+                .andExpect(view().name(ERROR_EXCEPTION_PAGE));
+        verify(personService,times(1)).addUserToPerson(person.getKeyForUser(),user1.getUsername());
+    }
+
+
 }

@@ -309,13 +309,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
     @Transactional
-    public boolean blockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
+    public LocalDate blockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
         var appointment =findById(id);
         var doctor=personService.findPersonByUsernameOfUser(username);
         if (appointment.getPersonal()==doctor){
             appointment.setEngaged(true);
             saveAndFlush(appointment);
-            return true;
+            return appointment.getDateOfAppointment().toLocalDateTime().toLocalDate();
         }else {
             throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }
@@ -323,13 +323,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public boolean unblockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
+    public LocalDate unblockAppointmentByDoctor(Integer id, String username) throws AppointmentException {
         var appointment =findById(id);
         var doctor=personService.findPersonByUsernameOfUser(username);
         if (appointment.getPersonal()==doctor){
             appointment.setEngaged(false);
             saveAndFlush(appointment);
-            return true;
+            return appointment.getDateOfAppointment().toLocalDateTime().toLocalDate();
         }else {
             throw new AppointmentException(USER_HAS_NO_PERMISSIONS);
         }

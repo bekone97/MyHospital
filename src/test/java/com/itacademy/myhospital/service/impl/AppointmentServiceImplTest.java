@@ -292,9 +292,10 @@ class AppointmentServiceImplTest {
     @Test
     void blockAppointmentByDoctorTest() throws AppointmentException {
         when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
+        var dateOfAppointment=appointment.getDateOfAppointment().toLocalDateTime().toLocalDate();
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
-        var isTestCompleted = appointmentService.blockAppointmentByDoctor(1,user1.getUsername());
-        assertTrue(isTestCompleted);
+        var isDateOfAppointment = appointmentService.blockAppointmentByDoctor(1,user1.getUsername());
+        assertEquals(dateOfAppointment,isDateOfAppointment);
         assertEquals(person1,appointment.getPersonal());
         assertTrue(appointment.isEngaged());
         verify(appointmentRepository,times(1)).findById(1);
@@ -322,10 +323,11 @@ class AppointmentServiceImplTest {
     }
     @Test
     void unblockAppointmentByDoctorTest() throws AppointmentException {
+        var dateOfAppointment=appointment.getDateOfAppointment().toLocalDateTime().toLocalDate();
         when(appointmentRepository.findById(1)).thenReturn(Optional.of(appointment));
         when(personRepository.findPersonByUsernameOfUser(user1.getUsername())).thenReturn(person1);
-        var isTestCompleted = appointmentService.unblockAppointmentByDoctor(1,user1.getUsername());
-        assertTrue(isTestCompleted);
+        var isDateOfAppointment = appointmentService.unblockAppointmentByDoctor(1,user1.getUsername());
+        assertEquals(dateOfAppointment,isDateOfAppointment);
         assertFalse(appointment.isEngaged());
         verify(appointmentRepository,times(1)).findById(1);
         verify(personRepository,times(1)).findPersonByUsernameOfUser(user1.getUsername());

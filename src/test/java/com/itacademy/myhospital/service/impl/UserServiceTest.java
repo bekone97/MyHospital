@@ -107,7 +107,7 @@ class UserServiceTest {
     }
 
     @Test
-    void createCodeAndSaveUserTest() throws UserException, MessagingException, UnsupportedEncodingException {
+    void createCodeAndSaveUserTest() throws MessagingException, UnsupportedEncodingException {
         var user1Dto = new UserDto();
         user1Dto.setUsername("bababa");
         user1Dto.setEmail("emkds@mail.ru");
@@ -118,7 +118,6 @@ class UserServiceTest {
         when(userRepository.findByVerificationCode(uuid)).thenReturn(null);
         when(bCryptPasswordEncoder.encode("aspdlap")).thenReturn("dadada");
         var isUserSaved= userService.createCodeAndSaveUser(user1Dto);
-        verify(userRepository, times(1)).findUserByUsername(user1Dto.getUsername());
         assertTrue(isUserSaved);
     }
 

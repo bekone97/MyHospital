@@ -92,3 +92,10 @@ body{
 .labelForProcess{
     margin-left: 10px;
 }
+.label{
+    position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: Calibri;
+}

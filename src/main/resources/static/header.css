@@ -123,5 +123,18 @@
 .btnsLang{
     float: right;
 }
+.constraint{
+    position: relative;
+    margin-bottom: 10px;
+}
+.constraint span{
+    padding: 4px 4px;
+    background-color: #deefb8;
+    border-radius: 5px;
+        border: #8eafaa solid 2px;
+    color: #bd0909;
 
+    font-weight: bold;
+    font-family: "Footlight MT Light";
+}
 .show {display: block}

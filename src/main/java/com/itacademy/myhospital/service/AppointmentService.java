@@ -115,20 +115,20 @@ public interface AppointmentService {
      * Thes method changes engaged status of the appointment on true value and save it
      * @param id - id of appointment
      * @param username - name of user
-     * @return true value if the method has successfully completed
+     * @return date of appointment
      * @throws AppointmentException if there is no appointment with this id in database or user doesn't have enough
      * permissions to block it
      */
-    boolean blockAppointmentByDoctor(Integer id, String username) throws AppointmentException;
+    LocalDate blockAppointmentByDoctor(Integer id, String username) throws AppointmentException;
     /**
      * This method changes engaged status of the appointment on false value and save it
      * @param id - id of appointment
      * @param username - name of user
-     * @return true value if the method has completed
+     * @return date of appointment
      * @throws AppointmentException if there is no appointment with this id in database or user doesn't have enough
      * permissions to block it
      */
-    boolean unblockAppointmentByDoctor(Integer id, String username) throws AppointmentException;
+    LocalDate unblockAppointmentByDoctor(Integer id, String username) throws AppointmentException;
     /**
      * This method returns a list of the person's appointments on the date
      * @param date - date of appointment

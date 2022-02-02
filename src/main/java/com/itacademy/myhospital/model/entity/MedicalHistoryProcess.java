@@ -23,25 +23,25 @@ public class MedicalHistoryProcess {
 
 
     @Column(name = "number_of_days")
-    @Min(value = 1,message = "Number must be more than 1 or equals 1")
-    @Max(value = 100,message = "Number must be less than 100")
+    @Min(value = 1)
+    @Max(value = 100)
     private int numberOfDays;
 
 
     @Column(name="quantity_per_day")
-    @Min(value = 1,message = "Quantity must be more than 1 or equals 1")
-    @Max(value = 100,message = "Quantity must be less than 100")
+    @Min(value = 1)
+    @Max(value = 100)
     private int quantityPerDay;
 
     @Valid
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "name_of_process_id")
     private NameOfProcess nameOfProcess;
 
     @Column(name = "status")
     private boolean status;
 
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "medical_history_id")
     private MedicalHistory medicalHistory;
 }
