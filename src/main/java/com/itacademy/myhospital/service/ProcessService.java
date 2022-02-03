@@ -16,7 +16,7 @@ public interface ProcessService{
      * @param numberOfOperations  -  shows the number of operations
      * @param numberOfProcedures -  shows the number of procedures
      * @param numberOfMedications -  shows the number of medications
-     * @return Map<Process,Integer>
+     * @return Map where a key is a process and a value is a quantity of it
      * @throws ProcessException if there is no process with the id
      */
     Map<Process, Integer> getMapOfProcesses(int numberOfOperations,

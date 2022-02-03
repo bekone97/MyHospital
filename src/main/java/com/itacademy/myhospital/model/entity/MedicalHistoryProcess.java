@@ -34,14 +34,14 @@ public class MedicalHistoryProcess {
     private int quantityPerDay;
 
     @Valid
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "name_of_process_id")
     private NameOfProcess nameOfProcess;
 
     @Column(name = "status")
     private boolean status;
 
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "medical_history_id")
     private MedicalHistory medicalHistory;
 }

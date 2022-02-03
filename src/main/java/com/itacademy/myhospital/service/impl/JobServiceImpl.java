@@ -22,6 +22,7 @@ public class JobServiceImpl {
 
     /**
      * The method is invoked when the project has started(Except tests)
+     * @throws AppointmentException if there are some problems(no person with role doctor for example)
      */
     @Scheduled(initialDelayString = "${schedule.start}",fixedDelay=Long.MAX_VALUE)
     public void checkAndAddAppointmentsForPersonalForWeek() throws AppointmentException {
@@ -33,6 +34,7 @@ public class JobServiceImpl {
 
     /**
      * The method is called 24 hours after the project has started working and then called every 24 hours
+     * @throws AppointmentException if there are some problems(no person with role doctor for example)
      */
     @Scheduled(initialDelayString = "${schedule.work}", fixedDelayString = "${schedule.work}")
     public void addAppointmentsForDay() throws AppointmentException {

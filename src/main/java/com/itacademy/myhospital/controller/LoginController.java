@@ -53,7 +53,7 @@ public class LoginController {
         }
         var usernameMessage= userEmailAndUsernameValidator.validateUsername(user);
         if (usernameMessage!=null){
-            ObjectError error= new ObjectError("username",emailMessage);
+            ObjectError error= new ObjectError("username",usernameMessage);
             bindingResult.addError(error);
         }
        if (bindingResult.hasErrors()){

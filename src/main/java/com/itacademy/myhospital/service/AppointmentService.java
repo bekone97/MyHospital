@@ -72,7 +72,8 @@ public interface AppointmentService {
      * @param id - id of appointment
      * @return true
      * @throws AppointmentException if there is no appointment with the id in database or the appointment is already blocked
-     * @throws MessagingException,UnsupportedEncodingException if there are some problem with sending a  message
+     * @throws MessagingException if there are some problem with sending a  message
+     * @throws UnsupportedEncodingException if there are some problem with sending a  message
      */
     boolean changeAppointmentOnBlockedValue(String phoneNumber, String username, Integer id) throws AppointmentException, MessagingException, UnsupportedEncodingException;
     /**
@@ -82,7 +83,8 @@ public interface AppointmentService {
      * @param appointmentId - id of appointment
      * @return true value if the method has completed
      * @throws AppointmentException if there is no appointment with the id in database
-     * @throws MessagingException,UnsupportedEncodingException if there are some problems with sending a message
+     * @throws MessagingException if there are some problems with sending a message
+     * @throws UnsupportedEncodingException if there are some problems with sending a message
      * @throws UserException if there is no user with the username in database
      */
     boolean cancelAppointmentByUser(String username, Integer appointmentId) throws AppointmentException, MessagingException, UnsupportedEncodingException, UserException;
@@ -92,7 +94,8 @@ public interface AppointmentService {
      * @param appointmentId - id of appointment
      * @param username - name of user
      * @return true value if the method has completed
-     * @throws MessagingException,UnsupportedEncodingException if there are some problems with sending a message
+     * @throws MessagingException if there are some problems with sending a message
+     *  @throws UnsupportedEncodingException if there are some problems with sending a message
      * @throws AppointmentException if there is no appointment with the id in database
      * @throws UserException if there is no user with the username in database
      */
@@ -106,6 +109,7 @@ public interface AppointmentService {
     /**
      * This method find persons with the ROLE_DOCTOR , and creates appointments for them for the day
      * @param dateOfAppointments  date for creating appointments
+     * @throws AppointmentException no appointments
      */
     void addAppointmentsForPersonalForDay(LocalDateTime dateOfAppointments) throws AppointmentException;
     List<Appointment> findAppointmentsByPersonalAndAndDateOfAppointmentBetween(Person person,

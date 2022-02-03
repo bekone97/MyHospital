@@ -20,7 +20,7 @@
 </div>
 <div class="bodyExceptHeader">
     <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
-        <div th:unless="${error}==null">
+        <div th:unless="${error}==null" class="constraint">
             <p>
                 <a th:text="${error}"></a>
             </p>

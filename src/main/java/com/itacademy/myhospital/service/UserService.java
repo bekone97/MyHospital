@@ -26,7 +26,8 @@ public interface UserService{
      * email message to a new user and saves a new user.
      * @param userDto This is dto of new user.
      * @return  If the method is successful, true is returned
-     * @throws MessagingException,UnsupportedEncodingException If there are some problems with sending a message
+     * @throws MessagingException If there are some problems with sending a message
+     *@throws UnsupportedEncodingException If there are some problems with sending a message
      */
     boolean createCodeAndSaveUser(UserDto userDto) throws MessagingException, UnsupportedEncodingException;
     /**
@@ -52,9 +53,10 @@ public interface UserService{
      * @param multipartFile - an img of user.
      * @return true
      * @throws UserException If there is no user with userDto.getId()
-     * @throws IOException,MessagingException if there are some problems with sending message
+     * @throws IOException if there are some problems with sending message
+     * @throws MessagingException if there are some problems with sending message
      */
-    boolean saveUpdatedUser(UserDto user,MultipartFile multipartFile) throws UserException, IOException, MessagingException, PersonException;
+    boolean saveUpdatedUser(UserDto user,MultipartFile multipartFile) throws UserException, IOException, MessagingException;
     boolean checkChangeOfRoles(UserDto user);
     UserDto getDtoByUsernameForProfile(String username);
     List<User> findByUsernameIsStartingWith(String keyword);

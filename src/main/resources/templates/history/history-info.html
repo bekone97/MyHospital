@@ -28,12 +28,14 @@
        <td><a class="verticalBodyTable" th:text="#{historyInfo.patient}">Patient</a></td>
        <td><a class="verticalBodyTable" th:text="#{userAppointments.doctor}">Doctor</a></td>
        <td><a class="verticalBodyTable" th:text="#{historyInfo.receipt}">Receipt Date</a></td>
+           <td><a class="verticalBodyTable" th:text="#{historyInfo.complains}" ></td>
        <td><a class="verticalBodyTable" th:text="#{historyInfo.discharge}">Discharge Date</a></td>
        </tr>
        <tr>
        <td><a th:text="${history.getPatient().getFIO()}" class="verticalBodyTable">value</a></td>
        <td><a th:text="${history.getDiagnosis().getPersonal().getFIO()}" class="verticalBodyTable">value</a></td>
        <td><a th:text="${history.getReceiptDate()}" class="verticalBodyTable">value</a></td>
+           <td><a th:text="${history.getComplain()}"></a> </td>
        <td><a th:text="${history.getDischargeDate()}" iclass="verticalBodyTable">value</a></td>
        </tr>
        </div>

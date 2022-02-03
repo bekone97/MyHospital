@@ -189,9 +189,9 @@ public class UserServiceImpl implements UserService {
 
 
     private boolean uploadFile(User updatedUser, MultipartFile multipartFile) throws IOException {
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
-        if (!Objects.equals(updatedUser.getImg(), fileName)) {
+        if (!multipartFile.getOriginalFilename().isBlank()) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
             updatedUser.setImg(fileName);
             String uploadDirectory = "./users-images/" + updatedUser.getId();
 

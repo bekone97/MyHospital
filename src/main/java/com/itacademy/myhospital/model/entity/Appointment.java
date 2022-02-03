@@ -33,11 +33,11 @@ public class Appointment {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "personal_id")
     private Person personal;
 
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "user_patient_id")
     private User userPatient;
 

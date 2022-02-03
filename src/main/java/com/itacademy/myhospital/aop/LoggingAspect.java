@@ -31,6 +31,7 @@ public class LoggingAspect {
                 joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
         //Start  of execution
         Instant start = Instant.now();
+        
         //        Execution target
         Object returnValue= joinPoint.proceed();
             if (returnValue!=null) {

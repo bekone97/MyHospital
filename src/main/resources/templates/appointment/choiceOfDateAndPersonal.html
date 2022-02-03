@@ -22,7 +22,7 @@
 <div class="bodyExceptHeader">
 <form th:method="GET" th:action="@{/choiceOfTime}" th:object="${appointmentDto}">
     <div th:if="${patient==null}">
-        <div th:if="${#fields.hasErrors('phoneNumber')}" class="form-editPatronymic">
+        <div th:if="${#fields.hasErrors('phoneNumber')}" class="constraint">
             <span th:errors="*{phoneNumber}"></span>
         </div>
         <label for="phoneNumber" th:text="#{appointmentTime.phone}" >Phone number</label>

@@ -34,9 +34,9 @@
 
             <div th:unless="${user.getVerificationStatus()}">
                 <h4 class="verificationOfUser">Account isn't confirmed</h4>
+            </div>
                 <p><a th:text="#{userInfo.email}">Email : </a>
                     <a th:text="${user.getEmail()}" class="userInf"> </a></p>
-            </div>
             <div th:if="${user.getAuthenticationStatus()}">
                 <p>
                     <a th:text="#{userInfo.firstName}">Firstname : </a><a> </a>

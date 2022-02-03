@@ -41,7 +41,7 @@ public class Person {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;
 
