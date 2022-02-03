@@ -107,7 +107,7 @@ class LoginControllerTest {
                 .param("code",code))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/logout"));
         verify(userService,times(1)).checkAndChangeVerificationStatus(code);
     }
     @Test
@@ -117,9 +117,9 @@ class LoginControllerTest {
         this.mockMvc.perform(get("/verification")
                         .param("code",code))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name(LOGIN_PAGE));
-        verify(userService,times(0)).checkAndChangeVerificationStatus(code);
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+        verify(userService,times(1)).checkAndChangeVerificationStatus(code);
     }
 
     @Test

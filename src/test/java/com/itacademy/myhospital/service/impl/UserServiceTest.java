@@ -136,7 +136,7 @@ class UserServiceTest {
         verify(roleService,times(1)).findById(4);
         assertTrue(isChanged);
         assertTrue(user2.getVerificationStatus());
-        assertNull(user2.getVerificationCode());
+        assertNotNull(user2.getVerificationCode());
         verify(userRepository,times(1)).saveAndFlush(user2);
     }
 
