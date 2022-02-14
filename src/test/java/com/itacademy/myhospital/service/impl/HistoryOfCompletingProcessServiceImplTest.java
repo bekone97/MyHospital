@@ -1,6 +1,8 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
+import com.itacademy.myhospital.exception.PersonException;
+import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.Process;
 import com.itacademy.myhospital.model.entity.*;
 import com.itacademy.myhospital.model.repository.HistoryOfCompletingProcessRepository;
@@ -124,7 +126,7 @@ class HistoryOfCompletingProcessServiceImplTest {
     }
 
     @Test
-    void checkNumberOfExecutionsAndCreateNewExecutionTest() throws HistoryOfCompletingProcessException {
+    void checkNumberOfExecutionsAndCreateNewExecutionTest() throws HistoryOfCompletingProcessException, UserException {
         String result = "done";
         when(historyOfCompletingProcessRepository.findByMedicalHistoryProcess(medicalHistoryProcess))
                 .thenReturn(historyOfCompletingProcessList);

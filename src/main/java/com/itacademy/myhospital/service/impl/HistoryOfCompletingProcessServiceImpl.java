@@ -1,13 +1,18 @@
 package com.itacademy.myhospital.service.impl;
 
 import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
+import com.itacademy.myhospital.exception.PersonException;
 import com.itacademy.myhospital.exception.ProcessException;
+import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.HistoryOfCompletingProcess;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
 import com.itacademy.myhospital.model.entity.Person;
 import com.itacademy.myhospital.model.repository.HistoryOfCompletingProcessRepository;
 import com.itacademy.myhospital.service.HistoryOfCompletingProcessService;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
 import static com.itacademy.myhospital.constants.Constants.*;
 import java.sql.Timestamp;
 import java.util.List;
@@ -53,21 +58,30 @@ public class HistoryOfCompletingProcessServiceImpl implements HistoryOfCompletin
         return historyOfCompletingProcessRepository.findByMedicalHistoryProcess(medicalHistoryProcess);
     }
 
-
+    @Transactional
     public boolean checkNumberOfExecutionsAndCreateNewExecution(MedicalHistoryProcess medicalHistoryProcess,
                                                                                    Person person,
-                                                                                   String result) throws HistoryOfCompletingProcessException {
+                                                                                   String result) throws HistoryOfCompletingProcessException, UserException {
 
-       medicalHistoryProcess=checkNumberOfExecutions(medicalHistoryProcess);
-        var completingProcess = HistoryOfCompletingProcess.builder()
-                .medicalHistoryProcess(medicalHistoryProcess)
-                .dateOfCompleting(new Timestamp(System.currentTimeMillis()))
-                .personal(person)
-                .resultOfCompleting(result)
-                .build();
-        saveAndFlush(completingProcess);
-        return true;
-    }
+        medicalHistoryProcess = checkNumberOfExecutions(medicalHistoryProcess);
+
+        if (medicalHistoryProcess.getNameOfProcess().getProcess().getId() == OPERATION_ID) {
+            var personRole = person.getUser().getRoles().stream()
+                    .filter(role -> role.getId() == ROLE_DOCTOR_ID)
+                    .findFirst();
+            if (personRole.isEmpty()) {
+                throw new UserException(USER_HAS_NO_PERMISSIONS);
+            }
+        }
+            var completingProcess = HistoryOfCompletingProcess.builder()
+                    .medicalHistoryProcess(medicalHistoryProcess)
+                    .dateOfCompleting(new Timestamp(System.currentTimeMillis()))
+                    .personal(person)
+                    .resultOfCompleting(result)
+                    .build();
+            saveAndFlush(completingProcess);
+            return true;
+        }
 
     /**
      * This method checks the number of executed processes with the number of required executions and checks status

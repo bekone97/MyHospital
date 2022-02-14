@@ -2,11 +2,14 @@ package com.itacademy.myhospital.controller;
 
 import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
 import com.itacademy.myhospital.exception.MedicalHistoryProcessException;
+import com.itacademy.myhospital.exception.PersonException;
+import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.service.HistoryOfCompletingProcessService;
 import com.itacademy.myhospital.service.MedicalHistoryProcessService;
 import com.itacademy.myhospital.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +30,7 @@ public class HistoryOfCompletingProcessController {
     @PostMapping("/executionProcess/{id}")
     public String executionOfProcess(@PathVariable Integer id,
                                      @RequestParam("result") String result,
-                                     Principal principal) throws HistoryOfCompletingProcessException, MedicalHistoryProcessException {
+                                     Principal principal) throws HistoryOfCompletingProcessException, MedicalHistoryProcessException, UserException {
             var person = personService.findPersonByUsernameOfUser(principal.getName());
             var medicalHistoryProcess = medicalHistoryProcessService.findById(id);
                 historyOfCompletingProcessService.checkNumberOfExecutionsAndCreateNewExecution(medicalHistoryProcess, person, result);

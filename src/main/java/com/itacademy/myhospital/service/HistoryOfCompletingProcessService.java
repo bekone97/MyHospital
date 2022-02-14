@@ -2,6 +2,8 @@ package com.itacademy.myhospital.service;
 
 
 import com.itacademy.myhospital.exception.HistoryOfCompletingProcessException;
+import com.itacademy.myhospital.exception.PersonException;
+import com.itacademy.myhospital.exception.UserException;
 import com.itacademy.myhospital.model.entity.HistoryOfCompletingProcess;
 import com.itacademy.myhospital.model.entity.MedicalHistoryProcess;
 import com.itacademy.myhospital.model.entity.Person;
@@ -27,7 +29,7 @@ public interface HistoryOfCompletingProcessService {
       */
      boolean checkNumberOfExecutionsAndCreateNewExecution(MedicalHistoryProcess medicalHistoryProcess,
                                                                                     Person person,
-                                                                                   String result) throws HistoryOfCompletingProcessException;
+                                                                                   String result) throws HistoryOfCompletingProcessException,UserException;
      boolean removeHistoryOfCompletingProcessesByMedicalHistoryProcess(MedicalHistoryProcess medicalHistoryProcess);
 
 }
