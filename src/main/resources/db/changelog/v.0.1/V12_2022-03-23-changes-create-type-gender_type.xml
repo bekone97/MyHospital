@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="V12_2022-03-23--create-type-gender_type" author="a.miachyn">
+        <sql>ALTER TABLE users ADD COLUMN email varchar(528) not null;
+        ALTER TABLE users ADD COLUMN verification_code varchar(528) not null;
+        ALTER TABLE users ADD COLUMN verification_status TINYINT(1) not null;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

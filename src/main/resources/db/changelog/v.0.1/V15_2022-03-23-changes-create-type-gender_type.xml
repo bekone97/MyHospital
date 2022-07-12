@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="V15_2022-03-23--create-type-gender_type" author="a.miachyn">
+        <sql>
+            CREATE TABLE Appointments
+            (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                date_of_appointment DATETIME NOT NULL ,
+                personal_id BIGINT NOT NULL,
+                user_patient_id BIGINT,
+                is_engaged TINYINT(1),
+                phone_number varchar(528)
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>

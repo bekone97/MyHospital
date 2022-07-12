@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="V8_2022-03-23--create-type-gender_type" author="a.miachyn">
+        <sql>CREATE TABLE roles_users
+             (
+                 id    bigint primary key auto_increment,
+                 role_id BIGINT NOT NULL,
+                 user_id bigint NOT NULl
+             );
+        ALTER TABLE roles_users ADD
+            CONSTRAINT users_roles_fk_for_roles
+                FOREIGN KEY (role_id) REFERENCES roles(id);
+        ALTER TABLE roles_users ADD
+            CONSTRAINT users_roles_fk_for_users
+                FOREIGN KEY (user_id) REFERENCES users(id);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
