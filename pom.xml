@@ -18,6 +18,7 @@
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <junit.platform.version>1.8.1</junit.platform.version>
         <java.version>11</java.version>
+        <app.start.class>com.itacademy.myhospital.MyHospitalApplication</app.start.class>
     </properties>
     <dependencies>
         <dependency>
@@ -147,6 +148,13 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+<execution>
+<configuration>
+    <mainClass>${app.start.class}</mainClass>
+</configuration>
+</execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.flywaydb</groupId>
