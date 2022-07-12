@@ -31,9 +31,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -156,19 +155,7 @@
 </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.flywaydb</groupId>-->
-<!--                <artifactId>flyway-maven-plugin</artifactId>-->
-<!--                <version>8.0.3</version>-->
-<!--                <configuration>-->
-<!--                    <locations>-->
-<!--                        <location>filesystem:src\main\resources</location>-->
-<!--                    </locations>-->
-<!--                    <url>jdbc:mysql://localhost:3306/my_hospital</url>-->
-<!--                    <user>bestuser</user>-->
-<!--                    <password>bestuser</password>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+
         </plugins>
     </build>
 
